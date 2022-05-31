@@ -1,0 +1,15 @@
+name = "Fortran-NetCDF"
+version = "0.0.1"
+maintainer = "htang2@alaska.edu"
+author = "Han Tang"
+
+[ library ]
+source-dir = "src"
+
+[ build ]
+external-modules = "netcdf"
+
+[[ test ]]
+name = "test_netcdf_module"
+source-dir = "test/"
+main = "test_netcdf_module.f90"
