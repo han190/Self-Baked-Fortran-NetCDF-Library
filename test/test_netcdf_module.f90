@@ -5,9 +5,11 @@ program main
 
   type(netcdf_file) :: nc
   integer :: iunit
+  character(:), allocatable :: filename
 
-  open(newunit=iunit, file="./sample/ecmwf.nc", action="read")
-  read(iunit, *) nc
+  filename = "./sample/ecmwf.nc"
+  open (newunit=iunit, file=filename, action="read")
+  read (iunit, *) nc
   close (iunit)
 
 end program main
