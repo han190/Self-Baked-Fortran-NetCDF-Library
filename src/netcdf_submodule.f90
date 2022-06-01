@@ -6,7 +6,7 @@ contains
 
   !> Wrapper of nf90_strerror
   module function strerror_(self) result(ret)
-    class(dataset), intent(in) :: self
+    class(netcdf_file), intent(in) :: self
     character(len=80) :: ret
 
     ret = nf90_strerror(self%status)
@@ -14,7 +14,7 @@ contains
 
   !> Check
   module subroutine check(self)
-    class(dataset), intent(inout) :: self
+    class(netcdf_file), intent(inout) :: self
     character(:), allocatable :: message
 
     ! error stop trim(self%strerror_()) ! Don't work
@@ -25,7 +25,7 @@ contains
 
   !> Wrapper of nf90_open (TODO: make it fully functional)
   module function open_(self) result(ret)
-    class(dataset), intent(inout) :: self
+    class(netcdf_file), intent(inout) :: self
     integer :: ret
 
     ret = nf90_open(self%filename, self%mode, self%ncid)
@@ -33,7 +33,7 @@ contains
 
   !> Wrapper of nf90_create (TODO: make it fully functional)
   module function create_(self) result(ret)
-    class(dataset), intent(inout) :: self
+    class(netcdf_file), intent(inout) :: self
     integer :: ret
 
     ret = nf90_create(self%filename, self%mode, self%ncid)
@@ -41,14 +41,14 @@ contains
 
   !> Wrapper of nf90_close
   module function close_(self) result(ret)
-    class(dataset), intent(in) :: self
+    class(netcdf_file), intent(in) :: self
     integer :: ret
 
     ret = nf90_close(self%ncid)
   end function close_
 
   module subroutine read_formatted(self, unit, iotype, v_list, iostat, iomsg)
-    class(dataset), intent(inout) :: self
+    class(netcdf_file), intent(inout) :: self
     integer, intent(in) :: unit
     character(len=*), intent(in) :: iotype
     integer, intent(in) :: v_list(:)
