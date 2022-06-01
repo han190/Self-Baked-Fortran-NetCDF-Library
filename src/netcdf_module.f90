@@ -3,7 +3,7 @@ module netcdf_module
   use netcdf
   implicit none
 
-  public :: netcdf_file
+  public :: netcdf_dataset
 
   private
 
@@ -13,26 +13,30 @@ module netcdf_module
   !> NetCDF Fortran file type
   type :: netcdf_file
 
-    private
+    ! private
     character(:), allocatable :: filename
     integer :: status = 0
     integer :: mode = 0
     integer :: ncid = 0
+    integer :: ndim = 0
+    integer :: nvar = 0
+    integer :: natt = 0
+    integer :: unlimited_dimid = 0
+    integer :: format_num = 0
 
   contains
 
-    private
+    ! private
     procedure :: strerror_
     procedure :: check
     procedure :: open_
     procedure :: create_
     procedure :: close_
-    procedure :: read_formatted
-    generic :: read (formatted) => read_formatted
+    procedure :: inquire_
 
   end type netcdf_file
 
-  !> Multidimensional unlimited 
+  !> Multidimensional unlimited
   !> polymorphic data container.
   type, abstract :: netcdf_data
   end type netcdf_data
@@ -54,13 +58,36 @@ module netcdf_module
   end type netcdf_data_4d
 
   !> NetCDF Fortran group type
-  type, extends(netcdf_file) :: netcdf_group
+  type, extends(netcdf_file) :: netcdf_dataset
+
     character(:), allocatable :: name
     type(netcdf_attributes), allocatable :: attributes(:)
     type(netcdf_dimensions), allocatable :: dimensions(:)
     type(netcdf_variables), allocatable :: variables(:)
-    type(netcdf_group), allocatable :: group
-  end type netcdf_group
+    type(netcdf_groups), pointer :: groups(:) => null()
+
+    integer :: ndims
+    integer, allocatable :: dimids(:)
+    integer :: include_parents = 0
+
+  contains
+
+    procedure :: inq_dimids_
+    procedure :: read_dataset
+    generic :: read (formatted) => read_dataset
+
+  end type netcdf_dataset
+
+  type :: netcdf_groups
+    character(:), allocatable :: name
+    type(netcdf_attributes), pointer :: attributes(:) => null()
+    type(netcdf_dimensions), pointer :: dimensions(:) => null()
+    type(netcdf_variables), pointer :: variables(:) => null()
+    type(netcdf_groups), pointer :: groups(:) => null()
+    integer :: ndims = 0
+    integer, allocatable :: dimids(:)
+    integer :: include_parents = 0
+  end type netcdf_groups
 
   !> NetCDF Fortran attribute
   type :: netcdf_attribute
@@ -122,17 +149,28 @@ module netcdf_module
       integer :: ret
     end function close_
 
-    module subroutine read_formatted(self, unit, iotype, v_list, iostat, iomsg)
+    module function inquire_(self) result(ret)
       class(netcdf_file), intent(inout) :: self
+      integer :: ret
+    end function inquire_
+
+    module function inq_dimids_(self) result(ret)
+      class(netcdf_dataset), intent(inout) :: self
+      integer :: ret
+    end function inq_dimids_
+
+    module subroutine read_dataset(self, unit, iotype, v_list, iostat, iomsg)
+      class(netcdf_dataset), intent(inout) :: self
       integer, intent(in) :: unit
       character(len=*), intent(in) :: iotype
       integer, intent(in) :: v_list(:)
       integer, intent(out) :: iostat
       character(len=*), intent(inout) :: iomsg
-    end subroutine read_formatted
+    end subroutine read_dataset
 
   end interface
 
   integer, parameter :: filename_max_len = 1000
+  integer, parameter :: dimids_max_len = 1000
 
 end module netcdf_module

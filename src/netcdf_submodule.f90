@@ -47,8 +47,25 @@ contains
     ret = nf90_close(self%ncid)
   end function close_
 
-  module subroutine read_formatted(self, unit, iotype, v_list, iostat, iomsg)
+  !> Wrapper of nf90_inquire family
+  module function inquire_(self) result(ret)
     class(netcdf_file), intent(inout) :: self
+    integer :: ret
+
+    ret = nf90_inquire(self%ncid, self%ndim, self%nvar, self%natt, &
+      self%unlimited_dimid, self%format_num)
+  end function inquire_
+
+  module function inq_dimids_(self) result(ret)
+    class(netcdf_dataset), intent(inout) :: self
+    integer :: ret
+
+    ret = nf90_inq_dimids(self%ncid, self%ndims, &
+      self%dimids, self%include_parents)
+  end function inq_dimids_
+
+  module subroutine read_dataset(self, unit, iotype, v_list, iostat, iomsg)
+    class(netcdf_dataset), intent(inout) :: self
     integer, intent(in) :: unit
     character(len=*), intent(in) :: iotype
     integer, intent(in) :: v_list(:)
@@ -66,18 +83,37 @@ contains
     end block
 
     select case (action)
-    case ("READ") ! Case sensitive.
+    case ("READ")
+
       self%mode = nf90_nowrite
       self%status = self%open_()
-      iostat = self%status
-      iomsg = "Normal."
-    case default
-      iostat = 1
-      iomsg = "action /= 'READ'"
-      error stop iomsg
-    end select
+      call self%check()
 
-    call self%check()
-  end subroutine read_formatted
+      self%status = self%inquire_()
+      call self%check()
+
+      !> Trick the compiler by association
+      !> Works on gfortran 11.3.0
+      associate (attributes_ => self%attributes)
+      end associate
+      associate (dimensions_ => self%dimensions)
+      end associate
+      associate (variables_ => self%variables)
+      end associate
+
+      if (allocated(self%dimids)) deallocate (self%dimids)
+      allocate (self%dimids(self%ndim))
+
+      self%status = self%inq_dimids_()
+      call self%check()
+
+      self%dimids = self%dimids(1:self%ndims)
+
+    case default
+
+      error stop
+
+    end select
+  end subroutine read_dataset
 
 end submodule netcdf_submodule
