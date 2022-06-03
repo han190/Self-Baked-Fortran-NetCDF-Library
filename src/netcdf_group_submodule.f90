@@ -43,8 +43,7 @@ contains
     integer :: ret
 
     allocate (self%dimids(max_dimids))
-    ret = nf90_inq_dimids(self%ncid, self%ndim, &
-                          self%dimids, self%include_parents)
+    ret = nf90_inq_dimids(self%ncid, self%ndim, self%dimids, self%parents)
     self%dimids = self%dimids(1:self%ndim)
   end function inq_dimids_
 

@@ -37,7 +37,7 @@ module netcdf_group_module
     integer :: ncid = 0
     integer :: nvar = 0
     integer :: ndim = 0
-    integer :: include_parents = 0
+    integer :: parents = 0
     integer, allocatable :: dimids(:)
 
   contains
