@@ -10,6 +10,6 @@ source-dir = "src"
 external-modules = "netcdf"
 
 [[ test ]]
-name = "test_netcdf_module"
+name = "test"
 source-dir = "test/"
-main = "test_netcdf_module.f90"
+main = "test.f90"
