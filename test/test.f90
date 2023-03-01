@@ -1,10 +1,16 @@
 program main
 
-  use netcdf_group_module
-  implicit none
+use module_netcdf
+implicit none
 
-  type(netcdf_dataset) :: dataset
+type(variable_type) :: var
+type(group_type) :: nc
+real, allocatable :: t2m(:, :, :)
+character(:), allocatable :: file
 
-  call dataset%open("./sample/ecmwf.nc", "r")
+file = "t2m_2023_01"
+nc = dataset("./data/"//file//".nc", "r")
+t2m = get_var(nc, "t2m")
+call close_dataset(nc)
 
 end program main
