@@ -1,5 +1,5 @@
 # Fortran-NetCDF
-Light weighted NetCDF Fortran API wrapper written in modern Fortran
+A light weighted NetCDF C Library wrapper and an intermediate interface written in modern Fortran.
 
 ## Get started
 
