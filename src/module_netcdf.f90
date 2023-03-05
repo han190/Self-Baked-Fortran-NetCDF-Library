@@ -13,10 +13,11 @@ public :: dimension_type
 public :: variable_type
 
 public :: dataset
-public :: close_dataset
 public :: get_var
+public :: close
+public :: shape
 public :: operator(.att.)
-public :: write(formatted)
+public :: write (formatted)
 private
 
 !> The data model follows the netCDF data model introduced
@@ -42,21 +43,22 @@ end type group_type
 type :: attribute_type
   character(:), allocatable :: name
   integer(int64) :: length = 0
-  integer(c_int), private :: type = 0
+  class(*), allocatable :: values(:)
+  integer(c_int) :: type = 0
 end type attribute_type
 
 !> Dimension type
 type :: dimension_type
   character(:), allocatable :: name
   integer(int64) :: length = 0
+  logical :: is_unlimited = .false.
   integer(c_int), private :: id = 0
-  integer(c_int), private :: unlimited_dim = 0
 end type dimension_type
 
 !> Variable type
 type :: variable_type
   character(:), allocatable :: name
-  type(dimension_type), pointer :: dimensions(:) => null()
+  type(dimension_type), allocatable :: dimensions(:)
   type(attribute_type), allocatable :: attributes(:)
   integer(c_int), private :: type = 0
   integer(c_int), private :: id = 0
@@ -64,17 +66,49 @@ end type variable_type
 
 !> Group constructor
 interface dataset
-  procedure :: new_group
+  procedure :: open_dataset
 end interface dataset
+
+interface shape
+  procedure :: shape_dimensions
+end interface shape
+
+interface close
+  procedure :: close_dataset
+end interface close
 
 !> Interface to submodules
 interface
 
+  !> New dimensions
+  module function inquire_dimensions(nc_id) result(dimensions)
+    integer(c_int), intent(in) :: nc_id
+    type(dimension_type), allocatable :: dimensions(:)
+  end function inquire_dimensions
+  
+  !> Inquire variable dimensions
+  module function inquire_variable_dimensions(nc_id, var_id) result(dimensions)
+    integer(c_int), intent(in) :: nc_id, var_id
+    type(dimension_type), allocatable :: dimensions(:)
+  end function inquire_variable_dimensions
+
+  !> Shape of dimensions
+  module function shape_dimensions(dimensions) result(shapes)
+    type(dimension_type), intent(in) :: dimensions(:)
+    integer(int64), allocatable :: shapes(:)
+  end function shape_dimensions
+
+  !> Inquire variable attributes
+  module function inquire_variable_attributes(nc_id, var_id) result(attributes)
+    integer(c_int), intent(in) :: nc_id, var_id
+    type(attribute_type), allocatable :: attributes(:)
+  end function inquire_variable_attributes
+
   !> Group constructor
-  module function new_group(path, mode) result(group)
+  module function open_dataset(path, mode) result(group)
     character(*), intent(in) :: path, mode
     type(group_type) :: group
-  end function new_group
+  end function open_dataset
 
   !> Group destructor
   module subroutine close_dataset(group)
@@ -82,10 +116,10 @@ interface
   end subroutine close_dataset
 
   !> Check function with error messages.
-  module subroutine check(status, error_message)
+  module subroutine handle_error(status, error_message)
     integer, intent(in) :: status
     character(*), intent(in), optional :: error_message
-  end subroutine check
+  end subroutine handle_error
 
   !> Strip c string
   module function strip(cstring, nlen) result(string)
@@ -95,41 +129,14 @@ interface
   end function strip
 
   !> Get variable
-  module function get_var_(group, name) result(variable)
+  module function get_var(group, name) result(variable)
     type(group_type), intent(in) :: group
     character(*), intent(in) :: name
     type(variable_type) :: variable
-  end function get_var_
+  end function get_var
 
 end interface
 
-contains
-
-!> Retrieve data
-!> This routine is designed specifically for ERA5 data
-!> and therefore not included in the submodules.
-function get_var(nc, name) result(ret)
-  type(group_type), intent(in) :: nc
-  character(*), intent(in) :: name
-  real, allocatable :: ret(:, :, :)
-  type(variable_type) :: var
-  integer(int16), allocatable :: temp(:, :, :)
-  real(real64) :: add_offset(1), scale_factor(1)
-  integer :: status, i
-
-  var = get_var_(nc, name)
-
-  status = nc_get_att_double(nc%id, var%id, &
-    & "add_offset"//c_null_char, add_offset)
-  status = nc_get_att_double(nc%id, var%id, &
-    & "scale_factor"//c_null_char, scale_factor)
-  
-  associate (dims => var%dimensions)
-    allocate (temp(dims(3)%length, &
-      & dims(2)%length, dims(1)%length))
-  end associate
-  status = nc_get_var_short(nc%id, var%id, temp)
-  ret = scale_factor(1)*temp + add_offset(1)
-end function get_var
+integer, parameter :: num_chars = 500
 
 end module module_netcdf

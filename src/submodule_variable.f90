@@ -4,7 +4,7 @@ implicit none
 contains
 
 !> Get meta data for a variable
-module function get_var_(group, name) result(variable)
+module function get_var(group, name) result(variable)
   type(group_type), intent(in) :: group
   character(*), intent(in) :: name
   type(variable_type) :: variable
@@ -19,55 +19,15 @@ module function get_var_(group, name) result(variable)
   !> Inquire variable ID
   variable%name = name
   status = nc_inq_varid(group%id, name//c_null_char, variable%id)
-  call check(status, name)
+  call handle_error(status, "nc_inq_varid")
 
-  !> Inquire number of dimensions
-  status = nc_inq_varndims(group%id, variable%id, num_dims)
-  call check(status)
-
-  !> Inquire dimension IDs
-  allocate(dim_ids(num_dims), dim_lens(num_dims))
-  status = nc_inq_vardimid(group%id, variable%id, dim_ids)
-  call check(status)
-
-  !> Inquire dimension lengths
-  do i = 1, num_dims
-    status = nc_inq_dimlen(group%id, dim_ids(i), dim_lens(i))
-    call check(status)
-  end do
-
-  !> Copy dimension info to variable type
-  allocate(variable%dimensions(num_dims))
-  associate (dims => variable%dimensions)
-    do i = 1, num_dims
-      dims(i)%id = dim_ids(i)
-      dims(i)%length = dim_lens(i)        
-      status = nc_inq_dimname(group%id, dims(i)%id, temp)
-      call check(status)
-      dims(i)%name = strip(temp, nlen)
-    end do
-  end associate
-
-  !> Inquire the number of attributes
-  status = nc_inq_varnatts(group%id, variable%id, num_atts)
-  call check(status)
-
-  !> Copy attribute info to variable type
-  allocate (variable%attributes(num_atts))
-    associate (atts => variable%attributes)
-    do i = 1, num_atts
-      status = nc_inq_attname(group%id, variable%id, i - 1, temp)
-      call check(status)
-      atts(i)%name = strip(temp, nlen)
-      status = nc_inq_att(group%id, variable%id, &
-        & temp, atts(i)%type, atts(i)%length)
-      call check(status)
-    end do
-  end associate
+  !> Inquire dimensions and attributes
+  variable%dimensions = inquire_variable_dimensions(group%id, variable%id)
+  variable%attributes = inquire_variable_attributes(group%id, variable%id)
 
   !> Inquire variable type
   status = nc_inq_vartype(group%id, variable%id, variable%type)
-  call check(status)
-end function get_var_
+  call handle_error(status, "nc_inq_vartype")
+end function get_var
 
 end submodule submodule_variable

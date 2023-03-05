@@ -1,16 +1,32 @@
 program main
 
 use module_netcdf
+use iso_fortran_env
 implicit none
 
-type(variable_type) :: var
 type(group_type) :: nc
-real, allocatable :: t2m(:, :, :)
-character(:), allocatable :: file
+type(variable_type) :: var
+integer :: i
 
-file = "t2m_2023_01"
-nc = dataset("./data/"//file//".nc", "r")
-t2m = get_var(nc, "t2m")
-call close_dataset(nc)
+nc = dataset("./data/t2m_2023_01.nc", "r")
+var = get_var(nc, "t2m")
+
+do i = 1, size(var%attributes)
+  select type (values_ => var%attributes(i)%values)
+  type is (character(*))
+    print "(a, ':', 1x, a)", var%attributes(i)%name, values_
+  type is (integer(int16))
+    print "(a, ':', 1x, i0)", var%attributes(i)%name, values_
+  type is (integer(int32))
+    print "(a, ':', 1x, i0)", var%attributes(i)%name, values_
+  type is (integer(int64))
+    print "(a, ':', 1x, i0)", var%attributes(i)%name, values_
+  type is (real(real32))
+    print "(a, ':', 1x, f0.6)", var%attributes(i)%name, values_
+  type is (real(real64))
+    print "(a, ':', 1x, f0.6)", var%attributes(i)%name, values_
+  end select
+end do
+call close(nc)
 
 end program main

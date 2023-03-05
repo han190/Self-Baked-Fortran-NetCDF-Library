@@ -21,7 +21,7 @@ end function strip
 
 !> Check function with error messages. Credit:
 !> https://github.com/Unidata/netcdf-fortran/blob/main/fortran/nf_misc.F90
-module subroutine check(status, error_message)
+module subroutine handle_error(status, error_message)
   integer, intent(in) :: status
   character(*), intent(in), optional :: error_message
   character(:), pointer :: fptr => null()
@@ -50,6 +50,6 @@ module subroutine check(status, error_message)
     error stop message
 
   end if
-end subroutine check
+end subroutine handle_error
 
 end submodule submodule_error
