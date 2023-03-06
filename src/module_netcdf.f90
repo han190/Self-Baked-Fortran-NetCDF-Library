@@ -11,6 +11,9 @@ public :: group_type
 public :: attribute_type
 public :: dimension_type
 public :: variable_type
+public :: container_type
+public :: container_1d
+public :: container_3d
 
 public :: dataset
 public :: get_var
@@ -22,6 +25,26 @@ private
 
 !> The data model follows the netCDF data model introduced
 !> https://docs.unidata.ucar.edu/netcdf-c/current/netcdf_data_model.html
+
+!> Data container
+type, abstract :: container_type
+end type container_type
+
+type, extends(container_type) :: container_1d
+  class(*), allocatable :: data(:)
+end type container_1d
+
+type, extends(container_type) :: container_2d
+  class(*), allocatable :: data(:, :)
+end type container_2d
+
+type, extends(container_type) :: container_3d
+  class(*), allocatable :: data(:, :, :)
+end type container_3d
+
+type, extends(container_type) :: container_4d
+  class(*), allocatable :: data(:, :, :, :)
+end type container_4d
 
 !> File
 type, abstract :: file_type
@@ -60,6 +83,7 @@ type :: variable_type
   character(:), allocatable :: name
   type(dimension_type), allocatable :: dimensions(:)
   type(attribute_type), allocatable :: attributes(:)
+  class(container_type), allocatable :: container
   integer(c_int), private :: type = 0
   integer(c_int), private :: id = 0
 end type variable_type
@@ -85,7 +109,7 @@ interface
     integer(c_int), intent(in) :: nc_id
     type(dimension_type), allocatable :: dimensions(:)
   end function inquire_dimensions
-  
+
   !> Inquire variable dimensions
   module function inquire_variable_dimensions(nc_id, var_id) result(dimensions)
     integer(c_int), intent(in) :: nc_id, var_id

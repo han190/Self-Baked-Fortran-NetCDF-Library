@@ -27,6 +27,17 @@ do i = 1, size(var%attributes)
     print "(a, ':', 1x, f0.6)", var%attributes(i)%name, values_
   end select
 end do
+
+select type (container_ => var%container)
+type is (container_3d)
+
+  select type (data_ => container_%data)
+  type is (integer(int16))
+    print *, shape(data_)
+  end select
+
+end select
+
 call close(nc)
 
 end program main

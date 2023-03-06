@@ -33,53 +33,32 @@ module function inquire_variable_attributes(nc_id, var_id) result(attributes)
 
     select case (att_type)
     case (nc_char)
-
       allocate (character(kind=c_char, len=att_len) :: values(1))
-      select type (values_ => values)
-      type is (character(kind=c_char, len=*))
-        status = nc_get_att_text(nc_id, var_id, att_name, values_(1))
-      end select
-
     case (nc_short)
-
       allocate (integer(kind=int16) :: values(att_len))
-      select type (values_ => values)
-      type is (integer(kind=int16))
-        status = nc_get_att_short(nc_id, var_id, att_name, values_)
-      end select
-
     case (nc_int)
-
       allocate (integer(kind=int32) :: values(att_len))
-      select type (values_ => values)
-      type is (integer(kind=int32))
-        status = nc_get_att_int(nc_id, var_id, att_name, values_)
-      end select
-
     case (nc_int64)
-
       allocate (integer(kind=int64) :: values(att_len))
-      select type (values_ => values)
-      type is (integer(kind=int64))
-        status = nc_get_att_long(nc_id, var_id, att_name, values_)
-      end select
-
     case (nc_float)
-
       allocate (real(kind=real32) :: values(att_len))
-      select type (values_ => values)
-      type is (real(kind=real32))
-        status = nc_get_att_float(nc_id, var_id, att_name, values_)
-      end select
-
     case (nc_double)
-
       allocate (real(kind=real64) :: values(att_len))
-      select type (values_ => values)
-      type is (real(kind=real64))
-        status = nc_get_att_double(nc_id, var_id, att_name, values_)
-      end select
+    end select
 
+    select type (values_ => values)
+    type is (character(kind=c_char, len=*))
+      status = nc_get_att_text(nc_id, var_id, att_name, values_(1))
+    type is (integer(kind=int16))
+      status = nc_get_att_short(nc_id, var_id, att_name, values_)
+    type is (integer(kind=int32))
+      status = nc_get_att_int(nc_id, var_id, att_name, values_)
+    type is (integer(kind=int64))
+      status = nc_get_att_long(nc_id, var_id, att_name, values_)
+    type is (real(kind=real32))
+      status = nc_get_att_float(nc_id, var_id, att_name, values_)
+    type is (real(kind=real64))
+      status = nc_get_att_double(nc_id, var_id, att_name, values_)
     end select
 
     select case (att_type)
