@@ -1,0 +1,65 @@
+submodule(module_netcdf) submodule_variable
+
+implicit none
+contains
+
+!> Get meta data for a variable
+#: set ranks = ['1', '2', '3', '4']
+#: set kinds = ['integer(int16)', 'integer(int32)', 'integer(int64)', 'real(real32)', 'real(real64)']
+#: set nc_kinds = ['nc_short', 'nc_int', 'nc_int64', 'nc_float', 'nc_double']
+#: set get_vars = ['nc_get_var_short', 'nc_get_var_int', 'nc_get_var_longlong', 'nc_get_var_float', 'nc_get_var_double']
+module function get_var(group, name) result(variable)
+  type(group_type), intent(in) :: group
+  character(*), intent(in) :: name
+  type(variable_type) :: variable
+  integer :: status
+  integer, allocatable :: s(:) !> shape
+
+  !> Inquire variable ID
+  variable%name = name
+  status = nc_inq_varid(group%id, name//c_null_char, variable%id)
+  call handle_error(status, "nc_inq_varid")
+
+  !> Inquire dimensions and attributes
+  variable%dimensions = inquire_variable_dimensions(group%id, variable%id)
+  variable%attributes = inquire_variable_attributes(group%id, variable%id)
+
+  !> Inquire variable type
+  status = nc_inq_vartype(group%id, variable%id, variable%type)
+  call handle_error(status, "nc_inq_vartype")
+
+  select case (size(variable%dimensions))
+  #: for rank in ranks
+  case (${rank}$)
+    allocate (container_${rank}$d :: variable%container)
+  #: endfor
+  case default
+    error stop "Invalid data rank."
+  end select
+
+  select case (variable%type)
+  #: for nc_kind, kind, get_var in zip(nc_kinds, kinds, get_vars)
+  case (${nc_kind}$)
+
+    select type (container_ => variable%container)
+    #: for rank in ranks
+    type is (container_${rank}$d)
+
+      s = shape(variable%dimensions)
+      allocate (${kind}$ :: container_%data( &
+        & #{for i in range(int(rank), 1, -1)}#s(${i}$), #{endfor}#s(1)))
+
+      select type (data_ => container_%data)
+      type is (${kind}$)
+        status = ${get_var}$(group%id, variable%id, data_)
+        call handle_error(status, "${get_var}$")
+      end select
+
+    #: endfor
+    end select
+
+  #: endfor
+  end select
+end function get_var
+
+end submodule submodule_variable

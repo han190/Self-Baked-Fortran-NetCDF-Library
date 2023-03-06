@@ -9,6 +9,7 @@ module function get_var(group, name) result(variable)
   character(*), intent(in) :: name
   type(variable_type) :: variable
   integer :: status
+  integer, allocatable :: s(:) !> shape
 
   !> Inquire variable ID
   variable%name = name
@@ -42,260 +43,265 @@ module function get_var(group, name) result(variable)
     select type (container_ => variable%container)
     type is (container_1d)
 
-      allocate (integer(kind=int16) :: container_%data( &
-        & variable%dimensions(1)%length))
+      s = shape(variable%dimensions)
+      allocate (integer(int16) :: container_%data( &
+        & s(1)))
 
       select type (data_ => container_%data)
-      type is (integer(kind=int16))
+      type is (integer(int16))
         status = nc_get_var_short(group%id, variable%id, data_)
+        call handle_error(status, "nc_get_var_short")
       end select
 
     type is (container_2d)
 
-      allocate (integer(kind=int16) :: container_%data( &
-        & variable%dimensions(2)%length, &
-        & variable%dimensions(1)%length))
+      s = shape(variable%dimensions)
+      allocate (integer(int16) :: container_%data( &
+        & s(2), s(1)))
 
       select type (data_ => container_%data)
-      type is (integer(kind=int16))
+      type is (integer(int16))
         status = nc_get_var_short(group%id, variable%id, data_)
+        call handle_error(status, "nc_get_var_short")
       end select
 
     type is (container_3d)
 
-      allocate (integer(kind=int16) :: container_%data( &
-        & variable%dimensions(3)%length, &
-        & variable%dimensions(2)%length, &
-        & variable%dimensions(1)%length))
+      s = shape(variable%dimensions)
+      allocate (integer(int16) :: container_%data( &
+        & s(3), s(2), s(1)))
 
       select type (data_ => container_%data)
-      type is (integer(kind=int16))
+      type is (integer(int16))
         status = nc_get_var_short(group%id, variable%id, data_)
+        call handle_error(status, "nc_get_var_short")
       end select
 
     type is (container_4d)
 
-      allocate (integer(kind=int16) :: container_%data( &
-        & variable%dimensions(4)%length, &
-        & variable%dimensions(3)%length, &
-        & variable%dimensions(2)%length, &
-        & variable%dimensions(1)%length))
+      s = shape(variable%dimensions)
+      allocate (integer(int16) :: container_%data( &
+        & s(4), s(3), s(2), s(1)))
 
       select type (data_ => container_%data)
-      type is (integer(kind=int16))
+      type is (integer(int16))
         status = nc_get_var_short(group%id, variable%id, data_)
+        call handle_error(status, "nc_get_var_short")
       end select
 
     end select
-    call handle_error(status, "nc_get_var_short")
 
   case (nc_int)
 
     select type (container_ => variable%container)
     type is (container_1d)
 
-      allocate (integer(kind=int32) :: container_%data( &
-        & variable%dimensions(1)%length))
+      s = shape(variable%dimensions)
+      allocate (integer(int32) :: container_%data( &
+        & s(1)))
 
       select type (data_ => container_%data)
-      type is (integer(kind=int32))
+      type is (integer(int32))
         status = nc_get_var_int(group%id, variable%id, data_)
+        call handle_error(status, "nc_get_var_int")
       end select
 
     type is (container_2d)
 
-      allocate (integer(kind=int32) :: container_%data( &
-        & variable%dimensions(2)%length, &
-        & variable%dimensions(1)%length))
+      s = shape(variable%dimensions)
+      allocate (integer(int32) :: container_%data( &
+        & s(2), s(1)))
 
       select type (data_ => container_%data)
-      type is (integer(kind=int32))
+      type is (integer(int32))
         status = nc_get_var_int(group%id, variable%id, data_)
+        call handle_error(status, "nc_get_var_int")
       end select
 
     type is (container_3d)
 
-      allocate (integer(kind=int32) :: container_%data( &
-        & variable%dimensions(3)%length, &
-        & variable%dimensions(2)%length, &
-        & variable%dimensions(1)%length))
+      s = shape(variable%dimensions)
+      allocate (integer(int32) :: container_%data( &
+        & s(3), s(2), s(1)))
 
       select type (data_ => container_%data)
-      type is (integer(kind=int32))
+      type is (integer(int32))
         status = nc_get_var_int(group%id, variable%id, data_)
+        call handle_error(status, "nc_get_var_int")
       end select
 
     type is (container_4d)
 
-      allocate (integer(kind=int32) :: container_%data( &
-        & variable%dimensions(4)%length, &
-        & variable%dimensions(3)%length, &
-        & variable%dimensions(2)%length, &
-        & variable%dimensions(1)%length))
+      s = shape(variable%dimensions)
+      allocate (integer(int32) :: container_%data( &
+        & s(4), s(3), s(2), s(1)))
 
       select type (data_ => container_%data)
-      type is (integer(kind=int32))
+      type is (integer(int32))
         status = nc_get_var_int(group%id, variable%id, data_)
+        call handle_error(status, "nc_get_var_int")
       end select
 
     end select
-    call handle_error(status, "nc_get_var_int")
 
   case (nc_int64)
 
     select type (container_ => variable%container)
     type is (container_1d)
 
-      allocate (integer(kind=int64) :: container_%data( &
-        & variable%dimensions(1)%length))
+      s = shape(variable%dimensions)
+      allocate (integer(int64) :: container_%data( &
+        & s(1)))
 
       select type (data_ => container_%data)
-      type is (integer(kind=int64))
+      type is (integer(int64))
         status = nc_get_var_longlong(group%id, variable%id, data_)
+        call handle_error(status, "nc_get_var_longlong")
       end select
 
     type is (container_2d)
 
-      allocate (integer(kind=int64) :: container_%data( &
-        & variable%dimensions(2)%length, &
-        & variable%dimensions(1)%length))
+      s = shape(variable%dimensions)
+      allocate (integer(int64) :: container_%data( &
+        & s(2), s(1)))
 
       select type (data_ => container_%data)
-      type is (integer(kind=int64))
+      type is (integer(int64))
         status = nc_get_var_longlong(group%id, variable%id, data_)
+        call handle_error(status, "nc_get_var_longlong")
       end select
 
     type is (container_3d)
 
-      allocate (integer(kind=int64) :: container_%data( &
-        & variable%dimensions(3)%length, &
-        & variable%dimensions(2)%length, &
-        & variable%dimensions(1)%length))
+      s = shape(variable%dimensions)
+      allocate (integer(int64) :: container_%data( &
+        & s(3), s(2), s(1)))
 
       select type (data_ => container_%data)
-      type is (integer(kind=int64))
+      type is (integer(int64))
         status = nc_get_var_longlong(group%id, variable%id, data_)
+        call handle_error(status, "nc_get_var_longlong")
       end select
 
     type is (container_4d)
 
-      allocate (integer(kind=int64) :: container_%data( &
-        & variable%dimensions(4)%length, &
-        & variable%dimensions(3)%length, &
-        & variable%dimensions(2)%length, &
-        & variable%dimensions(1)%length))
+      s = shape(variable%dimensions)
+      allocate (integer(int64) :: container_%data( &
+        & s(4), s(3), s(2), s(1)))
 
       select type (data_ => container_%data)
-      type is (integer(kind=int64))
+      type is (integer(int64))
         status = nc_get_var_longlong(group%id, variable%id, data_)
+        call handle_error(status, "nc_get_var_longlong")
       end select
 
     end select
-    call handle_error(status, "nc_get_var_longlong")
 
   case (nc_float)
 
     select type (container_ => variable%container)
     type is (container_1d)
 
-      allocate (real(kind=real32) :: container_%data( &
-        & variable%dimensions(1)%length))
+      s = shape(variable%dimensions)
+      allocate (real(real32) :: container_%data( &
+        & s(1)))
 
       select type (data_ => container_%data)
-      type is (real(kind=real32))
+      type is (real(real32))
         status = nc_get_var_float(group%id, variable%id, data_)
+        call handle_error(status, "nc_get_var_float")
       end select
 
     type is (container_2d)
 
-      allocate (real(kind=real32) :: container_%data( &
-        & variable%dimensions(2)%length, &
-        & variable%dimensions(1)%length))
+      s = shape(variable%dimensions)
+      allocate (real(real32) :: container_%data( &
+        & s(2), s(1)))
 
       select type (data_ => container_%data)
-      type is (real(kind=real32))
+      type is (real(real32))
         status = nc_get_var_float(group%id, variable%id, data_)
+        call handle_error(status, "nc_get_var_float")
       end select
 
     type is (container_3d)
 
-      allocate (real(kind=real32) :: container_%data( &
-        & variable%dimensions(3)%length, &
-        & variable%dimensions(2)%length, &
-        & variable%dimensions(1)%length))
+      s = shape(variable%dimensions)
+      allocate (real(real32) :: container_%data( &
+        & s(3), s(2), s(1)))
 
       select type (data_ => container_%data)
-      type is (real(kind=real32))
+      type is (real(real32))
         status = nc_get_var_float(group%id, variable%id, data_)
+        call handle_error(status, "nc_get_var_float")
       end select
 
     type is (container_4d)
 
-      allocate (real(kind=real32) :: container_%data( &
-        & variable%dimensions(4)%length, &
-        & variable%dimensions(3)%length, &
-        & variable%dimensions(2)%length, &
-        & variable%dimensions(1)%length))
+      s = shape(variable%dimensions)
+      allocate (real(real32) :: container_%data( &
+        & s(4), s(3), s(2), s(1)))
 
       select type (data_ => container_%data)
-      type is (real(kind=real32))
+      type is (real(real32))
         status = nc_get_var_float(group%id, variable%id, data_)
+        call handle_error(status, "nc_get_var_float")
       end select
 
     end select
-    call handle_error(status, "nc_get_var_float")
 
   case (nc_double)
 
     select type (container_ => variable%container)
     type is (container_1d)
 
-      allocate (real(kind=real64) :: container_%data( &
-        & variable%dimensions(1)%length))
+      s = shape(variable%dimensions)
+      allocate (real(real64) :: container_%data( &
+        & s(1)))
 
       select type (data_ => container_%data)
-      type is (real(kind=real64))
+      type is (real(real64))
         status = nc_get_var_double(group%id, variable%id, data_)
+        call handle_error(status, "nc_get_var_double")
       end select
 
     type is (container_2d)
 
-      allocate (real(kind=real64) :: container_%data( &
-        & variable%dimensions(2)%length, &
-        & variable%dimensions(1)%length))
+      s = shape(variable%dimensions)
+      allocate (real(real64) :: container_%data( &
+        & s(2), s(1)))
 
       select type (data_ => container_%data)
-      type is (real(kind=real64))
+      type is (real(real64))
         status = nc_get_var_double(group%id, variable%id, data_)
+        call handle_error(status, "nc_get_var_double")
       end select
 
     type is (container_3d)
 
-      allocate (real(kind=real64) :: container_%data( &
-        & variable%dimensions(3)%length, &
-        & variable%dimensions(2)%length, &
-        & variable%dimensions(1)%length))
+      s = shape(variable%dimensions)
+      allocate (real(real64) :: container_%data( &
+        & s(3), s(2), s(1)))
 
       select type (data_ => container_%data)
-      type is (real(kind=real64))
+      type is (real(real64))
         status = nc_get_var_double(group%id, variable%id, data_)
+        call handle_error(status, "nc_get_var_double")
       end select
 
     type is (container_4d)
 
-      allocate (real(kind=real64) :: container_%data( &
-        & variable%dimensions(4)%length, &
-        & variable%dimensions(3)%length, &
-        & variable%dimensions(2)%length, &
-        & variable%dimensions(1)%length))
+      s = shape(variable%dimensions)
+      allocate (real(real64) :: container_%data( &
+        & s(4), s(3), s(2), s(1)))
 
       select type (data_ => container_%data)
-      type is (real(kind=real64))
+      type is (real(real64))
         status = nc_get_var_double(group%id, variable%id, data_)
+        call handle_error(status, "nc_get_var_double")
       end select
 
     end select
-    call handle_error(status, "nc_get_var_double")
 
   end select
 end function get_var
