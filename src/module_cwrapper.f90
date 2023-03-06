@@ -589,6 +589,56 @@ interface
     integer(c_int) :: nc_inq_vartype
   end function nc_inq_vartype
 
+  !> nc_get_var_double
+  function nc_get_var_double(ncid, varid, ip) &
+    & bind(c, name='nc_get_var_double')
+    import c_int, c_double
+    implicit none
+    integer(c_int), value :: ncid, varid
+    real(c_double) :: ip(*)
+    integer(c_int) :: nc_get_var_double
+  end function nc_get_var_double
+
+  !> nc_get_var_float
+  function nc_get_var_float(ncid, varid, ip) &
+    & bind(c, name='nc_get_var_float')
+    import c_int, c_float
+    implicit none
+    integer(c_int), value :: ncid, varid
+    real(c_float) :: ip(*)
+    integer(c_int) :: nc_get_var_float
+  end function nc_get_var_float
+
+  !> nc_get_var_int
+  function nc_get_var_int(ncid, varid, ip) &
+    & bind(c, name='nc_get_var_int')
+    import c_int
+    implicit none
+    integer(c_int), value :: ncid, varid
+    integer(c_int) :: ip(*)
+    integer(c_int) :: nc_get_var_int
+  end function nc_get_var_int
+
+  !> nc_get_var_longlong
+  function nc_get_var_longlong(ncid, varid, ip) &
+    & bind(c, name='nc_get_var_longlong')
+    import c_int, c_long_long
+    implicit none
+    integer(c_int), value :: ncid, varid
+    integer(c_long_long) :: ip(*)
+    integer(c_int) :: nc_get_var_longlong
+  end function nc_get_var_longlong
+
+  !> nc_get_var_short
+  function nc_get_var_short(ncid, varid, ip) &
+    & bind(c, name='nc_get_var_short')
+    import c_int, c_short
+    implicit none
+    integer(c_int), value :: ncid, varid
+    integer(c_short) :: ip(*)
+    integer(c_int) :: nc_get_var_short
+  end function nc_get_var_short
+
   !> Groups
   !> ------
 
