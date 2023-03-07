@@ -51,6 +51,7 @@ type, extends(file_type) :: group_type
   type(variable_type), allocatable :: variables(:)
   integer(c_int), private :: id = 0
   integer(c_int), private :: mode = 0
+  integer(c_int), private :: format = 0
 end type group_type
 
 !> Attribute type

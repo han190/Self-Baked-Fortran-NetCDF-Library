@@ -12,7 +12,6 @@ integer :: i
 nc = dataset("./data/t2m_2023_01.nc", "r")
 var = get_var(nc, "t2m")
 
-print *, nc_show_metadata(nc%id)
 print "('Variable:', 1x, a)", var%name
 print "(2x, a)", "Dimension:"
 print "(4x, *(a, ':', 1x, i0, 1x))", (var%dimensions(i - 1)%name, var%dimensions(i - 1)%length, i=1, size(var%dimensions))

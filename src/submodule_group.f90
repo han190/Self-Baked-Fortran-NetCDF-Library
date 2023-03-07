@@ -22,6 +22,10 @@ module function open_dataset(path, mode) result(group)
     status = nc_open(filename, group%mode, group%id)
     call handle_error(status, group%filename)
 
+    !> Inquire format
+    status = nc_inq_format(group%id, group%format)
+    call handle_error(status, "nc_inq_format")
+
     !> Copy dimension info
     call inquire_dimensions(group)
 
