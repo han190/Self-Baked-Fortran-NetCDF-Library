@@ -1,3 +1,4 @@
+#: set ranks = ['1', '2', '3', '4']
 module module_netcdf
 
 use iso_fortran_env, only: int8, int16, int32, int64, real32, real64
@@ -30,21 +31,11 @@ private
 type, abstract :: container_type
 end type container_type
 
-type, extends(container_type) :: container_1d
-  class(*), allocatable :: data(:)
-end type container_1d
-
-type, extends(container_type) :: container_2d
-  class(*), allocatable :: data(:, :)
-end type container_2d
-
-type, extends(container_type) :: container_3d
-  class(*), allocatable :: data(:, :, :)
-end type container_3d
-
-type, extends(container_type) :: container_4d
-  class(*), allocatable :: data(:, :, :, :)
-end type container_4d
+#: for rank in ranks
+type, extends(container_type) :: container_${rank}$d
+  class(*), allocatable :: data(:#{for i in range(int(rank) - 1)}#, :#{endfor}#)
+end type container_${rank}$d
+#: endfor
 
 !> File
 type, abstract :: file_type
