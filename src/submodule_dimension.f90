@@ -52,7 +52,7 @@ module subroutine inquire_variable_dimensions(group, variable)
   integer(c_int), allocatable :: dim_ids(:), grp_ids(:)
   integer(c_int) :: status, unlimited_dim
   integer :: num_dims, i
-  integer, allocatable :: dim_idxes(:)
+  integer, allocatable :: dim_idx(:)
   integer(c_int), parameter :: include_parents = 0
 
   if (.not. allocated(group%dimensions)) &
@@ -63,18 +63,16 @@ module subroutine inquire_variable_dimensions(group, variable)
   call handle_error(status, "nc_inq_varndims")
 
   !> Inquire dimension IDs
-  allocate (dim_ids(num_dims), dim_idxes(num_dims))
+  allocate (dim_ids(num_dims), dim_idx(num_dims))
   status = nc_inq_vardimid(group%id, variable%id, dim_ids)
   call handle_error(status, "nc_inq_dimids")
 
-  associate (dims => group%dimensions)
-    grp_ids = [(dims(i)%id, i=1, size(dims))]
-  end associate
+  grp_ids = [(group%dimensions(i)%id, i=1, size(group%dimensions))]
   dim_ids = dim_ids(num_dims:1:-1)
-  dim_idxes = [(findloc(grp_ids, dim_ids(i), dim=1), i=1, num_dims)]
+  dim_idx = [(findloc(grp_ids, dim_ids(i), dim=1), i=1, num_dims)]
 
   if (associated(variable%dimensions)) deallocate (variable%dimensions)
-  allocate(variable%dimensions, source=group%dimensions(dim_idxes))
+  allocate(variable%dimensions, source=group%dimensions(dim_idx))
 end subroutine inquire_variable_dimensions
 
 !> Shape of dimensions
