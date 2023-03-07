@@ -23,9 +23,11 @@ while true; do
   esac
 done
 
+cd ${src}
 for fypp_file in ${fypp_files[@]}; do
-  echo "fypp ${src}/${fypp_file}.fypp ${src}/${fypp_file}.f90"
-  fypp ${src}/${fypp_file}.fypp ${src}/${fypp_file}.f90
+  echo "fypp ${fypp_file}.fypp ${fypp_file}.f90"
+  fypp ${fypp_file}.fypp ${fypp_file}.f90
 done
+cd ..
 
 fpm build

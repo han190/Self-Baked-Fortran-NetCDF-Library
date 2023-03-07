@@ -1,12 +1,12 @@
+#:mute
+#:include "common.fypp"
+#:endmute
 submodule(module_netcdf) submodule_attribute
 
 implicit none
 contains
 
 !> Inquire attributes based on nc_id
-#: set kinds = ['integer(int16)', 'integer(int32)', 'integer(int64)', 'real(real32)', 'real(real64)']
-#: set nc_kinds = ['nc_short', 'nc_int', 'nc_int64', 'nc_float', 'nc_double']
-#: set get_atts = ['nc_get_att_short', 'nc_get_att_int', 'nc_get_att_longlong', 'nc_get_att_float', 'nc_get_att_double']
 module function inquire_variable_attributes(nc_id, var_id) result(attributes)
   integer(c_int), intent(in) :: nc_id, var_id
   type(attribute_type), allocatable :: attributes(:)
@@ -39,20 +39,20 @@ module function inquire_variable_attributes(nc_id, var_id) result(attributes)
     select case (att_type)
     case (nc_char)
       allocate (character(kind=c_char, len=att_len) :: values(1))
-      #: for nc_kind, kind in zip(nc_kinds, kinds)
+      #:for nc_kind, kind in zip(nc_kinds, kinds)
     case (${nc_kind}$)
       allocate (${kind}$ :: values(att_len))
-      #: endfor
+      #:endfor
     end select
 
     select type (values_ => values)
     type is (character(kind=c_char, len=*))
       status = nc_get_att_text(nc_id, var_id, att_name, values_(1))
-      #: for kind, get_att in zip(kinds, get_atts)
+      #:for kind, get_att in zip(kinds, get_atts)
     type is (${kind}$)
       status = ${get_att}$ (nc_id, var_id, att_name, values_)
       call handle_error(status, "${get_att}$")
-      #: endfor
+      #:endfor
     end select
 
     select case (att_type)
@@ -68,6 +68,6 @@ module function inquire_variable_attributes(nc_id, var_id) result(attributes)
     if (allocated(values)) deallocate (values)
   end do
 end function inquire_variable_attributes
-#: del kinds, nc_kinds, get_atts
+#:del kinds, nc_kinds, get_atts
 
 end submodule submodule_attribute
