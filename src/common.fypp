@@ -1,6 +1,11 @@
+#:mute
+
 #:set ranks = ['1', '2', '3', '4']
-#:set nc_kinds = ['nc_short', 'nc_int', 'nc_int64', 'nc_float', 'nc_double']
 #:set kinds = ['integer(int16)', 'integer(int32)', 'integer(int64)', 'real(real32)', 'real(real64)']
 #:set nc_kinds = ['nc_short', 'nc_int', 'nc_int64', 'nc_float', 'nc_double']
-#:set get_atts = ['nc_get_att_short', 'nc_get_att_int', 'nc_get_att_longlong', 'nc_get_att_float', 'nc_get_att_double']
-#:set get_vars = ['nc_get_var_short', 'nc_get_var_int', 'nc_get_var_longlong', 'nc_get_var_float', 'nc_get_var_double']
+#:set kind_names = ['short', 'int', 'longlong', 'float', 'double']
+#:set get_atts = ['nc_get_att_' + kind_name for kind_name in kind_names]
+#:set get_vars = ['nc_get_var_' + kind_name for kind_name in kind_names]
+#:del kind_names
+
+#:endmute

@@ -1,6 +1,4 @@
-#:mute
 #:include "common.fypp"
-#:endmute
 submodule(module_netcdf) submodule_variable
 
 implicit none
