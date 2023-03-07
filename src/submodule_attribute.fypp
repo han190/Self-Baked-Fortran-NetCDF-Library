@@ -5,8 +5,10 @@ implicit none
 contains
 
 !> Inquire attributes based on nc_id
-module function inquire_variable_attributes(nc_id, var_id) result(attributes)
-  integer(c_int), intent(in) :: nc_id, var_id
+module subroutine inquire_variable_attributes(group, variable)
+  type(group_type), intent(inout) :: group
+  type(variable_type), intent(inout) :: variable
+  integer(c_int) :: nc_id, var_id
   type(attribute_type), allocatable :: attributes(:)
   integer(c_int) :: status
   integer :: num_atts, i
@@ -16,6 +18,8 @@ module function inquire_variable_attributes(nc_id, var_id) result(attributes)
   class(*), allocatable :: values(:)
 
   !> Inquire number of attributes
+  nc_id = group%id
+  var_id = variable%id
   status = nc_inq_varnatts(nc_id, var_id, num_atts)
   call handle_error(status, "nc_inq_natts")
 
@@ -65,7 +69,9 @@ module function inquire_variable_attributes(nc_id, var_id) result(attributes)
     end select
     if (allocated(values)) deallocate (values)
   end do
-end function inquire_variable_attributes
+
+  variable%attributes = attributes
+end subroutine inquire_variable_attributes
 #:del kinds, nc_kinds, get_atts
 
 end submodule submodule_attribute

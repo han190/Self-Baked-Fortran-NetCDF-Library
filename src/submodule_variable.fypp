@@ -6,7 +6,7 @@ contains
 
 !> Get meta data for a variable
 module function get_var(group, name) result(variable)
-  type(group_type), intent(in) :: group
+  type(group_type), intent(inout) :: group
   character(*), intent(in) :: name
   type(variable_type) :: variable
   integer :: status
@@ -18,8 +18,8 @@ module function get_var(group, name) result(variable)
   call handle_error(status, "nc_inq_varid")
 
   !> Inquire dimensions and attributes
-  variable%dimensions = inquire_variable_dimensions(group%id, variable%id)
-  variable%attributes = inquire_variable_attributes(group%id, variable%id)
+  call inquire_dimensions(group, variable)
+  call inquire_attributes(group, variable)
 
   !> Inquire variable type
   status = nc_inq_vartype(group%id, variable%id, variable%type)
@@ -43,8 +43,10 @@ module function get_var(group, name) result(variable)
     type is (container_${rank}$d)
 
       s = shape(variable%dimensions)
+      #: set n = int(rank)
       allocate (${kind}$ :: container_%data( &
-        & #{for i in range(int(rank), 1, -1)}#s(${i}$), #{endfor}#s(1)))
+        & #{for i in range(n - 1)}#s(${i + 1}$), #{endfor}#s(${n}$)))
+      #: del n
 
       select type (data_ => container_%data)
       type is (${kind}$)

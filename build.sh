@@ -1,6 +1,7 @@
 
 src="./src"
-fypp_files=("module_netcdf" "submodule_attribute" "submodule_variable")
+fypp_files=(\
+  "module_netcdf" "submodule_attribute" "submodule_variable")
 
 while true; do
   case "$1" in

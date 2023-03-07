@@ -23,7 +23,7 @@ module function open_dataset(path, mode) result(group)
     call handle_error(status, group%filename)
 
     !> Copy dimension info
-    group%dimensions = inquire_dimensions(group%id)
+    call inquire_dimensions(group)
 
   case default
     error stop "Invalid mode."

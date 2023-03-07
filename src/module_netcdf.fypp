@@ -72,7 +72,7 @@ end type dimension_type
 !> Variable type
 type :: variable_type
   character(:), allocatable :: name
-  type(dimension_type), allocatable :: dimensions(:)
+  type(dimension_type), pointer :: dimensions(:) => null()
   type(attribute_type), allocatable :: attributes(:)
   class(container_type), allocatable :: container
   integer(c_int), private :: type = 0
@@ -92,20 +92,28 @@ interface close
   procedure :: close_dataset
 end interface close
 
+interface inquire_dimensions
+  procedure :: inquire_group_dimensions
+  procedure :: inquire_variable_dimensions
+end interface inquire_dimensions
+
+interface inquire_attributes
+  procedure :: inquire_variable_attributes
+end interface inquire_attributes
+
 !> Interface to submodules
 interface
 
   !> New dimensions
-  module function inquire_dimensions(nc_id) result(dimensions)
-    integer(c_int), intent(in) :: nc_id
-    type(dimension_type), allocatable :: dimensions(:)
-  end function inquire_dimensions
+  module subroutine inquire_group_dimensions(group)
+    type(group_type), intent(inout) :: group
+  end subroutine inquire_group_dimensions
 
   !> Inquire variable dimensions
-  module function inquire_variable_dimensions(nc_id, var_id) result(dimensions)
-    integer(c_int), intent(in) :: nc_id, var_id
-    type(dimension_type), allocatable :: dimensions(:)
-  end function inquire_variable_dimensions
+  module subroutine inquire_variable_dimensions(group, variable)
+    type(group_type), intent(inout) :: group
+    type(variable_type), intent(inout) :: variable
+  end subroutine inquire_variable_dimensions
 
   !> Shape of dimensions
   module function shape_dimensions(dimensions) result(shapes)
@@ -114,10 +122,10 @@ interface
   end function shape_dimensions
 
   !> Inquire variable attributes
-  module function inquire_variable_attributes(nc_id, var_id) result(attributes)
-    integer(c_int), intent(in) :: nc_id, var_id
-    type(attribute_type), allocatable :: attributes(:)
-  end function inquire_variable_attributes
+  module subroutine inquire_variable_attributes(group, variable)
+    type(group_type), intent(inout) :: group
+    type(variable_type), intent(inout) :: variable
+  end subroutine inquire_variable_attributes
 
   !> Group constructor
   module function open_dataset(path, mode) result(group)
@@ -145,7 +153,7 @@ interface
 
   !> Get variable
   module function get_var(group, name) result(variable)
-    type(group_type), intent(in) :: group
+    type(group_type), intent(inout) :: group
     character(*), intent(in) :: name
     type(variable_type) :: variable
   end function get_var
