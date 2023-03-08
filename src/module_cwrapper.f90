@@ -63,14 +63,14 @@ interface
   end function nc_close
 
   !> nc_close_memio
-  function nc_close_memio(ncid, memio) &
-    & bind(c, name='nc_close_memio')
-    import c_int, c_ptr
-    implicit none
-    integer(c_int), value :: ncid
-    type(c_ptr) :: memio
-    integer(c_int) :: nc_close_memio
-  end function nc_close_memio
+  ! function nc_close_memio(ncid, memio) &
+  !   & bind(c, name='nc_close_memio')
+  !   import c_int, c_ptr
+  !   implicit none
+  !   integer(c_int), value :: ncid
+  !   type(c_ptr) :: memio
+  !   integer(c_int) :: nc_close_memio
+  ! end function nc_close_memio
 
   !> nc_create
   function nc_create(path, cmode, ncidp) &

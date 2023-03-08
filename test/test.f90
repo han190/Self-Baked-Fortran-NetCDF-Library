@@ -36,15 +36,12 @@ end do
 
 select type (container_ => var%container)
 type is (container_3d)
-
   select type (data_ => container_%data)
   type is (integer(int16))
     print *, shape(data_)
     print *, data_(1:5, 1, 1)*.001275 + 265.876300 - 273.16
   end select
-
 end select
 
 call close(nc)
-
 end program main
