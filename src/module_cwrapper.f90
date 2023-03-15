@@ -9,9 +9,8 @@ interface
   !> NetCDF File and Data I/O
   !> ------------------------
 
-  !> nc__create
-  function nc__create(path, cmode, initialsz, chunksizehintp, ncidp) &
-    & bind(c, name='nc__create')
+  !> int nc__create(const char *path, int cmode, size_t initialsz, size_t *chunksizehintp, int *ncidp)
+  function nc__create(path, cmode, initialsz, chunksizehintp, ncidp) bind(c, name='nc__create')
     import c_char, c_int, c_size_t
     implicit none
     character(kind=c_char) :: path(*)

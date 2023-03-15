@@ -13,3 +13,5 @@ The API list can be checked from [the NetCDF documentation site](https://docs.un
 | `nc_close_memio` | `int` | `int ncid`<br />`NC_memio *memio` | | | :imp: |
 | `nc_create` | `int` | `const char *path`<br />`int cmode`<br />`int *ncidp` | `c_int` | `character(kind=c_char) :: path(*)`<br /> `integer(c_int), value :: cmode`<br />`integer(c_int) :: ncidp` | :laughing: |
 | `nc_create_mem` | `int` | `const char *path`<br />`int mode`<br />`size_t initialsize`<br />`int *ncidp` | `c_int` | `character(kind=c_char) :: path(*)`<br />`integer(c_int), value :: mode`<br />`integer(c_size_t), value :: initialsize`<br />`integer(c_int) :: ncidp` | :laughing: |
+| `nc_create_par` | `int` | `const char *path`<br />`int cmode`<br />`MPI_Comm comm`<br />`MPI_Info info`<br />`int *ncidp` | | | :imp: |
+| `nc_create_par_fortran` | `int` | `const char *path`<br />`int cmode`<br />`int comm`<br />`int info`<br />`int *ncidp` | `c_int` | `character(kind=c_char) :: path(*)`<br />

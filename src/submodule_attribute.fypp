@@ -72,6 +72,5 @@ module subroutine inquire_variable_attributes(group, variable)
 
   variable%attributes = attributes
 end subroutine inquire_variable_attributes
-#:del kinds, nc_kinds, get_atts
 
 end submodule submodule_attribute
