@@ -1,7 +1,12 @@
 module module_constant
 
+!> This module is converted from netcdf.h
+!> https://github.com/Unidata/netcdf-c/blob/main/include/netcdf.h
 use iso_c_binding
 implicit none
+
+! /*! The nc_type type is just an int. */
+integer(c_int), parameter :: nc_type                                        = c_int
 
 ! /*
 !  *  the netcdf external data types
