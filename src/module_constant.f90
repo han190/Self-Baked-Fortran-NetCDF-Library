@@ -171,7 +171,9 @@ integer(c_int), parameter :: nc_format_64bit_data                           = 5
 integer(c_int), parameter :: nc_format_cdf5                                 = nc_format_64bit_data
 
 ! /* Define a mask covering format flags only */
-! logical(c_bool), parameter :: nc_format_all                                 = ior(nc_64bit_offset, ior(nc_64bit_data, ior(nc_classic_model, ior(nc_netcdf4, ior(nc_udf0, nc_udf1)))))
+!> Use line continuation sign to avoid [-Werror=line-truncation]
+integer(c_int), parameter :: nc_format_all                                  = &
+  & ior(nc_64bit_offset, ior(nc_64bit_data, ior(nc_classic_model, ior(nc_netcdf4, ior(nc_udf0, nc_udf1)))))
 
 ! /**@}*/
 
