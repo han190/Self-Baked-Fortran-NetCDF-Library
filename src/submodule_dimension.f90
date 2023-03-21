@@ -72,7 +72,7 @@ module subroutine inquire_variable_dimensions(group, variable)
   dim_idx = [(findloc(grp_ids, dim_ids(i), dim=1), i=1, num_dims)]
 
   if (associated(variable%dimensions)) deallocate (variable%dimensions)
-  allocate(variable%dimensions, source=group%dimensions(dim_idx))
+  allocate (variable%dimensions, source=group%dimensions(dim_idx))
 end subroutine inquire_variable_dimensions
 
 !> Shape of dimensions

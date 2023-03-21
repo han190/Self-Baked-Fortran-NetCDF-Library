@@ -1,7 +1,7 @@
 program main
 
 use module_netcdf
-use module_cwrapper
+use module_interface
 use iso_fortran_env
 implicit none
 

@@ -4,7 +4,7 @@ module module_netcdf
 use iso_fortran_env, only: int8, int16, int32, int64, real32, real64
 use iso_c_binding, only: c_ptr, c_null_char, c_f_pointer
 use module_constant
-use module_cwrapper
+use module_interface
 implicit none
 
 public :: file_type
@@ -30,10 +30,10 @@ private
 !> Data container
 type, abstract :: container_type
 end type container_type
-
 #:for rank in ranks
+#:set colons = ":" + (int(rank) - 1)*"{}".format(", :")
 type, extends(container_type) :: container_${rank}$d
-  class(*), allocatable :: data(:#{for i in range(int(rank) - 1)}#, :#{endfor}#)
+  class(*), allocatable :: data(${colons}$)
 end type container_${rank}$d
 #:endfor
 

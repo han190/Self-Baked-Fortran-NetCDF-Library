@@ -50,7 +50,7 @@ module function get_var(group, name) result(variable)
 
       select type (data_ => container_%data)
       type is (${kind}$)
-        status = ${get_var}$(group%id, variable%id, data_)
+        status = ${get_var}$ (group%id, variable%id, data_)
         call handle_error(status, "${get_var}$")
       end select
 
