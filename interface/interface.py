@@ -1,5 +1,5 @@
 import re
-from dataclasses import dataclass
+import requests
 import sys
 
 # This script is used to convert all "EXTERNL" functions
@@ -175,13 +175,18 @@ class c_function:
 
 
 class nc_interface:
-    def __init__(self, filename):
+    def __init__(self):
         '''Initialization'''
-        with open(filename, "r") as file:
-            code = file.read()
+        url = "https://raw.githubusercontent.com/Unidata/netcdf-c/main/include/netcdf.h"
+        resp = requests.get(url)
+
+        # with open(filename, "r") as file:
+        #     code = file.read()
+        code = resp.text
+
         code = code.split('/* Begin v2.4 backward compatibility */')[0]
         code = re.sub(COMMENT, '', code)
-        self.filename = filename
+        # self.filename = filename
 
         def f(x): return x.replace('\n', ' ').replace(
             '*', ' * ').replace('const ', '')
@@ -207,4 +212,4 @@ class nc_interface:
 
 
 if __name__ == "__main__":
-    nc_interface("netcdf.h")
+    nc_interface()
