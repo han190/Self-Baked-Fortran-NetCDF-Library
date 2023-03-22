@@ -82,24 +82,25 @@ end type variable_type
 
 !> Group constructor
 interface dataset
-  procedure :: open_dataset
+  module procedure :: open_dataset
 end interface dataset
 
 interface shape
-  procedure :: shape_dimensions
+  module procedure :: shape_dimensions
+  module procedure :: shape_variable
 end interface shape
 
 interface close
-  procedure :: close_dataset
+  module procedure :: close_dataset
 end interface close
 
 interface inquire_dimensions
-  procedure :: inquire_group_dimensions
-  procedure :: inquire_variable_dimensions
+  module procedure :: inquire_group_dimensions
+  module procedure :: inquire_variable_dimensions
 end interface inquire_dimensions
 
 interface inquire_attributes
-  procedure :: inquire_variable_attributes
+  module procedure :: inquire_variable_attributes
 end interface inquire_attributes
 
 !> Interface to submodules
@@ -121,6 +122,12 @@ interface
     type(dimension_type), intent(in) :: dimensions(:)
     integer(int64), allocatable :: shapes(:)
   end function shape_dimensions
+
+  !> Shape of variable
+  module function shape_variable(variable) result(shapes)
+    type(variable_type), intent(in) :: variable
+    integer(int64), allocatable :: shapes(:)
+  end function shape_variable
 
   !> Inquire variable attributes
   module subroutine inquire_variable_attributes(group, variable)

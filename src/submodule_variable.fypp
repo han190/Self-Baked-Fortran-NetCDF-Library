@@ -25,15 +25,31 @@ module function get_var(group, name) result(variable)
   status = nc_inq_vartype(group%id, variable%id, variable%type)
   call handle_error(status, "nc_inq_vartype")
 
+  !> Get variable
+  call get_var_(group, variable)
+end function get_var
+
+!> Based on the rank and type of the data, get the variable.
+subroutine get_var_(group, variable)
+  type(group_type), intent(inout) :: group
+  type(variable_type), intent(inout) :: variable
+  integer, allocatable :: s(:) !> shape
+  integer(c_int) :: status
+
+  if (.not. associated(variable%dimensions)) &
+    error stop "Dimensions not associated."
+
+  !> Select rank.
   select case (size(variable%dimensions))
-  #:for rank in ranks
+  #: for rank in ranks
   case (${rank}$)
     allocate (container_${rank}$d :: variable%container)
-  #:endfor
+  #: endfor
   case default
     error stop "Invalid data rank."
   end select
 
+  !> Select type
   select case (variable%type)
   #:for nc_kind, kind, get_var in zip(nc_kinds, kinds, get_vars)
   case (${nc_kind}$)
@@ -47,7 +63,6 @@ module function get_var(group, name) result(variable)
       allocate (${kind}$ :: container_%data( &
         & #{for i in range(n - 1)}#s(${i + 1}$), #{endfor}#s(${n}$)))
       #: del n
-
       select type (data_ => container_%data)
       type is (${kind}$)
         status = ${get_var}$ (group%id, variable%id, data_)
@@ -59,6 +74,17 @@ module function get_var(group, name) result(variable)
 
   #:endfor
   end select
-end function get_var
+end subroutine get_var_
+
+!> Shape of a variable
+module function shape_variable(variable) result(shapes)
+  type(variable_type), intent(in) :: variable
+  integer(int64), allocatable :: shapes(:)
+
+  if (allocated(shapes)) deallocate (shapes)
+  if (.not. associated(variable%dimensions)) &
+    error stop "Variable dimensions not associated."
+  shapes = shape_dimensions(variable%dimensions)
+end function shape_variable
 
 end submodule submodule_variable

@@ -79,10 +79,12 @@ end subroutine inquire_variable_dimensions
 module function shape_dimensions(dimensions) result(shapes)
   type(dimension_type), intent(in) :: dimensions(:)
   integer(int64), allocatable :: shapes(:)
-  integer :: i
+  integer :: i, start, end
 
   if (allocated(shapes)) deallocate (shapes)
-  shapes = [(dimensions(i)%length, i=1, size(dimensions))]
+  start = lbound(dimensions, dim=1)
+  end = ubound(dimensions, dim=1)
+  shapes = [(dimensions(i)%length, i=start, end)]
 end function shape_dimensions
 
 end submodule submodule_dimension
