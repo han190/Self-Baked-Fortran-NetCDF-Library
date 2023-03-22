@@ -8,7 +8,7 @@ module function open_dataset(path, mode) result(group)
   character(*), intent(in) :: path, mode
   type(group_type) :: group
   integer :: status
-  character(kind=c_char, len=:), allocatable :: filename
+  character(kind=c_char, len=:), allocatable :: temp
 
   select case (trim(mode))
   case ("r", "read")
@@ -18,8 +18,8 @@ module function open_dataset(path, mode) result(group)
     group%mode = nc_nowrite
 
     !> Open file
-    filename = group%filename//c_null_char
-    status = nc_open(filename, group%mode, group%id)
+    temp = group%filename//c_null_char
+    status = nc_open(temp, group%mode, group%id)
     call handle_error(status, group%filename)
 
     !> Inquire format

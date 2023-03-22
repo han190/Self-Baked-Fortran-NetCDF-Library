@@ -1,4 +1,4 @@
-
+#!/usr/bin/env bash
 src="./src"
 interface="./interface"
 fypp_files=(\
@@ -34,6 +34,7 @@ for fypp_file in ${fypp_files[@]}; do
   echo "fypp ${fypp_file}.fypp ${fypp_file}.f90"
   fypp ${fypp_file}.fypp ${fypp_file}.f90
 done
+echo "python interface.py"
 python interface.py
 cd ..
 

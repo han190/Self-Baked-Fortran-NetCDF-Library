@@ -52,8 +52,7 @@ C_NAME = r"[a-zA-Z_][a-zA-Z0-9_]*"
 C_TYPE = r"".join(["(const\s)?" + t + "|" for t in TYPES])[:-1]
 C_DECL = r"({})(\s|\n)({})".format(C_TYPE, C_NAME)
 NC_API = r"EXTERNL\s((.|\n)*?);"
-IS_DIM = r"\[\]|ids"
-IS_DIM_FUNC_NAME = r"nc_(get|put)_(var|att)_(short|int|long|float|double|longlong|uchar)"
+IS_DIM_FUNC_NAME = r"nc_(get|put)_(var|att)_(short|int|long|float|double|longlong|uchar|schar|text)"
 IS_DIM_VAR_NAME = r"(op|ip)"
 
 
