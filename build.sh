@@ -34,11 +34,7 @@ for fypp_file in ${fypp_files[@]}; do
   echo "fypp ${fypp_file}.fypp ${fypp_file}.f90"
   fypp ${fypp_file}.fypp ${fypp_file}.f90
 done
-cd ..
-
-cd ${interface}
 python interface.py
-mv module_interface.f90 ../src
 cd ..
 
 fpm build
