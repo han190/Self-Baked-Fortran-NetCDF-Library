@@ -9,7 +9,7 @@ module subroutine inquire_group_dimensions(group)
   type(dimension_type), allocatable :: dimensions(:)
   integer(c_int) :: status, unlimited_dim
   integer(c_int), allocatable :: dim_ids(:)
-  integer(int64), allocatable :: dim_lens(:)
+  integer(c_size_t), allocatable :: dim_lens(:)
   character(kind=c_char, len=:), allocatable :: dim_name
   integer :: num_dims, i
   integer(c_int), parameter :: include_parents = 0

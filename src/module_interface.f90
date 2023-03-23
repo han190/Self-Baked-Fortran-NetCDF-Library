@@ -35,7 +35,7 @@ interface
   !> EXTERNL int nc_def_user_format(int mode_flag, NC_Dispatch * dispatch_table, char * magic_number)
   function nc_def_user_format(mode_flag, dispatch_table, magic_number) &
     & bind(c, name="nc_def_user_format")
-    import NC_Dispatch, c_int, c_char
+    import c_int, NC_Dispatch, c_char
     implicit none
 
     integer(c_int), value :: mode_flag
@@ -49,7 +49,7 @@ interface
   !> EXTERNL int nc_inq_user_format(int mode_flag, NC_Dispatch * * dispatch_table, char * magic_number)
   function nc_inq_user_format(mode_flag, dispatch_table, magic_number) &
     & bind(c, name="nc_inq_user_format")
-    import NC_Dispatch, c_int, c_char
+    import c_int, NC_Dispatch, c_char
     implicit none
 
     integer(c_int), value :: mode_flag
@@ -89,7 +89,7 @@ interface
   !> EXTERNL int nc__create(char * path, int cmode, size_t initialsz, size_t * chunksizehintp, int * ncidp)
   function nc__create(path, cmode, initialsz, chunksizehintp, ncidp) &
     & bind(c, name="nc__create")
-    import c_size_t, c_int, c_char
+    import c_int, c_size_t, c_char
     implicit none
 
     character(kind=c_char), dimension(*) :: path
@@ -119,7 +119,7 @@ interface
   !> EXTERNL int nc__open(char * path, int mode, size_t * chunksizehintp, int * ncidp)
   function nc__open(path, mode, chunksizehintp, ncidp) &
     & bind(c, name="nc__open")
-    import c_size_t, c_int, c_char
+    import c_int, c_size_t, c_char
     implicit none
 
     character(kind=c_char), dimension(*) :: path
@@ -148,7 +148,7 @@ interface
   !> EXTERNL int nc_inq_path(int ncid, size_t * pathlen, char * path)
   function nc_inq_path(ncid, pathlen, path) &
     & bind(c, name="nc_inq_path")
-    import c_size_t, c_int, c_char
+    import c_int, c_size_t, c_char
     implicit none
 
     integer(c_int), value :: ncid
@@ -203,7 +203,7 @@ interface
   !> EXTERNL int nc_inq_grpname_full(int ncid, size_t * lenp, char * full_name)
   function nc_inq_grpname_full(ncid, lenp, full_name) &
     & bind(c, name="nc_inq_grpname_full")
-    import c_size_t, c_int, c_char
+    import c_int, c_size_t, c_char
     implicit none
 
     integer(c_int), value :: ncid
@@ -217,7 +217,7 @@ interface
   !> EXTERNL int nc_inq_grpname_len(int ncid, size_t * lenp)
   function nc_inq_grpname_len(ncid, lenp) &
     & bind(c, name="nc_inq_grpname_len")
-    import c_size_t, c_int
+    import c_int, c_size_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -314,7 +314,7 @@ interface
   !> EXTERNL int nc_inq_type_equal(int ncid1, nc_type typeid1, int ncid2, nc_type typeid2, int * equal)
   function nc_inq_type_equal(ncid1, typeid1, ncid2, typeid2, equal) &
     & bind(c, name="nc_inq_type_equal")
-    import nc_type, c_int
+    import c_int, nc_type
     implicit none
 
     integer(c_int), value :: ncid1
@@ -357,7 +357,7 @@ interface
   !> EXTERNL int nc_def_compound(int ncid, size_t size, char * name, nc_type * typeidp)
   function nc_def_compound(ncid, size, name, typeidp) &
     & bind(c, name="nc_def_compound")
-    import c_size_t, c_int, nc_type, c_char
+    import c_int, c_size_t, c_char, nc_type
     implicit none
 
     integer(c_int), value :: ncid
@@ -372,7 +372,7 @@ interface
   !> EXTERNL int nc_insert_compound(int ncid, nc_type xtype, char * name, size_t offset, nc_type field_typeid)
   function nc_insert_compound(ncid, xtype, name, offset, field_typeid) &
     & bind(c, name="nc_insert_compound")
-    import nc_type, c_size_t, c_int, c_char
+    import c_int, c_size_t, c_char, nc_type
     implicit none
 
     integer(c_int), value :: ncid
@@ -388,7 +388,7 @@ interface
   !> EXTERNL int nc_insert_array_compound(int ncid, nc_type xtype, char * name, size_t offset, nc_type field_typeid, int ndims, int * dim_sizes)
   function nc_insert_array_compound(ncid, xtype, name, offset, field_typeid, ndims, dim_sizes) &
     & bind(c, name="nc_insert_array_compound")
-    import nc_type, c_size_t, c_int, c_char
+    import c_int, c_size_t, c_char, nc_type
     implicit none
 
     integer(c_int), value :: ncid
@@ -406,7 +406,7 @@ interface
   !> EXTERNL int nc_inq_type(int ncid, nc_type xtype, char * name, size_t * size)
   function nc_inq_type(ncid, xtype, name, size) &
     & bind(c, name="nc_inq_type")
-    import nc_type, c_size_t, c_int, c_char
+    import c_int, c_size_t, c_char, nc_type
     implicit none
 
     integer(c_int), value :: ncid
@@ -421,7 +421,7 @@ interface
   !> EXTERNL int nc_inq_typeid(int ncid, char * name, nc_type * typeidp)
   function nc_inq_typeid(ncid, name, typeidp) &
     & bind(c, name="nc_inq_typeid")
-    import nc_type, c_int, c_char
+    import c_int, c_char, nc_type
     implicit none
 
     integer(c_int), value :: ncid
@@ -435,7 +435,7 @@ interface
   !> EXTERNL int nc_inq_compound(int ncid, nc_type xtype, char * name, size_t * sizep, size_t * nfieldsp)
   function nc_inq_compound(ncid, xtype, name, sizep, nfieldsp) &
     & bind(c, name="nc_inq_compound")
-    import nc_type, c_size_t, c_int, c_char
+    import c_int, c_size_t, c_char, nc_type
     implicit none
 
     integer(c_int), value :: ncid
@@ -451,7 +451,7 @@ interface
   !> EXTERNL int nc_inq_compound_name(int ncid, nc_type xtype, char * name)
   function nc_inq_compound_name(ncid, xtype, name) &
     & bind(c, name="nc_inq_compound_name")
-    import nc_type, c_int, c_char
+    import c_int, c_char, nc_type
     implicit none
 
     integer(c_int), value :: ncid
@@ -465,7 +465,7 @@ interface
   !> EXTERNL int nc_inq_compound_size(int ncid, nc_type xtype, size_t * sizep)
   function nc_inq_compound_size(ncid, xtype, sizep) &
     & bind(c, name="nc_inq_compound_size")
-    import nc_type, c_size_t, c_int
+    import c_int, c_size_t, nc_type
     implicit none
 
     integer(c_int), value :: ncid
@@ -479,7 +479,7 @@ interface
   !> EXTERNL int nc_inq_compound_nfields(int ncid, nc_type xtype, size_t * nfieldsp)
   function nc_inq_compound_nfields(ncid, xtype, nfieldsp) &
     & bind(c, name="nc_inq_compound_nfields")
-    import nc_type, c_size_t, c_int
+    import c_int, c_size_t, nc_type
     implicit none
 
     integer(c_int), value :: ncid
@@ -493,7 +493,7 @@ interface
   !> EXTERNL int nc_inq_compound_field(int ncid, nc_type xtype, int fieldid, char * name, size_t * offsetp, nc_type * field_typeidp, int * ndimsp, int * dim_sizesp)
   function nc_inq_compound_field(ncid, xtype, fieldid, name, offsetp, field_typeidp, ndimsp, dim_sizesp) &
     & bind(c, name="nc_inq_compound_field")
-    import nc_type, c_size_t, c_int, c_char
+    import c_int, c_size_t, c_char, nc_type
     implicit none
 
     integer(c_int), value :: ncid
@@ -512,7 +512,7 @@ interface
   !> EXTERNL int nc_inq_compound_fieldname(int ncid, nc_type xtype, int fieldid, char * name)
   function nc_inq_compound_fieldname(ncid, xtype, fieldid, name) &
     & bind(c, name="nc_inq_compound_fieldname")
-    import nc_type, c_int, c_char
+    import c_int, c_char, nc_type
     implicit none
 
     integer(c_int), value :: ncid
@@ -527,7 +527,7 @@ interface
   !> EXTERNL int nc_inq_compound_fieldindex(int ncid, nc_type xtype, char * name, int * fieldidp)
   function nc_inq_compound_fieldindex(ncid, xtype, name, fieldidp) &
     & bind(c, name="nc_inq_compound_fieldindex")
-    import nc_type, c_int, c_char
+    import c_int, c_char, nc_type
     implicit none
 
     integer(c_int), value :: ncid
@@ -542,7 +542,7 @@ interface
   !> EXTERNL int nc_inq_compound_fieldoffset(int ncid, nc_type xtype, int fieldid, size_t * offsetp)
   function nc_inq_compound_fieldoffset(ncid, xtype, fieldid, offsetp) &
     & bind(c, name="nc_inq_compound_fieldoffset")
-    import nc_type, c_size_t, c_int
+    import c_int, c_size_t, nc_type
     implicit none
 
     integer(c_int), value :: ncid
@@ -557,7 +557,7 @@ interface
   !> EXTERNL int nc_inq_compound_fieldtype(int ncid, nc_type xtype, int fieldid, nc_type * field_typeidp)
   function nc_inq_compound_fieldtype(ncid, xtype, fieldid, field_typeidp) &
     & bind(c, name="nc_inq_compound_fieldtype")
-    import nc_type, c_int
+    import c_int, nc_type
     implicit none
 
     integer(c_int), value :: ncid
@@ -572,7 +572,7 @@ interface
   !> EXTERNL int nc_inq_compound_fieldndims(int ncid, nc_type xtype, int fieldid, int * ndimsp)
   function nc_inq_compound_fieldndims(ncid, xtype, fieldid, ndimsp) &
     & bind(c, name="nc_inq_compound_fieldndims")
-    import nc_type, c_int
+    import c_int, nc_type
     implicit none
 
     integer(c_int), value :: ncid
@@ -587,7 +587,7 @@ interface
   !> EXTERNL int nc_inq_compound_fielddim_sizes(int ncid, nc_type xtype, int fieldid, int * dim_sizes)
   function nc_inq_compound_fielddim_sizes(ncid, xtype, fieldid, dim_sizes) &
     & bind(c, name="nc_inq_compound_fielddim_sizes")
-    import nc_type, c_int
+    import c_int, nc_type
     implicit none
 
     integer(c_int), value :: ncid
@@ -602,7 +602,7 @@ interface
   !> EXTERNL int nc_def_vlen(int ncid, char * name, nc_type base_typeid, nc_type * xtypep)
   function nc_def_vlen(ncid, name, base_typeid, xtypep) &
     & bind(c, name="nc_def_vlen")
-    import nc_type, c_int, c_char
+    import c_int, c_char, nc_type
     implicit none
 
     integer(c_int), value :: ncid
@@ -617,7 +617,7 @@ interface
   !> EXTERNL int nc_inq_vlen(int ncid, nc_type xtype, char * name, size_t * datum_sizep, nc_type * base_nc_typep)
   function nc_inq_vlen(ncid, xtype, name, datum_sizep, base_nc_typep) &
     & bind(c, name="nc_inq_vlen")
-    import nc_type, c_size_t, c_int, c_char
+    import c_int, c_size_t, c_char, nc_type
     implicit none
 
     integer(c_int), value :: ncid
@@ -633,7 +633,7 @@ interface
   !> EXTERNL int nc_free_vlen(nc_vlen_t * vl)
   function nc_free_vlen(vl) &
     & bind(c, name="nc_free_vlen")
-    import nc_vlen_t, c_int
+    import c_int, nc_vlen_t
     implicit none
 
     type(nc_vlen_t) :: vl
@@ -645,7 +645,7 @@ interface
   !> EXTERNL int nc_free_vlens(size_t len, nc_vlen_t vlens[])
   function nc_free_vlens(len, vlens) &
     & bind(c, name="nc_free_vlens")
-    import nc_vlen_t, c_int, c_size_t
+    import c_int, c_size_t, nc_vlen_t
     implicit none
 
     integer(c_size_t), value :: len
@@ -658,7 +658,7 @@ interface
   !> EXTERNL int nc_put_vlen_element(int ncid, int typeid1, void * vlen_element, size_t len, void * data)
   function nc_put_vlen_element(ncid, typeid1, vlen_element, len, data) &
     & bind(c, name="nc_put_vlen_element")
-    import c_size_t, c_int, c_ptr
+    import c_int, c_size_t, c_ptr
     implicit none
 
     integer(c_int), value :: ncid
@@ -674,7 +674,7 @@ interface
   !> EXTERNL int nc_get_vlen_element(int ncid, int typeid1, void * vlen_element, size_t * len, void * data)
   function nc_get_vlen_element(ncid, typeid1, vlen_element, len, data) &
     & bind(c, name="nc_get_vlen_element")
-    import c_size_t, c_int, c_ptr
+    import c_int, c_size_t, c_ptr
     implicit none
 
     integer(c_int), value :: ncid
@@ -703,7 +703,7 @@ interface
   !> EXTERNL int nc_inq_user_type(int ncid, nc_type xtype, char * name, size_t * size, nc_type * base_nc_typep, size_t * nfieldsp, int * classp)
   function nc_inq_user_type(ncid, xtype, name, size, base_nc_typep, nfieldsp, classp) &
     & bind(c, name="nc_inq_user_type")
-    import nc_type, c_size_t, c_int, c_char
+    import c_int, c_size_t, c_char, nc_type
     implicit none
 
     integer(c_int), value :: ncid
@@ -721,7 +721,7 @@ interface
   !> EXTERNL int nc_put_att(int ncid, int varid, char * name, nc_type xtype, size_t len, void * op)
   function nc_put_att(ncid, varid, name, xtype, len, op) &
     & bind(c, name="nc_put_att")
-    import nc_type, c_char, c_int, c_size_t, c_ptr
+    import nc_type, c_size_t, c_ptr, c_int, c_char
     implicit none
 
     integer(c_int), value :: ncid
@@ -738,7 +738,7 @@ interface
   !> EXTERNL int nc_get_att(int ncid, int varid, char * name, void * ip)
   function nc_get_att(ncid, varid, name, ip) &
     & bind(c, name="nc_get_att")
-    import c_ptr, c_int, c_char
+    import c_int, c_char, c_ptr
     implicit none
 
     integer(c_int), value :: ncid
@@ -753,7 +753,7 @@ interface
   !> EXTERNL int nc_def_enum(int ncid, nc_type base_typeid, char * name, nc_type * typeidp)
   function nc_def_enum(ncid, base_typeid, name, typeidp) &
     & bind(c, name="nc_def_enum")
-    import nc_type, c_int, c_char
+    import c_int, c_char, nc_type
     implicit none
 
     integer(c_int), value :: ncid
@@ -768,7 +768,7 @@ interface
   !> EXTERNL int nc_insert_enum(int ncid, nc_type xtype, char * name, void * value)
   function nc_insert_enum(ncid, xtype, name, value) &
     & bind(c, name="nc_insert_enum")
-    import nc_type, c_int, c_ptr, c_char
+    import c_int, c_char, c_ptr, nc_type
     implicit none
 
     integer(c_int), value :: ncid
@@ -783,7 +783,7 @@ interface
   !> EXTERNL int nc_inq_enum(int ncid, nc_type xtype, char * name, nc_type * base_nc_typep, size_t * base_sizep, size_t * num_membersp)
   function nc_inq_enum(ncid, xtype, name, base_nc_typep, base_sizep, num_membersp) &
     & bind(c, name="nc_inq_enum")
-    import nc_type, c_size_t, c_int, c_char
+    import c_int, c_size_t, c_char, nc_type
     implicit none
 
     integer(c_int), value :: ncid
@@ -800,7 +800,7 @@ interface
   !> EXTERNL int nc_inq_enum_member(int ncid, nc_type xtype, int idx, char * name, void * value)
   function nc_inq_enum_member(ncid, xtype, idx, name, value) &
     & bind(c, name="nc_inq_enum_member")
-    import nc_type, c_int, c_ptr, c_char
+    import c_int, c_char, c_ptr, nc_type
     implicit none
 
     integer(c_int), value :: ncid
@@ -816,7 +816,7 @@ interface
   !> EXTERNL int nc_inq_enum_ident(int ncid, nc_type xtype, long long value, char * identifier)
   function nc_inq_enum_ident(ncid, xtype, value, identifier) &
     & bind(c, name="nc_inq_enum_ident")
-    import nc_type, c_long_long, c_int, c_char
+    import c_int, c_long_long, c_char, nc_type
     implicit none
 
     integer(c_int), value :: ncid
@@ -831,7 +831,7 @@ interface
   !> EXTERNL int nc_def_opaque(int ncid, size_t size, char * name, nc_type * xtypep)
   function nc_def_opaque(ncid, size, name, xtypep) &
     & bind(c, name="nc_def_opaque")
-    import c_size_t, c_int, nc_type, c_char
+    import c_int, c_size_t, c_char, nc_type
     implicit none
 
     integer(c_int), value :: ncid
@@ -846,7 +846,7 @@ interface
   !> EXTERNL int nc_inq_opaque(int ncid, nc_type xtype, char * name, size_t * sizep)
   function nc_inq_opaque(ncid, xtype, name, sizep) &
     & bind(c, name="nc_inq_opaque")
-    import nc_type, c_size_t, c_int, c_char
+    import c_int, c_size_t, c_char, nc_type
     implicit none
 
     integer(c_int), value :: ncid
@@ -889,7 +889,7 @@ interface
   !> EXTERNL int nc_put_var1(int ncid, int varid, size_t * indexp, void * op)
   function nc_put_var1(ncid, varid, indexp, op) &
     & bind(c, name="nc_put_var1")
-    import c_size_t, c_int, c_ptr
+    import c_int, c_size_t, c_ptr
     implicit none
 
     integer(c_int), value :: ncid
@@ -904,7 +904,7 @@ interface
   !> EXTERNL int nc_get_var1(int ncid, int varid, size_t * indexp, void * ip)
   function nc_get_var1(ncid, varid, indexp, ip) &
     & bind(c, name="nc_get_var1")
-    import c_size_t, c_int, c_ptr
+    import c_int, c_size_t, c_ptr
     implicit none
 
     integer(c_int), value :: ncid
@@ -919,7 +919,7 @@ interface
   !> EXTERNL int nc_put_vara(int ncid, int varid, size_t * startp, size_t * countp, void * op)
   function nc_put_vara(ncid, varid, startp, countp, op) &
     & bind(c, name="nc_put_vara")
-    import c_size_t, c_int, c_ptr
+    import c_int, c_size_t, c_ptr
     implicit none
 
     integer(c_int), value :: ncid
@@ -935,7 +935,7 @@ interface
   !> EXTERNL int nc_get_vara(int ncid, int varid, size_t * startp, size_t * countp, void * ip)
   function nc_get_vara(ncid, varid, startp, countp, ip) &
     & bind(c, name="nc_get_vara")
-    import c_size_t, c_int, c_ptr
+    import c_int, c_size_t, c_ptr
     implicit none
 
     integer(c_int), value :: ncid
@@ -951,7 +951,7 @@ interface
   !> EXTERNL int nc_put_vars(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, void * op)
   function nc_put_vars(ncid, varid, startp, countp, stridep, op) &
     & bind(c, name="nc_put_vars")
-    import c_size_t, c_ptrdiff_t, c_int, c_ptr
+    import c_int, c_size_t, c_ptr, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -968,7 +968,7 @@ interface
   !> EXTERNL int nc_get_vars(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, void * ip)
   function nc_get_vars(ncid, varid, startp, countp, stridep, ip) &
     & bind(c, name="nc_get_vars")
-    import c_size_t, c_ptrdiff_t, c_int, c_ptr
+    import c_int, c_size_t, c_ptr, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -985,7 +985,7 @@ interface
   !> EXTERNL int nc_put_varm(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, ptrdiff_t * imapp, void * op)
   function nc_put_varm(ncid, varid, startp, countp, stridep, imapp, op) &
     & bind(c, name="nc_put_varm")
-    import c_size_t, c_ptrdiff_t, c_int, c_ptr
+    import c_int, c_size_t, c_ptr, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -1003,7 +1003,7 @@ interface
   !> EXTERNL int nc_get_varm(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, ptrdiff_t * imapp, void * ip)
   function nc_get_varm(ncid, varid, startp, countp, stridep, imapp, ip) &
     & bind(c, name="nc_get_varm")
-    import c_size_t, c_ptrdiff_t, c_int, c_ptr
+    import c_int, c_size_t, c_ptr, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -1141,7 +1141,7 @@ interface
   !> EXTERNL int nc_def_var_chunking(int ncid, int varid, int storage, size_t * chunksizesp)
   function nc_def_var_chunking(ncid, varid, storage, chunksizesp) &
     & bind(c, name="nc_def_var_chunking")
-    import c_size_t, c_int
+    import c_int, c_size_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -1156,7 +1156,7 @@ interface
   !> EXTERNL int nc_inq_var_chunking(int ncid, int varid, int * storagep, size_t * chunksizesp)
   function nc_inq_var_chunking(ncid, varid, storagep, chunksizesp) &
     & bind(c, name="nc_inq_var_chunking")
-    import c_size_t, c_int
+    import c_int, c_size_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -1229,7 +1229,7 @@ interface
   !> EXTERNL int nc_def_var_filter(int ncid, int varid, unsigned int id, size_t nparams, unsigned int * parms)
   function nc_def_var_filter(ncid, varid, id, nparams, parms) &
     & bind(c, name="nc_def_var_filter")
-    import c_size_t, c_int
+    import c_int, c_size_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -1245,7 +1245,7 @@ interface
   !> EXTERNL int nc_inq_var_filter(int ncid, int varid, unsigned int * idp, size_t * nparams, unsigned int * params)
   function nc_inq_var_filter(ncid, varid, idp, nparams, params) &
     & bind(c, name="nc_inq_var_filter")
-    import c_size_t, c_int
+    import c_int, c_size_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -1288,7 +1288,7 @@ interface
   !> EXTERNL int nc_set_chunk_cache(size_t size, size_t nelems, float preemption)
   function nc_set_chunk_cache(size, nelems, preemption) &
     & bind(c, name="nc_set_chunk_cache")
-    import c_float, c_int, c_size_t
+    import c_int, c_size_t, c_float
     implicit none
 
     integer(c_size_t), value :: size
@@ -1302,7 +1302,7 @@ interface
   !> EXTERNL int nc_get_chunk_cache(size_t * sizep, size_t * nelemsp, float * preemptionp)
   function nc_get_chunk_cache(sizep, nelemsp, preemptionp) &
     & bind(c, name="nc_get_chunk_cache")
-    import c_float, c_int, c_size_t
+    import c_int, c_size_t, c_float
     implicit none
 
     integer(c_size_t) :: sizep
@@ -1316,7 +1316,7 @@ interface
   !> EXTERNL int nc_set_var_chunk_cache(int ncid, int varid, size_t size, size_t nelems, float preemption)
   function nc_set_var_chunk_cache(ncid, varid, size, nelems, preemption) &
     & bind(c, name="nc_set_var_chunk_cache")
-    import c_size_t, c_float, c_int
+    import c_int, c_size_t, c_float
     implicit none
 
     integer(c_int), value :: ncid
@@ -1332,7 +1332,7 @@ interface
   !> EXTERNL int nc_get_var_chunk_cache(int ncid, int varid, size_t * sizep, size_t * nelemsp, float * preemptionp)
   function nc_get_var_chunk_cache(ncid, varid, sizep, nelemsp, preemptionp) &
     & bind(c, name="nc_get_var_chunk_cache")
-    import c_size_t, c_float, c_int
+    import c_int, c_size_t, c_float
     implicit none
 
     integer(c_int), value :: ncid
@@ -1360,7 +1360,7 @@ interface
   !> EXTERNL int nc__enddef(int ncid, size_t h_minfree, size_t v_align, size_t v_minfree, size_t r_align)
   function nc__enddef(ncid, h_minfree, v_align, v_minfree, r_align) &
     & bind(c, name="nc__enddef")
-    import c_size_t, c_int
+    import c_int, c_size_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -1533,7 +1533,7 @@ interface
   !> EXTERNL int nc_def_dim(int ncid, char * name, size_t len, int * idp)
   function nc_def_dim(ncid, name, len, idp) &
     & bind(c, name="nc_def_dim")
-    import c_size_t, c_int, c_char
+    import c_int, c_size_t, c_char
     implicit none
 
     integer(c_int), value :: ncid
@@ -1562,7 +1562,7 @@ interface
   !> EXTERNL int nc_inq_dim(int ncid, int dimid, char * name, size_t * lenp)
   function nc_inq_dim(ncid, dimid, name, lenp) &
     & bind(c, name="nc_inq_dim")
-    import c_size_t, c_int, c_char
+    import c_int, c_size_t, c_char
     implicit none
 
     integer(c_int), value :: ncid
@@ -1591,7 +1591,7 @@ interface
   !> EXTERNL int nc_inq_dimlen(int ncid, int dimid, size_t * lenp)
   function nc_inq_dimlen(ncid, dimid, lenp) &
     & bind(c, name="nc_inq_dimlen")
-    import c_size_t, c_int
+    import c_int, c_size_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -1619,7 +1619,7 @@ interface
   !> EXTERNL int nc_inq_att(int ncid, int varid, char * name, nc_type * xtypep, size_t * lenp)
   function nc_inq_att(ncid, varid, name, xtypep, lenp) &
     & bind(c, name="nc_inq_att")
-    import nc_type, c_size_t, c_int, c_char
+    import c_int, c_size_t, c_char, nc_type
     implicit none
 
     integer(c_int), value :: ncid
@@ -1650,7 +1650,7 @@ interface
   !> EXTERNL int nc_inq_atttype(int ncid, int varid, char * name, nc_type * xtypep)
   function nc_inq_atttype(ncid, varid, name, xtypep) &
     & bind(c, name="nc_inq_atttype")
-    import nc_type, c_int, c_char
+    import c_int, c_char, nc_type
     implicit none
 
     integer(c_int), value :: ncid
@@ -1665,7 +1665,7 @@ interface
   !> EXTERNL int nc_inq_attlen(int ncid, int varid, char * name, size_t * lenp)
   function nc_inq_attlen(ncid, varid, name, lenp) &
     & bind(c, name="nc_inq_attlen")
-    import c_size_t, c_int, c_char
+    import c_int, c_size_t, c_char
     implicit none
 
     integer(c_int), value :: ncid
@@ -1740,7 +1740,7 @@ interface
   !> EXTERNL int nc_put_att_text(int ncid, int varid, char * name, size_t len, char * op)
   function nc_put_att_text(ncid, varid, name, len, op) &
     & bind(c, name="nc_put_att_text")
-    import c_size_t, c_int, c_char
+    import c_int, c_size_t, c_char
     implicit none
 
     integer(c_int), value :: ncid
@@ -1771,7 +1771,7 @@ interface
   !> EXTERNL int nc_put_att_string(int ncid, int varid, char * name, size_t len, char * * op)
   function nc_put_att_string(ncid, varid, name, len, op) &
     & bind(c, name="nc_put_att_string")
-    import c_size_t, c_int, c_char
+    import c_int, c_size_t, c_char
     implicit none
 
     integer(c_int), value :: ncid
@@ -1802,7 +1802,7 @@ interface
   !> EXTERNL int nc_put_att_uchar(int ncid, int varid, char * name, nc_type xtype, size_t len, unsigned char * op)
   function nc_put_att_uchar(ncid, varid, name, xtype, len, op) &
     & bind(c, name="nc_put_att_uchar")
-    import nc_type, c_char, c_int, c_size_t, c_signed_char
+    import c_signed_char, c_size_t, nc_type, c_int, c_char
     implicit none
 
     integer(c_int), value :: ncid
@@ -1819,7 +1819,7 @@ interface
   !> EXTERNL int nc_get_att_uchar(int ncid, int varid, char * name, unsigned char * ip)
   function nc_get_att_uchar(ncid, varid, name, ip) &
     & bind(c, name="nc_get_att_uchar")
-    import c_signed_char, c_int, c_char
+    import c_int, c_char, c_signed_char
     implicit none
 
     integer(c_int), value :: ncid
@@ -1834,7 +1834,7 @@ interface
   !> EXTERNL int nc_put_att_schar(int ncid, int varid, char * name, nc_type xtype, size_t len, signed char * op)
   function nc_put_att_schar(ncid, varid, name, xtype, len, op) &
     & bind(c, name="nc_put_att_schar")
-    import nc_type, c_char, c_int, c_size_t, c_signed_char
+    import c_signed_char, c_size_t, nc_type, c_int, c_char
     implicit none
 
     integer(c_int), value :: ncid
@@ -1851,7 +1851,7 @@ interface
   !> EXTERNL int nc_get_att_schar(int ncid, int varid, char * name, signed char * ip)
   function nc_get_att_schar(ncid, varid, name, ip) &
     & bind(c, name="nc_get_att_schar")
-    import c_signed_char, c_int, c_char
+    import c_int, c_char, c_signed_char
     implicit none
 
     integer(c_int), value :: ncid
@@ -1866,7 +1866,7 @@ interface
   !> EXTERNL int nc_put_att_short(int ncid, int varid, char * name, nc_type xtype, size_t len, short * op)
   function nc_put_att_short(ncid, varid, name, xtype, len, op) &
     & bind(c, name="nc_put_att_short")
-    import nc_type, c_char, c_int, c_short, c_size_t
+    import nc_type, c_size_t, c_int, c_short, c_char
     implicit none
 
     integer(c_int), value :: ncid
@@ -1883,7 +1883,7 @@ interface
   !> EXTERNL int nc_get_att_short(int ncid, int varid, char * name, short * ip)
   function nc_get_att_short(ncid, varid, name, ip) &
     & bind(c, name="nc_get_att_short")
-    import c_short, c_int, c_char
+    import c_int, c_char, c_short
     implicit none
 
     integer(c_int), value :: ncid
@@ -1898,7 +1898,7 @@ interface
   !> EXTERNL int nc_put_att_int(int ncid, int varid, char * name, nc_type xtype, size_t len, int * op)
   function nc_put_att_int(ncid, varid, name, xtype, len, op) &
     & bind(c, name="nc_put_att_int")
-    import nc_type, c_size_t, c_int, c_char
+    import c_int, c_size_t, c_char, nc_type
     implicit none
 
     integer(c_int), value :: ncid
@@ -1930,7 +1930,7 @@ interface
   !> EXTERNL int nc_put_att_long(int ncid, int varid, char * name, nc_type xtype, size_t len, long * op)
   function nc_put_att_long(ncid, varid, name, xtype, len, op) &
     & bind(c, name="nc_put_att_long")
-    import c_long, nc_type, c_char, c_int, c_size_t
+    import nc_type, c_size_t, c_int, c_long, c_char
     implicit none
 
     integer(c_int), value :: ncid
@@ -1947,7 +1947,7 @@ interface
   !> EXTERNL int nc_get_att_long(int ncid, int varid, char * name, long * ip)
   function nc_get_att_long(ncid, varid, name, ip) &
     & bind(c, name="nc_get_att_long")
-    import c_long, c_int, c_char
+    import c_int, c_char, c_long
     implicit none
 
     integer(c_int), value :: ncid
@@ -1962,7 +1962,7 @@ interface
   !> EXTERNL int nc_put_att_float(int ncid, int varid, char * name, nc_type xtype, size_t len, float * op)
   function nc_put_att_float(ncid, varid, name, xtype, len, op) &
     & bind(c, name="nc_put_att_float")
-    import nc_type, c_float, c_char, c_int, c_size_t
+    import nc_type, c_size_t, c_int, c_float, c_char
     implicit none
 
     integer(c_int), value :: ncid
@@ -1979,7 +1979,7 @@ interface
   !> EXTERNL int nc_get_att_float(int ncid, int varid, char * name, float * ip)
   function nc_get_att_float(ncid, varid, name, ip) &
     & bind(c, name="nc_get_att_float")
-    import c_float, c_int, c_char
+    import c_int, c_float, c_char
     implicit none
 
     integer(c_int), value :: ncid
@@ -1994,7 +1994,7 @@ interface
   !> EXTERNL int nc_put_att_double(int ncid, int varid, char * name, nc_type xtype, size_t len, double * op)
   function nc_put_att_double(ncid, varid, name, xtype, len, op) &
     & bind(c, name="nc_put_att_double")
-    import nc_type, c_char, c_int, c_double, c_size_t
+    import nc_type, c_size_t, c_int, c_double, c_char
     implicit none
 
     integer(c_int), value :: ncid
@@ -2011,7 +2011,7 @@ interface
   !> EXTERNL int nc_get_att_double(int ncid, int varid, char * name, double * ip)
   function nc_get_att_double(ncid, varid, name, ip) &
     & bind(c, name="nc_get_att_double")
-    import c_double, c_int, c_char
+    import c_int, c_char, c_double
     implicit none
 
     integer(c_int), value :: ncid
@@ -2026,7 +2026,7 @@ interface
   !> EXTERNL int nc_put_att_ushort(int ncid, int varid, char * name, nc_type xtype, size_t len, unsigned short * op)
   function nc_put_att_ushort(ncid, varid, name, xtype, len, op) &
     & bind(c, name="nc_put_att_ushort")
-    import nc_type, c_char, c_int, c_short, c_size_t
+    import nc_type, c_size_t, c_int, c_short, c_char
     implicit none
 
     integer(c_int), value :: ncid
@@ -2043,7 +2043,7 @@ interface
   !> EXTERNL int nc_get_att_ushort(int ncid, int varid, char * name, unsigned short * ip)
   function nc_get_att_ushort(ncid, varid, name, ip) &
     & bind(c, name="nc_get_att_ushort")
-    import c_short, c_int, c_char
+    import c_int, c_char, c_short
     implicit none
 
     integer(c_int), value :: ncid
@@ -2058,7 +2058,7 @@ interface
   !> EXTERNL int nc_put_att_uint(int ncid, int varid, char * name, nc_type xtype, size_t len, unsigned int * op)
   function nc_put_att_uint(ncid, varid, name, xtype, len, op) &
     & bind(c, name="nc_put_att_uint")
-    import nc_type, c_size_t, c_int, c_char
+    import c_int, c_size_t, c_char, nc_type
     implicit none
 
     integer(c_int), value :: ncid
@@ -2090,7 +2090,7 @@ interface
   !> EXTERNL int nc_put_att_longlong(int ncid, int varid, char * name, nc_type xtype, size_t len, long long * op)
   function nc_put_att_longlong(ncid, varid, name, xtype, len, op) &
     & bind(c, name="nc_put_att_longlong")
-    import nc_type, c_char, c_int, c_long_long, c_size_t
+    import nc_type, c_size_t, c_long_long, c_int, c_char
     implicit none
 
     integer(c_int), value :: ncid
@@ -2107,7 +2107,7 @@ interface
   !> EXTERNL int nc_get_att_longlong(int ncid, int varid, char * name, long long * ip)
   function nc_get_att_longlong(ncid, varid, name, ip) &
     & bind(c, name="nc_get_att_longlong")
-    import c_long_long, c_int, c_char
+    import c_int, c_long_long, c_char
     implicit none
 
     integer(c_int), value :: ncid
@@ -2122,7 +2122,7 @@ interface
   !> EXTERNL int nc_put_att_ulonglong(int ncid, int varid, char * name, nc_type xtype, size_t len, unsigned long long * op)
   function nc_put_att_ulonglong(ncid, varid, name, xtype, len, op) &
     & bind(c, name="nc_put_att_ulonglong")
-    import nc_type, c_char, c_int, c_long_long, c_size_t
+    import nc_type, c_size_t, c_long_long, c_int, c_char
     implicit none
 
     integer(c_int), value :: ncid
@@ -2139,7 +2139,7 @@ interface
   !> EXTERNL int nc_get_att_ulonglong(int ncid, int varid, char * name, unsigned long long * ip)
   function nc_get_att_ulonglong(ncid, varid, name, ip) &
     & bind(c, name="nc_get_att_ulonglong")
-    import c_long_long, c_int, c_char
+    import c_int, c_long_long, c_char
     implicit none
 
     integer(c_int), value :: ncid
@@ -2154,7 +2154,7 @@ interface
   !> EXTERNL int nc_def_var(int ncid, char * name, nc_type xtype, int ndims, int * dimidsp, int * varidp)
   function nc_def_var(ncid, name, xtype, ndims, dimidsp, varidp) &
     & bind(c, name="nc_def_var")
-    import nc_type, c_int, c_char
+    import c_int, c_char, nc_type
     implicit none
 
     integer(c_int), value :: ncid
@@ -2171,7 +2171,7 @@ interface
   !> EXTERNL int nc_inq_var(int ncid, int varid, char * name, nc_type * xtypep, int * ndimsp, int * dimidsp, int * nattsp)
   function nc_inq_var(ncid, varid, name, xtypep, ndimsp, dimidsp, nattsp) &
     & bind(c, name="nc_inq_var")
-    import nc_type, c_int, c_char
+    import c_int, c_char, nc_type
     implicit none
 
     integer(c_int), value :: ncid
@@ -2217,7 +2217,7 @@ interface
   !> EXTERNL int nc_inq_vartype(int ncid, int varid, nc_type * xtypep)
   function nc_inq_vartype(ncid, varid, xtypep) &
     & bind(c, name="nc_inq_vartype")
-    import nc_type, c_int
+    import c_int, nc_type
     implicit none
 
     integer(c_int), value :: ncid
@@ -2301,7 +2301,7 @@ interface
   !> EXTERNL int nc_put_var1_text(int ncid, int varid, size_t * indexp, char * op)
   function nc_put_var1_text(ncid, varid, indexp, op) &
     & bind(c, name="nc_put_var1_text")
-    import c_size_t, c_int, c_char
+    import c_int, c_size_t, c_char
     implicit none
 
     integer(c_int), value :: ncid
@@ -2316,7 +2316,7 @@ interface
   !> EXTERNL int nc_get_var1_text(int ncid, int varid, size_t * indexp, char * ip)
   function nc_get_var1_text(ncid, varid, indexp, ip) &
     & bind(c, name="nc_get_var1_text")
-    import c_size_t, c_int, c_char
+    import c_int, c_size_t, c_char
     implicit none
 
     integer(c_int), value :: ncid
@@ -2331,7 +2331,7 @@ interface
   !> EXTERNL int nc_put_var1_uchar(int ncid, int varid, size_t * indexp, unsigned char * op)
   function nc_put_var1_uchar(ncid, varid, indexp, op) &
     & bind(c, name="nc_put_var1_uchar")
-    import c_size_t, c_int, c_signed_char
+    import c_int, c_size_t, c_signed_char
     implicit none
 
     integer(c_int), value :: ncid
@@ -2346,7 +2346,7 @@ interface
   !> EXTERNL int nc_get_var1_uchar(int ncid, int varid, size_t * indexp, unsigned char * ip)
   function nc_get_var1_uchar(ncid, varid, indexp, ip) &
     & bind(c, name="nc_get_var1_uchar")
-    import c_size_t, c_int, c_signed_char
+    import c_int, c_size_t, c_signed_char
     implicit none
 
     integer(c_int), value :: ncid
@@ -2361,7 +2361,7 @@ interface
   !> EXTERNL int nc_put_var1_schar(int ncid, int varid, size_t * indexp, signed char * op)
   function nc_put_var1_schar(ncid, varid, indexp, op) &
     & bind(c, name="nc_put_var1_schar")
-    import c_size_t, c_int, c_signed_char
+    import c_int, c_size_t, c_signed_char
     implicit none
 
     integer(c_int), value :: ncid
@@ -2376,7 +2376,7 @@ interface
   !> EXTERNL int nc_get_var1_schar(int ncid, int varid, size_t * indexp, signed char * ip)
   function nc_get_var1_schar(ncid, varid, indexp, ip) &
     & bind(c, name="nc_get_var1_schar")
-    import c_size_t, c_int, c_signed_char
+    import c_int, c_size_t, c_signed_char
     implicit none
 
     integer(c_int), value :: ncid
@@ -2391,7 +2391,7 @@ interface
   !> EXTERNL int nc_put_var1_short(int ncid, int varid, size_t * indexp, short * op)
   function nc_put_var1_short(ncid, varid, indexp, op) &
     & bind(c, name="nc_put_var1_short")
-    import c_size_t, c_short, c_int
+    import c_int, c_size_t, c_short
     implicit none
 
     integer(c_int), value :: ncid
@@ -2406,7 +2406,7 @@ interface
   !> EXTERNL int nc_get_var1_short(int ncid, int varid, size_t * indexp, short * ip)
   function nc_get_var1_short(ncid, varid, indexp, ip) &
     & bind(c, name="nc_get_var1_short")
-    import c_size_t, c_short, c_int
+    import c_int, c_size_t, c_short
     implicit none
 
     integer(c_int), value :: ncid
@@ -2421,7 +2421,7 @@ interface
   !> EXTERNL int nc_put_var1_int(int ncid, int varid, size_t * indexp, int * op)
   function nc_put_var1_int(ncid, varid, indexp, op) &
     & bind(c, name="nc_put_var1_int")
-    import c_size_t, c_int
+    import c_int, c_size_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -2436,7 +2436,7 @@ interface
   !> EXTERNL int nc_get_var1_int(int ncid, int varid, size_t * indexp, int * ip)
   function nc_get_var1_int(ncid, varid, indexp, ip) &
     & bind(c, name="nc_get_var1_int")
-    import c_size_t, c_int
+    import c_int, c_size_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -2451,7 +2451,7 @@ interface
   !> EXTERNL int nc_put_var1_long(int ncid, int varid, size_t * indexp, long * op)
   function nc_put_var1_long(ncid, varid, indexp, op) &
     & bind(c, name="nc_put_var1_long")
-    import c_size_t, c_int, c_long
+    import c_int, c_size_t, c_long
     implicit none
 
     integer(c_int), value :: ncid
@@ -2466,7 +2466,7 @@ interface
   !> EXTERNL int nc_get_var1_long(int ncid, int varid, size_t * indexp, long * ip)
   function nc_get_var1_long(ncid, varid, indexp, ip) &
     & bind(c, name="nc_get_var1_long")
-    import c_size_t, c_int, c_long
+    import c_int, c_size_t, c_long
     implicit none
 
     integer(c_int), value :: ncid
@@ -2481,7 +2481,7 @@ interface
   !> EXTERNL int nc_put_var1_float(int ncid, int varid, size_t * indexp, float * op)
   function nc_put_var1_float(ncid, varid, indexp, op) &
     & bind(c, name="nc_put_var1_float")
-    import c_size_t, c_float, c_int
+    import c_int, c_size_t, c_float
     implicit none
 
     integer(c_int), value :: ncid
@@ -2496,7 +2496,7 @@ interface
   !> EXTERNL int nc_get_var1_float(int ncid, int varid, size_t * indexp, float * ip)
   function nc_get_var1_float(ncid, varid, indexp, ip) &
     & bind(c, name="nc_get_var1_float")
-    import c_size_t, c_float, c_int
+    import c_int, c_size_t, c_float
     implicit none
 
     integer(c_int), value :: ncid
@@ -2511,7 +2511,7 @@ interface
   !> EXTERNL int nc_put_var1_double(int ncid, int varid, size_t * indexp, double * op)
   function nc_put_var1_double(ncid, varid, indexp, op) &
     & bind(c, name="nc_put_var1_double")
-    import c_size_t, c_int, c_double
+    import c_int, c_size_t, c_double
     implicit none
 
     integer(c_int), value :: ncid
@@ -2526,7 +2526,7 @@ interface
   !> EXTERNL int nc_get_var1_double(int ncid, int varid, size_t * indexp, double * ip)
   function nc_get_var1_double(ncid, varid, indexp, ip) &
     & bind(c, name="nc_get_var1_double")
-    import c_size_t, c_int, c_double
+    import c_int, c_size_t, c_double
     implicit none
 
     integer(c_int), value :: ncid
@@ -2541,7 +2541,7 @@ interface
   !> EXTERNL int nc_put_var1_ushort(int ncid, int varid, size_t * indexp, unsigned short * op)
   function nc_put_var1_ushort(ncid, varid, indexp, op) &
     & bind(c, name="nc_put_var1_ushort")
-    import c_size_t, c_short, c_int
+    import c_int, c_size_t, c_short
     implicit none
 
     integer(c_int), value :: ncid
@@ -2556,7 +2556,7 @@ interface
   !> EXTERNL int nc_get_var1_ushort(int ncid, int varid, size_t * indexp, unsigned short * ip)
   function nc_get_var1_ushort(ncid, varid, indexp, ip) &
     & bind(c, name="nc_get_var1_ushort")
-    import c_size_t, c_short, c_int
+    import c_int, c_size_t, c_short
     implicit none
 
     integer(c_int), value :: ncid
@@ -2571,7 +2571,7 @@ interface
   !> EXTERNL int nc_put_var1_uint(int ncid, int varid, size_t * indexp, unsigned int * op)
   function nc_put_var1_uint(ncid, varid, indexp, op) &
     & bind(c, name="nc_put_var1_uint")
-    import c_size_t, c_int
+    import c_int, c_size_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -2586,7 +2586,7 @@ interface
   !> EXTERNL int nc_get_var1_uint(int ncid, int varid, size_t * indexp, unsigned int * ip)
   function nc_get_var1_uint(ncid, varid, indexp, ip) &
     & bind(c, name="nc_get_var1_uint")
-    import c_size_t, c_int
+    import c_int, c_size_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -2601,7 +2601,7 @@ interface
   !> EXTERNL int nc_put_var1_longlong(int ncid, int varid, size_t * indexp, long long * op)
   function nc_put_var1_longlong(ncid, varid, indexp, op) &
     & bind(c, name="nc_put_var1_longlong")
-    import c_size_t, c_long_long, c_int
+    import c_int, c_size_t, c_long_long
     implicit none
 
     integer(c_int), value :: ncid
@@ -2616,7 +2616,7 @@ interface
   !> EXTERNL int nc_get_var1_longlong(int ncid, int varid, size_t * indexp, long long * ip)
   function nc_get_var1_longlong(ncid, varid, indexp, ip) &
     & bind(c, name="nc_get_var1_longlong")
-    import c_size_t, c_long_long, c_int
+    import c_int, c_size_t, c_long_long
     implicit none
 
     integer(c_int), value :: ncid
@@ -2631,7 +2631,7 @@ interface
   !> EXTERNL int nc_put_var1_ulonglong(int ncid, int varid, size_t * indexp, unsigned long long * op)
   function nc_put_var1_ulonglong(ncid, varid, indexp, op) &
     & bind(c, name="nc_put_var1_ulonglong")
-    import c_size_t, c_long_long, c_int
+    import c_int, c_size_t, c_long_long
     implicit none
 
     integer(c_int), value :: ncid
@@ -2646,7 +2646,7 @@ interface
   !> EXTERNL int nc_get_var1_ulonglong(int ncid, int varid, size_t * indexp, unsigned long long * ip)
   function nc_get_var1_ulonglong(ncid, varid, indexp, ip) &
     & bind(c, name="nc_get_var1_ulonglong")
-    import c_size_t, c_long_long, c_int
+    import c_int, c_size_t, c_long_long
     implicit none
 
     integer(c_int), value :: ncid
@@ -2661,7 +2661,7 @@ interface
   !> EXTERNL int nc_put_var1_string(int ncid, int varid, size_t * indexp, char * * op)
   function nc_put_var1_string(ncid, varid, indexp, op) &
     & bind(c, name="nc_put_var1_string")
-    import c_size_t, c_int, c_char
+    import c_int, c_size_t, c_char
     implicit none
 
     integer(c_int), value :: ncid
@@ -2676,7 +2676,7 @@ interface
   !> EXTERNL int nc_get_var1_string(int ncid, int varid, size_t * indexp, char * * ip)
   function nc_get_var1_string(ncid, varid, indexp, ip) &
     & bind(c, name="nc_get_var1_string")
-    import c_size_t, c_int, c_char
+    import c_int, c_size_t, c_char
     implicit none
 
     integer(c_int), value :: ncid
@@ -2691,7 +2691,7 @@ interface
   !> EXTERNL int nc_put_vara_text(int ncid, int varid, size_t * startp, size_t * countp, char * op)
   function nc_put_vara_text(ncid, varid, startp, countp, op) &
     & bind(c, name="nc_put_vara_text")
-    import c_size_t, c_int, c_char
+    import c_int, c_size_t, c_char
     implicit none
 
     integer(c_int), value :: ncid
@@ -2707,7 +2707,7 @@ interface
   !> EXTERNL int nc_get_vara_text(int ncid, int varid, size_t * startp, size_t * countp, char * ip)
   function nc_get_vara_text(ncid, varid, startp, countp, ip) &
     & bind(c, name="nc_get_vara_text")
-    import c_size_t, c_int, c_char
+    import c_int, c_size_t, c_char
     implicit none
 
     integer(c_int), value :: ncid
@@ -2723,7 +2723,7 @@ interface
   !> EXTERNL int nc_put_vara_uchar(int ncid, int varid, size_t * startp, size_t * countp, unsigned char * op)
   function nc_put_vara_uchar(ncid, varid, startp, countp, op) &
     & bind(c, name="nc_put_vara_uchar")
-    import c_size_t, c_int, c_signed_char
+    import c_int, c_size_t, c_signed_char
     implicit none
 
     integer(c_int), value :: ncid
@@ -2739,7 +2739,7 @@ interface
   !> EXTERNL int nc_get_vara_uchar(int ncid, int varid, size_t * startp, size_t * countp, unsigned char * ip)
   function nc_get_vara_uchar(ncid, varid, startp, countp, ip) &
     & bind(c, name="nc_get_vara_uchar")
-    import c_size_t, c_int, c_signed_char
+    import c_int, c_size_t, c_signed_char
     implicit none
 
     integer(c_int), value :: ncid
@@ -2755,7 +2755,7 @@ interface
   !> EXTERNL int nc_put_vara_schar(int ncid, int varid, size_t * startp, size_t * countp, signed char * op)
   function nc_put_vara_schar(ncid, varid, startp, countp, op) &
     & bind(c, name="nc_put_vara_schar")
-    import c_size_t, c_int, c_signed_char
+    import c_int, c_size_t, c_signed_char
     implicit none
 
     integer(c_int), value :: ncid
@@ -2771,7 +2771,7 @@ interface
   !> EXTERNL int nc_get_vara_schar(int ncid, int varid, size_t * startp, size_t * countp, signed char * ip)
   function nc_get_vara_schar(ncid, varid, startp, countp, ip) &
     & bind(c, name="nc_get_vara_schar")
-    import c_size_t, c_int, c_signed_char
+    import c_int, c_size_t, c_signed_char
     implicit none
 
     integer(c_int), value :: ncid
@@ -2787,7 +2787,7 @@ interface
   !> EXTERNL int nc_put_vara_short(int ncid, int varid, size_t * startp, size_t * countp, short * op)
   function nc_put_vara_short(ncid, varid, startp, countp, op) &
     & bind(c, name="nc_put_vara_short")
-    import c_size_t, c_short, c_int
+    import c_int, c_size_t, c_short
     implicit none
 
     integer(c_int), value :: ncid
@@ -2803,7 +2803,7 @@ interface
   !> EXTERNL int nc_get_vara_short(int ncid, int varid, size_t * startp, size_t * countp, short * ip)
   function nc_get_vara_short(ncid, varid, startp, countp, ip) &
     & bind(c, name="nc_get_vara_short")
-    import c_size_t, c_short, c_int
+    import c_int, c_size_t, c_short
     implicit none
 
     integer(c_int), value :: ncid
@@ -2819,7 +2819,7 @@ interface
   !> EXTERNL int nc_put_vara_int(int ncid, int varid, size_t * startp, size_t * countp, int * op)
   function nc_put_vara_int(ncid, varid, startp, countp, op) &
     & bind(c, name="nc_put_vara_int")
-    import c_size_t, c_int
+    import c_int, c_size_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -2835,7 +2835,7 @@ interface
   !> EXTERNL int nc_get_vara_int(int ncid, int varid, size_t * startp, size_t * countp, int * ip)
   function nc_get_vara_int(ncid, varid, startp, countp, ip) &
     & bind(c, name="nc_get_vara_int")
-    import c_size_t, c_int
+    import c_int, c_size_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -2851,7 +2851,7 @@ interface
   !> EXTERNL int nc_put_vara_long(int ncid, int varid, size_t * startp, size_t * countp, long * op)
   function nc_put_vara_long(ncid, varid, startp, countp, op) &
     & bind(c, name="nc_put_vara_long")
-    import c_size_t, c_int, c_long
+    import c_int, c_size_t, c_long
     implicit none
 
     integer(c_int), value :: ncid
@@ -2867,7 +2867,7 @@ interface
   !> EXTERNL int nc_get_vara_long(int ncid, int varid, size_t * startp, size_t * countp, long * ip)
   function nc_get_vara_long(ncid, varid, startp, countp, ip) &
     & bind(c, name="nc_get_vara_long")
-    import c_size_t, c_int, c_long
+    import c_int, c_size_t, c_long
     implicit none
 
     integer(c_int), value :: ncid
@@ -2883,7 +2883,7 @@ interface
   !> EXTERNL int nc_put_vara_float(int ncid, int varid, size_t * startp, size_t * countp, float * op)
   function nc_put_vara_float(ncid, varid, startp, countp, op) &
     & bind(c, name="nc_put_vara_float")
-    import c_size_t, c_float, c_int
+    import c_int, c_size_t, c_float
     implicit none
 
     integer(c_int), value :: ncid
@@ -2899,7 +2899,7 @@ interface
   !> EXTERNL int nc_get_vara_float(int ncid, int varid, size_t * startp, size_t * countp, float * ip)
   function nc_get_vara_float(ncid, varid, startp, countp, ip) &
     & bind(c, name="nc_get_vara_float")
-    import c_size_t, c_float, c_int
+    import c_int, c_size_t, c_float
     implicit none
 
     integer(c_int), value :: ncid
@@ -2915,7 +2915,7 @@ interface
   !> EXTERNL int nc_put_vara_double(int ncid, int varid, size_t * startp, size_t * countp, double * op)
   function nc_put_vara_double(ncid, varid, startp, countp, op) &
     & bind(c, name="nc_put_vara_double")
-    import c_size_t, c_int, c_double
+    import c_int, c_size_t, c_double
     implicit none
 
     integer(c_int), value :: ncid
@@ -2931,7 +2931,7 @@ interface
   !> EXTERNL int nc_get_vara_double(int ncid, int varid, size_t * startp, size_t * countp, double * ip)
   function nc_get_vara_double(ncid, varid, startp, countp, ip) &
     & bind(c, name="nc_get_vara_double")
-    import c_size_t, c_int, c_double
+    import c_int, c_size_t, c_double
     implicit none
 
     integer(c_int), value :: ncid
@@ -2947,7 +2947,7 @@ interface
   !> EXTERNL int nc_put_vara_ushort(int ncid, int varid, size_t * startp, size_t * countp, unsigned short * op)
   function nc_put_vara_ushort(ncid, varid, startp, countp, op) &
     & bind(c, name="nc_put_vara_ushort")
-    import c_size_t, c_short, c_int
+    import c_int, c_size_t, c_short
     implicit none
 
     integer(c_int), value :: ncid
@@ -2963,7 +2963,7 @@ interface
   !> EXTERNL int nc_get_vara_ushort(int ncid, int varid, size_t * startp, size_t * countp, unsigned short * ip)
   function nc_get_vara_ushort(ncid, varid, startp, countp, ip) &
     & bind(c, name="nc_get_vara_ushort")
-    import c_size_t, c_short, c_int
+    import c_int, c_size_t, c_short
     implicit none
 
     integer(c_int), value :: ncid
@@ -2979,7 +2979,7 @@ interface
   !> EXTERNL int nc_put_vara_uint(int ncid, int varid, size_t * startp, size_t * countp, unsigned int * op)
   function nc_put_vara_uint(ncid, varid, startp, countp, op) &
     & bind(c, name="nc_put_vara_uint")
-    import c_size_t, c_int
+    import c_int, c_size_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -2995,7 +2995,7 @@ interface
   !> EXTERNL int nc_get_vara_uint(int ncid, int varid, size_t * startp, size_t * countp, unsigned int * ip)
   function nc_get_vara_uint(ncid, varid, startp, countp, ip) &
     & bind(c, name="nc_get_vara_uint")
-    import c_size_t, c_int
+    import c_int, c_size_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -3011,7 +3011,7 @@ interface
   !> EXTERNL int nc_put_vara_longlong(int ncid, int varid, size_t * startp, size_t * countp, long long * op)
   function nc_put_vara_longlong(ncid, varid, startp, countp, op) &
     & bind(c, name="nc_put_vara_longlong")
-    import c_size_t, c_long_long, c_int
+    import c_int, c_size_t, c_long_long
     implicit none
 
     integer(c_int), value :: ncid
@@ -3027,7 +3027,7 @@ interface
   !> EXTERNL int nc_get_vara_longlong(int ncid, int varid, size_t * startp, size_t * countp, long long * ip)
   function nc_get_vara_longlong(ncid, varid, startp, countp, ip) &
     & bind(c, name="nc_get_vara_longlong")
-    import c_size_t, c_long_long, c_int
+    import c_int, c_size_t, c_long_long
     implicit none
 
     integer(c_int), value :: ncid
@@ -3043,7 +3043,7 @@ interface
   !> EXTERNL int nc_put_vara_ulonglong(int ncid, int varid, size_t * startp, size_t * countp, unsigned long long * op)
   function nc_put_vara_ulonglong(ncid, varid, startp, countp, op) &
     & bind(c, name="nc_put_vara_ulonglong")
-    import c_size_t, c_long_long, c_int
+    import c_int, c_size_t, c_long_long
     implicit none
 
     integer(c_int), value :: ncid
@@ -3059,7 +3059,7 @@ interface
   !> EXTERNL int nc_get_vara_ulonglong(int ncid, int varid, size_t * startp, size_t * countp, unsigned long long * ip)
   function nc_get_vara_ulonglong(ncid, varid, startp, countp, ip) &
     & bind(c, name="nc_get_vara_ulonglong")
-    import c_size_t, c_long_long, c_int
+    import c_int, c_size_t, c_long_long
     implicit none
 
     integer(c_int), value :: ncid
@@ -3075,7 +3075,7 @@ interface
   !> EXTERNL int nc_put_vara_string(int ncid, int varid, size_t * startp, size_t * countp, char * * op)
   function nc_put_vara_string(ncid, varid, startp, countp, op) &
     & bind(c, name="nc_put_vara_string")
-    import c_size_t, c_int, c_char
+    import c_int, c_size_t, c_char
     implicit none
 
     integer(c_int), value :: ncid
@@ -3091,7 +3091,7 @@ interface
   !> EXTERNL int nc_get_vara_string(int ncid, int varid, size_t * startp, size_t * countp, char * * ip)
   function nc_get_vara_string(ncid, varid, startp, countp, ip) &
     & bind(c, name="nc_get_vara_string")
-    import c_size_t, c_int, c_char
+    import c_int, c_size_t, c_char
     implicit none
 
     integer(c_int), value :: ncid
@@ -3107,7 +3107,7 @@ interface
   !> EXTERNL int nc_put_vars_text(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, char * op)
   function nc_put_vars_text(ncid, varid, startp, countp, stridep, op) &
     & bind(c, name="nc_put_vars_text")
-    import c_size_t, c_ptrdiff_t, c_int, c_char
+    import c_int, c_size_t, c_char, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -3124,7 +3124,7 @@ interface
   !> EXTERNL int nc_get_vars_text(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, char * ip)
   function nc_get_vars_text(ncid, varid, startp, countp, stridep, ip) &
     & bind(c, name="nc_get_vars_text")
-    import c_size_t, c_ptrdiff_t, c_int, c_char
+    import c_int, c_size_t, c_char, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -3141,7 +3141,7 @@ interface
   !> EXTERNL int nc_put_vars_uchar(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, unsigned char * op)
   function nc_put_vars_uchar(ncid, varid, startp, countp, stridep, op) &
     & bind(c, name="nc_put_vars_uchar")
-    import c_size_t, c_ptrdiff_t, c_int, c_signed_char
+    import c_int, c_size_t, c_signed_char, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -3158,7 +3158,7 @@ interface
   !> EXTERNL int nc_get_vars_uchar(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, unsigned char * ip)
   function nc_get_vars_uchar(ncid, varid, startp, countp, stridep, ip) &
     & bind(c, name="nc_get_vars_uchar")
-    import c_size_t, c_ptrdiff_t, c_int, c_signed_char
+    import c_int, c_size_t, c_signed_char, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -3175,7 +3175,7 @@ interface
   !> EXTERNL int nc_put_vars_schar(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, signed char * op)
   function nc_put_vars_schar(ncid, varid, startp, countp, stridep, op) &
     & bind(c, name="nc_put_vars_schar")
-    import c_size_t, c_ptrdiff_t, c_int, c_signed_char
+    import c_int, c_size_t, c_signed_char, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -3192,7 +3192,7 @@ interface
   !> EXTERNL int nc_get_vars_schar(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, signed char * ip)
   function nc_get_vars_schar(ncid, varid, startp, countp, stridep, ip) &
     & bind(c, name="nc_get_vars_schar")
-    import c_size_t, c_ptrdiff_t, c_int, c_signed_char
+    import c_int, c_size_t, c_signed_char, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -3209,7 +3209,7 @@ interface
   !> EXTERNL int nc_put_vars_short(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, short * op)
   function nc_put_vars_short(ncid, varid, startp, countp, stridep, op) &
     & bind(c, name="nc_put_vars_short")
-    import c_size_t, c_ptrdiff_t, c_int, c_short
+    import c_int, c_size_t, c_short, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -3226,7 +3226,7 @@ interface
   !> EXTERNL int nc_get_vars_short(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, short * ip)
   function nc_get_vars_short(ncid, varid, startp, countp, stridep, ip) &
     & bind(c, name="nc_get_vars_short")
-    import c_size_t, c_ptrdiff_t, c_int, c_short
+    import c_int, c_size_t, c_short, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -3243,7 +3243,7 @@ interface
   !> EXTERNL int nc_put_vars_int(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, int * op)
   function nc_put_vars_int(ncid, varid, startp, countp, stridep, op) &
     & bind(c, name="nc_put_vars_int")
-    import c_size_t, c_ptrdiff_t, c_int
+    import c_int, c_size_t, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -3260,7 +3260,7 @@ interface
   !> EXTERNL int nc_get_vars_int(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, int * ip)
   function nc_get_vars_int(ncid, varid, startp, countp, stridep, ip) &
     & bind(c, name="nc_get_vars_int")
-    import c_size_t, c_ptrdiff_t, c_int
+    import c_int, c_size_t, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -3277,7 +3277,7 @@ interface
   !> EXTERNL int nc_put_vars_long(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, long * op)
   function nc_put_vars_long(ncid, varid, startp, countp, stridep, op) &
     & bind(c, name="nc_put_vars_long")
-    import c_size_t, c_ptrdiff_t, c_int, c_long
+    import c_int, c_size_t, c_long, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -3294,7 +3294,7 @@ interface
   !> EXTERNL int nc_get_vars_long(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, long * ip)
   function nc_get_vars_long(ncid, varid, startp, countp, stridep, ip) &
     & bind(c, name="nc_get_vars_long")
-    import c_size_t, c_ptrdiff_t, c_int, c_long
+    import c_int, c_size_t, c_long, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -3311,7 +3311,7 @@ interface
   !> EXTERNL int nc_put_vars_float(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, float * op)
   function nc_put_vars_float(ncid, varid, startp, countp, stridep, op) &
     & bind(c, name="nc_put_vars_float")
-    import c_size_t, c_float, c_ptrdiff_t, c_int
+    import c_int, c_size_t, c_float, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -3328,7 +3328,7 @@ interface
   !> EXTERNL int nc_get_vars_float(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, float * ip)
   function nc_get_vars_float(ncid, varid, startp, countp, stridep, ip) &
     & bind(c, name="nc_get_vars_float")
-    import c_size_t, c_float, c_ptrdiff_t, c_int
+    import c_int, c_size_t, c_float, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -3345,7 +3345,7 @@ interface
   !> EXTERNL int nc_put_vars_double(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, double * op)
   function nc_put_vars_double(ncid, varid, startp, countp, stridep, op) &
     & bind(c, name="nc_put_vars_double")
-    import c_size_t, c_ptrdiff_t, c_int, c_double
+    import c_int, c_size_t, c_double, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -3362,7 +3362,7 @@ interface
   !> EXTERNL int nc_get_vars_double(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, double * ip)
   function nc_get_vars_double(ncid, varid, startp, countp, stridep, ip) &
     & bind(c, name="nc_get_vars_double")
-    import c_size_t, c_ptrdiff_t, c_int, c_double
+    import c_int, c_size_t, c_double, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -3379,7 +3379,7 @@ interface
   !> EXTERNL int nc_put_vars_ushort(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, unsigned short * op)
   function nc_put_vars_ushort(ncid, varid, startp, countp, stridep, op) &
     & bind(c, name="nc_put_vars_ushort")
-    import c_size_t, c_ptrdiff_t, c_int, c_short
+    import c_int, c_size_t, c_short, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -3396,7 +3396,7 @@ interface
   !> EXTERNL int nc_get_vars_ushort(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, unsigned short * ip)
   function nc_get_vars_ushort(ncid, varid, startp, countp, stridep, ip) &
     & bind(c, name="nc_get_vars_ushort")
-    import c_size_t, c_ptrdiff_t, c_int, c_short
+    import c_int, c_size_t, c_short, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -3413,7 +3413,7 @@ interface
   !> EXTERNL int nc_put_vars_uint(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, unsigned int * op)
   function nc_put_vars_uint(ncid, varid, startp, countp, stridep, op) &
     & bind(c, name="nc_put_vars_uint")
-    import c_size_t, c_ptrdiff_t, c_int
+    import c_int, c_size_t, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -3430,7 +3430,7 @@ interface
   !> EXTERNL int nc_get_vars_uint(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, unsigned int * ip)
   function nc_get_vars_uint(ncid, varid, startp, countp, stridep, ip) &
     & bind(c, name="nc_get_vars_uint")
-    import c_size_t, c_ptrdiff_t, c_int
+    import c_int, c_size_t, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -3447,7 +3447,7 @@ interface
   !> EXTERNL int nc_put_vars_longlong(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, long long * op)
   function nc_put_vars_longlong(ncid, varid, startp, countp, stridep, op) &
     & bind(c, name="nc_put_vars_longlong")
-    import c_size_t, c_ptrdiff_t, c_int, c_long_long
+    import c_int, c_size_t, c_long_long, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -3464,7 +3464,7 @@ interface
   !> EXTERNL int nc_get_vars_longlong(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, long long * ip)
   function nc_get_vars_longlong(ncid, varid, startp, countp, stridep, ip) &
     & bind(c, name="nc_get_vars_longlong")
-    import c_size_t, c_ptrdiff_t, c_int, c_long_long
+    import c_int, c_size_t, c_long_long, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -3481,7 +3481,7 @@ interface
   !> EXTERNL int nc_put_vars_ulonglong(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, unsigned long long * op)
   function nc_put_vars_ulonglong(ncid, varid, startp, countp, stridep, op) &
     & bind(c, name="nc_put_vars_ulonglong")
-    import c_size_t, c_ptrdiff_t, c_int, c_long_long
+    import c_int, c_size_t, c_long_long, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -3498,7 +3498,7 @@ interface
   !> EXTERNL int nc_get_vars_ulonglong(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, unsigned long long * ip)
   function nc_get_vars_ulonglong(ncid, varid, startp, countp, stridep, ip) &
     & bind(c, name="nc_get_vars_ulonglong")
-    import c_size_t, c_ptrdiff_t, c_int, c_long_long
+    import c_int, c_size_t, c_long_long, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -3515,7 +3515,7 @@ interface
   !> EXTERNL int nc_put_vars_string(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, char * * op)
   function nc_put_vars_string(ncid, varid, startp, countp, stridep, op) &
     & bind(c, name="nc_put_vars_string")
-    import c_size_t, c_ptrdiff_t, c_int, c_char
+    import c_int, c_size_t, c_char, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -3532,7 +3532,7 @@ interface
   !> EXTERNL int nc_get_vars_string(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, char * * ip)
   function nc_get_vars_string(ncid, varid, startp, countp, stridep, ip) &
     & bind(c, name="nc_get_vars_string")
-    import c_size_t, c_ptrdiff_t, c_int, c_char
+    import c_int, c_size_t, c_char, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -3549,7 +3549,7 @@ interface
   !> EXTERNL int nc_put_varm_text(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, ptrdiff_t * imapp, char * op)
   function nc_put_varm_text(ncid, varid, startp, countp, stridep, imapp, op) &
     & bind(c, name="nc_put_varm_text")
-    import c_size_t, c_ptrdiff_t, c_int, c_char
+    import c_int, c_size_t, c_char, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -3567,7 +3567,7 @@ interface
   !> EXTERNL int nc_get_varm_text(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, ptrdiff_t * imapp, char * ip)
   function nc_get_varm_text(ncid, varid, startp, countp, stridep, imapp, ip) &
     & bind(c, name="nc_get_varm_text")
-    import c_size_t, c_ptrdiff_t, c_int, c_char
+    import c_int, c_size_t, c_char, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -3585,7 +3585,7 @@ interface
   !> EXTERNL int nc_put_varm_uchar(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, ptrdiff_t * imapp, unsigned char * op)
   function nc_put_varm_uchar(ncid, varid, startp, countp, stridep, imapp, op) &
     & bind(c, name="nc_put_varm_uchar")
-    import c_size_t, c_ptrdiff_t, c_int, c_signed_char
+    import c_int, c_size_t, c_signed_char, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -3603,7 +3603,7 @@ interface
   !> EXTERNL int nc_get_varm_uchar(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, ptrdiff_t * imapp, unsigned char * ip)
   function nc_get_varm_uchar(ncid, varid, startp, countp, stridep, imapp, ip) &
     & bind(c, name="nc_get_varm_uchar")
-    import c_size_t, c_ptrdiff_t, c_int, c_signed_char
+    import c_int, c_size_t, c_signed_char, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -3621,7 +3621,7 @@ interface
   !> EXTERNL int nc_put_varm_schar(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, ptrdiff_t * imapp, signed char * op)
   function nc_put_varm_schar(ncid, varid, startp, countp, stridep, imapp, op) &
     & bind(c, name="nc_put_varm_schar")
-    import c_size_t, c_ptrdiff_t, c_int, c_signed_char
+    import c_int, c_size_t, c_signed_char, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -3639,7 +3639,7 @@ interface
   !> EXTERNL int nc_get_varm_schar(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, ptrdiff_t * imapp, signed char * ip)
   function nc_get_varm_schar(ncid, varid, startp, countp, stridep, imapp, ip) &
     & bind(c, name="nc_get_varm_schar")
-    import c_size_t, c_ptrdiff_t, c_int, c_signed_char
+    import c_int, c_size_t, c_signed_char, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -3657,7 +3657,7 @@ interface
   !> EXTERNL int nc_put_varm_short(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, ptrdiff_t * imapp, short * op)
   function nc_put_varm_short(ncid, varid, startp, countp, stridep, imapp, op) &
     & bind(c, name="nc_put_varm_short")
-    import c_size_t, c_ptrdiff_t, c_int, c_short
+    import c_int, c_size_t, c_short, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -3675,7 +3675,7 @@ interface
   !> EXTERNL int nc_get_varm_short(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, ptrdiff_t * imapp, short * ip)
   function nc_get_varm_short(ncid, varid, startp, countp, stridep, imapp, ip) &
     & bind(c, name="nc_get_varm_short")
-    import c_size_t, c_ptrdiff_t, c_int, c_short
+    import c_int, c_size_t, c_short, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -3693,7 +3693,7 @@ interface
   !> EXTERNL int nc_put_varm_int(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, ptrdiff_t * imapp, int * op)
   function nc_put_varm_int(ncid, varid, startp, countp, stridep, imapp, op) &
     & bind(c, name="nc_put_varm_int")
-    import c_size_t, c_ptrdiff_t, c_int
+    import c_int, c_size_t, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -3711,7 +3711,7 @@ interface
   !> EXTERNL int nc_get_varm_int(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, ptrdiff_t * imapp, int * ip)
   function nc_get_varm_int(ncid, varid, startp, countp, stridep, imapp, ip) &
     & bind(c, name="nc_get_varm_int")
-    import c_size_t, c_ptrdiff_t, c_int
+    import c_int, c_size_t, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -3729,7 +3729,7 @@ interface
   !> EXTERNL int nc_put_varm_long(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, ptrdiff_t * imapp, long * op)
   function nc_put_varm_long(ncid, varid, startp, countp, stridep, imapp, op) &
     & bind(c, name="nc_put_varm_long")
-    import c_size_t, c_ptrdiff_t, c_int, c_long
+    import c_int, c_size_t, c_long, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -3747,7 +3747,7 @@ interface
   !> EXTERNL int nc_get_varm_long(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, ptrdiff_t * imapp, long * ip)
   function nc_get_varm_long(ncid, varid, startp, countp, stridep, imapp, ip) &
     & bind(c, name="nc_get_varm_long")
-    import c_size_t, c_ptrdiff_t, c_int, c_long
+    import c_int, c_size_t, c_long, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -3765,7 +3765,7 @@ interface
   !> EXTERNL int nc_put_varm_float(int ncid, int varid,size_t * startp, size_t * countp, ptrdiff_t * stridep, ptrdiff_t * imapp, float * op)
   function nc_put_varm_float(ncid, varid, startp, countp, stridep, imapp, op) &
     & bind(c, name="nc_put_varm_float")
-    import c_size_t, c_float, c_ptrdiff_t, c_int
+    import c_int, c_size_t, c_float, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -3783,7 +3783,7 @@ interface
   !> EXTERNL int nc_get_varm_float(int ncid, int varid,size_t * startp, size_t * countp, ptrdiff_t * stridep, ptrdiff_t * imapp, float * ip)
   function nc_get_varm_float(ncid, varid, startp, countp, stridep, imapp, ip) &
     & bind(c, name="nc_get_varm_float")
-    import c_size_t, c_float, c_ptrdiff_t, c_int
+    import c_int, c_size_t, c_float, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -3801,7 +3801,7 @@ interface
   !> EXTERNL int nc_put_varm_double(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, ptrdiff_t * imapp, double * op)
   function nc_put_varm_double(ncid, varid, startp, countp, stridep, imapp, op) &
     & bind(c, name="nc_put_varm_double")
-    import c_size_t, c_ptrdiff_t, c_int, c_double
+    import c_int, c_size_t, c_double, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -3819,7 +3819,7 @@ interface
   !> EXTERNL int nc_get_varm_double(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, ptrdiff_t * imapp, double * ip)
   function nc_get_varm_double(ncid, varid, startp, countp, stridep, imapp, ip) &
     & bind(c, name="nc_get_varm_double")
-    import c_size_t, c_ptrdiff_t, c_int, c_double
+    import c_int, c_size_t, c_double, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -3837,7 +3837,7 @@ interface
   !> EXTERNL int nc_put_varm_ushort(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, ptrdiff_t * imapp, unsigned short * op)
   function nc_put_varm_ushort(ncid, varid, startp, countp, stridep, imapp, op) &
     & bind(c, name="nc_put_varm_ushort")
-    import c_size_t, c_ptrdiff_t, c_int, c_short
+    import c_int, c_size_t, c_short, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -3855,7 +3855,7 @@ interface
   !> EXTERNL int nc_get_varm_ushort(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, ptrdiff_t * imapp, unsigned short * ip)
   function nc_get_varm_ushort(ncid, varid, startp, countp, stridep, imapp, ip) &
     & bind(c, name="nc_get_varm_ushort")
-    import c_size_t, c_ptrdiff_t, c_int, c_short
+    import c_int, c_size_t, c_short, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -3873,7 +3873,7 @@ interface
   !> EXTERNL int nc_put_varm_uint(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, ptrdiff_t * imapp, unsigned int * op)
   function nc_put_varm_uint(ncid, varid, startp, countp, stridep, imapp, op) &
     & bind(c, name="nc_put_varm_uint")
-    import c_size_t, c_ptrdiff_t, c_int
+    import c_int, c_size_t, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -3891,7 +3891,7 @@ interface
   !> EXTERNL int nc_get_varm_uint(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, ptrdiff_t * imapp, unsigned int * ip)
   function nc_get_varm_uint(ncid, varid, startp, countp, stridep, imapp, ip) &
     & bind(c, name="nc_get_varm_uint")
-    import c_size_t, c_ptrdiff_t, c_int
+    import c_int, c_size_t, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -3909,7 +3909,7 @@ interface
   !> EXTERNL int nc_put_varm_longlong(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, ptrdiff_t * imapp, long long * op)
   function nc_put_varm_longlong(ncid, varid, startp, countp, stridep, imapp, op) &
     & bind(c, name="nc_put_varm_longlong")
-    import c_size_t, c_ptrdiff_t, c_int, c_long_long
+    import c_int, c_size_t, c_long_long, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -3927,7 +3927,7 @@ interface
   !> EXTERNL int nc_get_varm_longlong(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, ptrdiff_t * imapp, long long * ip)
   function nc_get_varm_longlong(ncid, varid, startp, countp, stridep, imapp, ip) &
     & bind(c, name="nc_get_varm_longlong")
-    import c_size_t, c_ptrdiff_t, c_int, c_long_long
+    import c_int, c_size_t, c_long_long, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -3945,7 +3945,7 @@ interface
   !> EXTERNL int nc_put_varm_ulonglong(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, ptrdiff_t * imapp, unsigned long long * op)
   function nc_put_varm_ulonglong(ncid, varid, startp, countp, stridep, imapp, op) &
     & bind(c, name="nc_put_varm_ulonglong")
-    import c_size_t, c_ptrdiff_t, c_int, c_long_long
+    import c_int, c_size_t, c_long_long, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -3963,7 +3963,7 @@ interface
   !> EXTERNL int nc_get_varm_ulonglong(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, ptrdiff_t * imapp, unsigned long long * ip)
   function nc_get_varm_ulonglong(ncid, varid, startp, countp, stridep, imapp, ip) &
     & bind(c, name="nc_get_varm_ulonglong")
-    import c_size_t, c_ptrdiff_t, c_int, c_long_long
+    import c_int, c_size_t, c_long_long, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -3981,7 +3981,7 @@ interface
   !> EXTERNL int nc_put_varm_string(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, ptrdiff_t * imapp, char * * op)
   function nc_put_varm_string(ncid, varid, startp, countp, stridep, imapp, op) &
     & bind(c, name="nc_put_varm_string")
-    import c_size_t, c_ptrdiff_t, c_int, c_char
+    import c_int, c_size_t, c_char, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -3999,7 +3999,7 @@ interface
   !> EXTERNL int nc_get_varm_string(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, ptrdiff_t * imapp, char * * ip)
   function nc_get_varm_string(ncid, varid, startp, countp, stridep, imapp, ip) &
     & bind(c, name="nc_get_varm_string")
-    import c_size_t, c_ptrdiff_t, c_int, c_char
+    import c_int, c_size_t, c_char, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -4101,7 +4101,7 @@ interface
   !> EXTERNL int nc_put_var_short(int ncid, int varid, short * op)
   function nc_put_var_short(ncid, varid, op) &
     & bind(c, name="nc_put_var_short")
-    import c_short, c_int
+    import c_int, c_short
     implicit none
 
     integer(c_int), value :: ncid
@@ -4115,7 +4115,7 @@ interface
   !> EXTERNL int nc_get_var_short(int ncid, int varid, short * ip)
   function nc_get_var_short(ncid, varid, ip) &
     & bind(c, name="nc_get_var_short")
-    import c_short, c_int
+    import c_int, c_short
     implicit none
 
     integer(c_int), value :: ncid
@@ -4157,7 +4157,7 @@ interface
   !> EXTERNL int nc_put_var_long(int ncid, int varid, long * op)
   function nc_put_var_long(ncid, varid, op) &
     & bind(c, name="nc_put_var_long")
-    import c_long, c_int
+    import c_int, c_long
     implicit none
 
     integer(c_int), value :: ncid
@@ -4171,7 +4171,7 @@ interface
   !> EXTERNL int nc_get_var_long(int ncid, int varid, long * ip)
   function nc_get_var_long(ncid, varid, ip) &
     & bind(c, name="nc_get_var_long")
-    import c_long, c_int
+    import c_int, c_long
     implicit none
 
     integer(c_int), value :: ncid
@@ -4185,7 +4185,7 @@ interface
   !> EXTERNL int nc_put_var_float(int ncid, int varid, float * op)
   function nc_put_var_float(ncid, varid, op) &
     & bind(c, name="nc_put_var_float")
-    import c_float, c_int
+    import c_int, c_float
     implicit none
 
     integer(c_int), value :: ncid
@@ -4199,7 +4199,7 @@ interface
   !> EXTERNL int nc_get_var_float(int ncid, int varid, float * ip)
   function nc_get_var_float(ncid, varid, ip) &
     & bind(c, name="nc_get_var_float")
-    import c_float, c_int
+    import c_int, c_float
     implicit none
 
     integer(c_int), value :: ncid
@@ -4213,7 +4213,7 @@ interface
   !> EXTERNL int nc_put_var_double(int ncid, int varid, double * op)
   function nc_put_var_double(ncid, varid, op) &
     & bind(c, name="nc_put_var_double")
-    import c_double, c_int
+    import c_int, c_double
     implicit none
 
     integer(c_int), value :: ncid
@@ -4227,7 +4227,7 @@ interface
   !> EXTERNL int nc_get_var_double(int ncid, int varid, double * ip)
   function nc_get_var_double(ncid, varid, ip) &
     & bind(c, name="nc_get_var_double")
-    import c_double, c_int
+    import c_int, c_double
     implicit none
 
     integer(c_int), value :: ncid
@@ -4241,7 +4241,7 @@ interface
   !> EXTERNL int nc_put_var_ushort(int ncid, int varid, unsigned short * op)
   function nc_put_var_ushort(ncid, varid, op) &
     & bind(c, name="nc_put_var_ushort")
-    import c_short, c_int
+    import c_int, c_short
     implicit none
 
     integer(c_int), value :: ncid
@@ -4255,7 +4255,7 @@ interface
   !> EXTERNL int nc_get_var_ushort(int ncid, int varid, unsigned short * ip)
   function nc_get_var_ushort(ncid, varid, ip) &
     & bind(c, name="nc_get_var_ushort")
-    import c_short, c_int
+    import c_int, c_short
     implicit none
 
     integer(c_int), value :: ncid
@@ -4297,7 +4297,7 @@ interface
   !> EXTERNL int nc_put_var_longlong(int ncid, int varid, long long * op)
   function nc_put_var_longlong(ncid, varid, op) &
     & bind(c, name="nc_put_var_longlong")
-    import c_long_long, c_int
+    import c_int, c_long_long
     implicit none
 
     integer(c_int), value :: ncid
@@ -4311,7 +4311,7 @@ interface
   !> EXTERNL int nc_get_var_longlong(int ncid, int varid, long long * ip)
   function nc_get_var_longlong(ncid, varid, ip) &
     & bind(c, name="nc_get_var_longlong")
-    import c_long_long, c_int
+    import c_int, c_long_long
     implicit none
 
     integer(c_int), value :: ncid
@@ -4325,7 +4325,7 @@ interface
   !> EXTERNL int nc_put_var_ulonglong(int ncid, int varid, unsigned long long * op)
   function nc_put_var_ulonglong(ncid, varid, op) &
     & bind(c, name="nc_put_var_ulonglong")
-    import c_long_long, c_int
+    import c_int, c_long_long
     implicit none
 
     integer(c_int), value :: ncid
@@ -4339,7 +4339,7 @@ interface
   !> EXTERNL int nc_get_var_ulonglong(int ncid, int varid, unsigned long long * ip)
   function nc_get_var_ulonglong(ncid, varid, ip) &
     & bind(c, name="nc_get_var_ulonglong")
-    import c_long_long, c_int
+    import c_int, c_long_long
     implicit none
 
     integer(c_int), value :: ncid
@@ -4381,7 +4381,7 @@ interface
   !> EXTERNL int nc_reclaim_data(int ncid, nc_type xtypeid, void * memory, size_t count)
   function nc_reclaim_data(ncid, xtypeid, memory, count) &
     & bind(c, name="nc_reclaim_data")
-    import nc_type, c_size_t, c_int, c_ptr
+    import c_int, c_size_t, c_ptr, nc_type
     implicit none
 
     integer(c_int), value :: ncid
@@ -4396,7 +4396,7 @@ interface
   !> EXTERNL int nc_reclaim_data_all(int ncid, nc_type xtypeid, void * memory, size_t count)
   function nc_reclaim_data_all(ncid, xtypeid, memory, count) &
     & bind(c, name="nc_reclaim_data_all")
-    import nc_type, c_size_t, c_int, c_ptr
+    import c_int, c_size_t, c_ptr, nc_type
     implicit none
 
     integer(c_int), value :: ncid
@@ -4411,7 +4411,7 @@ interface
   !> EXTERNL int nc_copy_data(int ncid, nc_type xtypeid, void * memory, size_t count, void * copy)
   function nc_copy_data(ncid, xtypeid, memory, count, copy) &
     & bind(c, name="nc_copy_data")
-    import nc_type, c_size_t, c_int, c_ptr
+    import c_int, c_size_t, c_ptr, nc_type
     implicit none
 
     integer(c_int), value :: ncid
@@ -4427,7 +4427,7 @@ interface
   !> EXTERNL int nc_copy_data_all(int ncid, nc_type xtypeid, void * memory, size_t count, void * * copyp)
   function nc_copy_data_all(ncid, xtypeid, memory, count, copyp) &
     & bind(c, name="nc_copy_data_all")
-    import nc_type, c_size_t, c_int, c_ptr
+    import c_int, c_size_t, c_ptr, nc_type
     implicit none
 
     integer(c_int), value :: ncid
@@ -4443,7 +4443,7 @@ interface
   !> EXTERNL int nc_dump_data(int ncid, nc_type xtypeid, void * memory, size_t count, char * * buf)
   function nc_dump_data(ncid, xtypeid, memory, count, buf) &
     & bind(c, name="nc_dump_data")
-    import nc_type, c_char, c_int, c_size_t, c_ptr
+    import nc_type, c_size_t, c_ptr, c_int, c_char
     implicit none
 
     integer(c_int), value :: ncid
@@ -4459,7 +4459,7 @@ interface
   !> EXTERNL int nc_put_att_ubyte(int ncid, int varid, char * name, nc_type xtype, size_t len, unsigned char * op)
   function nc_put_att_ubyte(ncid, varid, name, xtype, len, op) &
     & bind(c, name="nc_put_att_ubyte")
-    import nc_type, c_char, c_int, c_size_t, c_signed_char
+    import c_signed_char, c_size_t, nc_type, c_int, c_char
     implicit none
 
     integer(c_int), value :: ncid
@@ -4476,7 +4476,7 @@ interface
   !> EXTERNL int nc_get_att_ubyte(int ncid, int varid, char * name, unsigned char * ip)
   function nc_get_att_ubyte(ncid, varid, name, ip) &
     & bind(c, name="nc_get_att_ubyte")
-    import c_signed_char, c_int, c_char
+    import c_int, c_char, c_signed_char
     implicit none
 
     integer(c_int), value :: ncid
@@ -4491,7 +4491,7 @@ interface
   !> EXTERNL int nc_put_var1_ubyte(int ncid, int varid, size_t * indexp, unsigned char * op)
   function nc_put_var1_ubyte(ncid, varid, indexp, op) &
     & bind(c, name="nc_put_var1_ubyte")
-    import c_size_t, c_int, c_signed_char
+    import c_int, c_size_t, c_signed_char
     implicit none
 
     integer(c_int), value :: ncid
@@ -4506,7 +4506,7 @@ interface
   !> EXTERNL int nc_get_var1_ubyte(int ncid, int varid, size_t * indexp, unsigned char * ip)
   function nc_get_var1_ubyte(ncid, varid, indexp, ip) &
     & bind(c, name="nc_get_var1_ubyte")
-    import c_size_t, c_int, c_signed_char
+    import c_int, c_size_t, c_signed_char
     implicit none
 
     integer(c_int), value :: ncid
@@ -4521,7 +4521,7 @@ interface
   !> EXTERNL int nc_put_vara_ubyte(int ncid, int varid, size_t * startp, size_t * countp, unsigned char * op)
   function nc_put_vara_ubyte(ncid, varid, startp, countp, op) &
     & bind(c, name="nc_put_vara_ubyte")
-    import c_size_t, c_int, c_signed_char
+    import c_int, c_size_t, c_signed_char
     implicit none
 
     integer(c_int), value :: ncid
@@ -4537,7 +4537,7 @@ interface
   !> EXTERNL int nc_get_vara_ubyte(int ncid, int varid, size_t * startp, size_t * countp, unsigned char * ip)
   function nc_get_vara_ubyte(ncid, varid, startp, countp, ip) &
     & bind(c, name="nc_get_vara_ubyte")
-    import c_size_t, c_int, c_signed_char
+    import c_int, c_size_t, c_signed_char
     implicit none
 
     integer(c_int), value :: ncid
@@ -4553,7 +4553,7 @@ interface
   !> EXTERNL int nc_put_vars_ubyte(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, unsigned char * op)
   function nc_put_vars_ubyte(ncid, varid, startp, countp, stridep, op) &
     & bind(c, name="nc_put_vars_ubyte")
-    import c_size_t, c_ptrdiff_t, c_int, c_signed_char
+    import c_int, c_size_t, c_signed_char, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -4570,7 +4570,7 @@ interface
   !> EXTERNL int nc_get_vars_ubyte(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, unsigned char * ip)
   function nc_get_vars_ubyte(ncid, varid, startp, countp, stridep, ip) &
     & bind(c, name="nc_get_vars_ubyte")
-    import c_size_t, c_ptrdiff_t, c_int, c_signed_char
+    import c_int, c_size_t, c_signed_char, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -4587,7 +4587,7 @@ interface
   !> EXTERNL int nc_put_varm_ubyte(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, ptrdiff_t * imapp, unsigned char * op)
   function nc_put_varm_ubyte(ncid, varid, startp, countp, stridep, imapp, op) &
     & bind(c, name="nc_put_varm_ubyte")
-    import c_size_t, c_ptrdiff_t, c_int, c_signed_char
+    import c_int, c_size_t, c_signed_char, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -4605,7 +4605,7 @@ interface
   !> EXTERNL int nc_get_varm_ubyte(int ncid, int varid, size_t * startp, size_t * countp, ptrdiff_t * stridep, ptrdiff_t * imapp, unsigned char * ip)
   function nc_get_varm_ubyte(ncid, varid, startp, countp, stridep, imapp, ip) &
     & bind(c, name="nc_get_varm_ubyte")
-    import c_size_t, c_ptrdiff_t, c_int, c_signed_char
+    import c_int, c_size_t, c_signed_char, c_ptrdiff_t
     implicit none
 
     integer(c_int), value :: ncid
@@ -4687,7 +4687,7 @@ interface
   !> EXTERNL int nc__create_mp(char * path, int cmode, size_t initialsz, int basepe, size_t * chunksizehintp, int * ncidp)
   function nc__create_mp(path, cmode, initialsz, basepe, chunksizehintp, ncidp) &
     & bind(c, name="nc__create_mp")
-    import c_size_t, c_int, c_char
+    import c_int, c_size_t, c_char
     implicit none
 
     character(kind=c_char), dimension(*) :: path
@@ -4704,7 +4704,7 @@ interface
   !> EXTERNL int nc__open_mp(char * path, int mode, int basepe, size_t * chunksizehintp, int * ncidp)
   function nc__open_mp(path, mode, basepe, chunksizehintp, ncidp) &
     & bind(c, name="nc__open_mp")
-    import c_size_t, c_int, c_char
+    import c_int, c_size_t, c_char
     implicit none
 
     character(kind=c_char), dimension(*) :: path
@@ -4759,7 +4759,7 @@ interface
   !> EXTERNL int nctypelen(nc_type datatype)
   function nctypelen(datatype) &
     & bind(c, name="nctypelen")
-    import c_int, nc_type
+    import nc_type, c_int
     implicit none
 
     integer(nc_type), value :: datatype

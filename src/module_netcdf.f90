@@ -62,7 +62,7 @@ end type group_type
 !> Attribute type
 type :: attribute_type
   character(:), allocatable :: name
-  integer(int64) :: length = 0
+  integer(c_size_t) :: length = 0
   integer(c_int) :: type = 0
   class(*), allocatable :: values(:)
 end type attribute_type
@@ -70,7 +70,7 @@ end type attribute_type
 !> Dimension type
 type :: dimension_type
   character(:), allocatable :: name
-  integer(int64) :: length = 0
+  integer(c_size_t) :: length = 0
   logical :: is_unlimited = .false.
   integer(c_int) :: id = 0
 end type dimension_type
