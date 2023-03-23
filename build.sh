@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
-src="./src"
-interface="./interface"
+repodir=$(pwd)
+src="${repodir}/src"
+preproc="${repodir}/preproc"
+interface="${repodir}/interface"
 num_ranks="4"
-fypp_files=(\
-  "module_netcdf" "submodule_attribute" "submodule_variable")
+fypp_files=("module_netcdf" "submodule_attribute" "submodule_variable")
 
 while true; do
   case "$1" in
@@ -30,13 +31,14 @@ while true; do
   esac
 done
 
-cd ${src}
+cd ${preproc}
 for fypp_file in ${fypp_files[@]}; do
-  echo "fypp ${fypp_file}.fypp ${fypp_file}.f90"
-  fypp -D num_ranks=${num_ranks} ${fypp_file}.fypp ${fypp_file}.f90
+  echo "fypp ${fypp_file}.fypp ${src}/${fypp_file}.f90"
+  fypp -D num_ranks=${num_ranks} ${fypp_file}.fypp ${src}/${fypp_file}.f90
 done
 echo "python module_interface.py"
 python module_interface.py
+mv module_interface.f90 ${src}
 cd ..
 
 fpm build
