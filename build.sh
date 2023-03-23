@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 src="./src"
 interface="./interface"
+num_ranks="4"
 fypp_files=(\
   "module_netcdf" "submodule_attribute" "submodule_variable")
 
@@ -32,10 +33,10 @@ done
 cd ${src}
 for fypp_file in ${fypp_files[@]}; do
   echo "fypp ${fypp_file}.fypp ${fypp_file}.f90"
-  fypp ${fypp_file}.fypp ${fypp_file}.f90
+  fypp -D num_ranks=${num_ranks} ${fypp_file}.fypp ${fypp_file}.f90
 done
-echo "python interface.py"
-python interface.py
+echo "python module_interface.py"
+python module_interface.py
 cd ..
 
 fpm build

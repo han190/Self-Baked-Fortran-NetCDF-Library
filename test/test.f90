@@ -12,8 +12,9 @@ integer :: i
 real(real64) :: add_offset, scale_factor
 real(real64), allocatable :: arr(:, :, :)
 
-nc = dataset("./data/sresa1b_ncar_ccsm3-example.nc", "r")
-var = get_var(nc, "tas")
+nc = dataset("./data/t2m_2023_01.nc", "r")
+var = get_var(nc, "t2m")
 print "(a, *(i0, 1x))", "shape(var): ", shape(var)
+print *, var%type
 
 end program main

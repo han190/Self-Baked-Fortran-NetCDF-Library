@@ -1,4 +1,4 @@
-#:include "common.fypp"
+#:include "module_common.fypp"
 submodule(module_netcdf) submodule_variable
 
 implicit none
@@ -10,7 +10,6 @@ module function get_var(group, name) result(variable)
   character(*), intent(in) :: name
   type(variable_type) :: variable
   integer :: status
-  integer, allocatable :: s(:) !> shape
 
   !> Inquire variable ID
   variable%name = name
@@ -33,7 +32,6 @@ end function get_var
 subroutine get_var_(group, variable)
   type(group_type), intent(inout) :: group
   type(variable_type), intent(inout) :: variable
-  integer, allocatable :: s(:) !> shape
   integer(c_int) :: status
 
   if (.not. associated(variable%dimensions)) &
@@ -58,11 +56,10 @@ subroutine get_var_(group, variable)
     #:for rank in ranks
     type is (container_${rank}$d)
 
-      s = shape(variable%dimensions)
-      #: set n = int(rank)
-      allocate (${kind}$ :: container_%data( &
-        & #{for i in range(n - 1)}#s(${i + 1}$), #{endfor}#s(${n}$)))
-      #: del n
+      associate (s => shape(variable%dimensions))
+      #: set shp = ", ".join(["s({})".format(i + 1) for i in range(int(rank))])
+        allocate (${kind}$ :: container_%data(${shp}$))
+      end associate
       select type (data_ => container_%data)
       type is (${kind}$)
         status = ${get_var}$ (group%id, variable%id, data_)

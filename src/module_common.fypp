@@ -1,6 +1,6 @@
 #:mute
 
-  #:set ranks = ['1', '2', '3', '4']
+  #:set ranks = [str(i + 1) for i in range(num_ranks)]
   #:set kinds = ['integer(int16)', 'integer(int32)', 'integer(int64)', 'real(real32)', 'real(real64)']
   #:set nc_kinds = ['nc_short', 'nc_int', 'nc_int64', 'nc_float', 'nc_double']
   #:set kind_names = ['short', 'int', 'longlong', 'float', 'double']

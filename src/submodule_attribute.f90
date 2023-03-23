@@ -1,4 +1,3 @@
-#:include "module_common.fypp"
 submodule(module_netcdf) submodule_attribute
 
 implicit none
@@ -54,21 +53,37 @@ subroutine get_var_att_(group, variable)
       select case (attr%type)
       case (nc_char)
         allocate (character(kind=c_char, len=attr%length) :: attr%values(1))
-      #: for nc_kind, kind in zip(nc_kinds, kinds)
-      case (${nc_kind}$)
-        allocate (${kind}$ :: attr%values(attr%length))
-      #: endfor
+      case (nc_short)
+        allocate (integer(int16) :: attr%values(attr%length))
+      case (nc_int)
+        allocate (integer(int32) :: attr%values(attr%length))
+      case (nc_int64)
+        allocate (integer(int64) :: attr%values(attr%length))
+      case (nc_float)
+        allocate (real(real32) :: attr%values(attr%length))
+      case (nc_double)
+        allocate (real(real64) :: attr%values(attr%length))
       end select
 
       select type (values_ => attr%values)
       type is (character(kind=c_char, len=*))
         status = nc_get_att_text(group%id, variable%id, attr%name, values_(1))
         call handle_error(status, "nc_get_att_text")
-      #: for kind, get_att in zip(kinds, get_atts)
-      type is (${kind}$)
-        status = ${get_att}$(group%id, variable%id, attr%name, values_)
-        call handle_error(status, "${get_att}$")
-      #: endfor
+      type is (integer(int16))
+        status = nc_get_att_short(group%id, variable%id, attr%name, values_)
+        call handle_error(status, "nc_get_att_short")
+      type is (integer(int32))
+        status = nc_get_att_int(group%id, variable%id, attr%name, values_)
+        call handle_error(status, "nc_get_att_int")
+      type is (integer(int64))
+        status = nc_get_att_longlong(group%id, variable%id, attr%name, values_)
+        call handle_error(status, "nc_get_att_longlong")
+      type is (real(real32))
+        status = nc_get_att_float(group%id, variable%id, attr%name, values_)
+        call handle_error(status, "nc_get_att_float")
+      type is (real(real64))
+        status = nc_get_att_double(group%id, variable%id, attr%name, values_)
+        call handle_error(status, "nc_get_att_double")
       end select
     end associate
   end do

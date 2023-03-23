@@ -1,4 +1,3 @@
-#:include "module_common.fypp"
 module module_netcdf
 
 use iso_fortran_env, only: int8, int16, int32, int64, real32, real64
@@ -30,12 +29,18 @@ private
 !> Data container
 type, abstract :: container_type
 end type container_type
-#:for rank in ranks
-#:set colons = ":" + (int(rank) - 1)*"{}".format(", :")
-type, extends(container_type) :: container_${rank}$d
-  class(*), allocatable :: data(${colons}$)
-end type container_${rank}$d
-#:endfor
+type, extends(container_type) :: container_1d
+  class(*), allocatable :: data(:)
+end type container_1d
+type, extends(container_type) :: container_2d
+  class(*), allocatable :: data(:, :)
+end type container_2d
+type, extends(container_type) :: container_3d
+  class(*), allocatable :: data(:, :, :)
+end type container_3d
+type, extends(container_type) :: container_4d
+  class(*), allocatable :: data(:, :, :, :)
+end type container_4d
 
 !> File
 type, abstract :: file_type
