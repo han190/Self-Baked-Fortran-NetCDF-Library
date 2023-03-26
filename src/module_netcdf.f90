@@ -11,36 +11,17 @@ public :: group_type
 public :: attribute_type
 public :: dimension_type
 public :: variable_type
-public :: container_type
-public :: container_1d
-public :: container_3d
 
 public :: dataset
 public :: get_var
+public :: extract
 public :: close
 public :: shape
-public :: operator(.att.)
 public :: write (formatted)
 private
 
 !> The data model follows the netCDF data model introduced
 !> https://docs.unidata.ucar.edu/netcdf-c/current/netcdf_data_model.html
-
-!> Data container
-type, abstract :: container_type
-end type container_type
-type, extends(container_type) :: container_1d
-  class(*), allocatable :: data(:)
-end type container_1d
-type, extends(container_type) :: container_2d
-  class(*), allocatable :: data(:, :)
-end type container_2d
-type, extends(container_type) :: container_3d
-  class(*), allocatable :: data(:, :, :)
-end type container_3d
-type, extends(container_type) :: container_4d
-  class(*), allocatable :: data(:, :, :, :)
-end type container_4d
 
 !> File
 type, abstract :: file_type
@@ -80,7 +61,7 @@ type :: variable_type
   character(:), allocatable :: name
   type(dimension_type), pointer :: dimensions(:) => null()
   type(attribute_type), allocatable :: attributes(:)
-  class(container_type), allocatable :: container
+  class(*), allocatable :: values(:)
   integer(c_int) :: type = 0
   integer(c_int) :: id = 0
 end type variable_type
@@ -107,6 +88,10 @@ end interface inquire_dimensions
 interface inquire_attributes
   module procedure :: inquire_variable_attributes
 end interface inquire_attributes
+
+interface extract
+  module procedure :: extract_variable
+end interface extract
 
 !> Interface to submodules
 interface
@@ -156,6 +141,12 @@ interface
     integer, intent(in) :: status
     character(*), intent(in), optional :: error_message
   end subroutine handle_error
+
+  !> Extract data
+  module subroutine extract_variable(variable, data)
+    type(variable_type), intent(inout) :: variable
+    class(*), allocatable, intent(out) :: data(..)
+  end subroutine extract_variable
 
   !> Strip c string
   module function strip(cstring, nlen) result(string)

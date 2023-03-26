@@ -36,269 +36,271 @@ subroutine get_var_(group, variable)
   if (.not. associated(variable%dimensions)) &
     error stop "Dimensions not associated."
 
-  !> Select rank.
-  select case (size(variable%dimensions))
-  case (1)
-    allocate (container_1d :: variable%container)
-  case (2)
-    allocate (container_2d :: variable%container)
-  case (3)
-    allocate (container_3d :: variable%container)
-  case (4)
-    allocate (container_4d :: variable%container)
-  case default
-    error stop "Invalid data rank."
-  end select
-
   !> Select type
   select case (variable%type)
   case (nc_short)
 
-    select type (container_ => variable%container)
-    type is (container_1d)
-
-      associate (s => shape(variable%dimensions))
-        allocate (integer(int16) :: container_%data(s(1)))
-      end associate
-      select type (data_ => container_%data)
-      type is (integer(int16))
-        status = nc_get_var_short (group%id, variable%id, data_)
-        call handle_error(status, "nc_get_var_short")
-      end select
-
-    type is (container_2d)
-
-      associate (s => shape(variable%dimensions))
-        allocate (integer(int16) :: container_%data(s(1), s(2)))
-      end associate
-      select type (data_ => container_%data)
-      type is (integer(int16))
-        status = nc_get_var_short (group%id, variable%id, data_)
-        call handle_error(status, "nc_get_var_short")
-      end select
-
-    type is (container_3d)
-
-      associate (s => shape(variable%dimensions))
-        allocate (integer(int16) :: container_%data(s(1), s(2), s(3)))
-      end associate
-      select type (data_ => container_%data)
-      type is (integer(int16))
-        status = nc_get_var_short (group%id, variable%id, data_)
-        call handle_error(status, "nc_get_var_short")
-      end select
-
-    type is (container_4d)
-
-      associate (s => shape(variable%dimensions))
-        allocate (integer(int16) :: container_%data(s(1), s(2), s(3), s(4)))
-      end associate
-      select type (data_ => container_%data)
-      type is (integer(int16))
-        status = nc_get_var_short (group%id, variable%id, data_)
-        call handle_error(status, "nc_get_var_short")
-      end select
-
+    associate (s => product(shape(variable%dimensions)))
+      allocate (integer(int16) :: variable%values(s))
+    end associate
+    select type (values_ => variable%values)
+    type is (integer(int16))
+      status = nc_get_var_short(group%id, variable%id, values_)
+      call handle_error(status, "nc_get_var_short")
     end select
 
   case (nc_int)
 
-    select type (container_ => variable%container)
-    type is (container_1d)
-
-      associate (s => shape(variable%dimensions))
-        allocate (integer(int32) :: container_%data(s(1)))
-      end associate
-      select type (data_ => container_%data)
-      type is (integer(int32))
-        status = nc_get_var_int (group%id, variable%id, data_)
-        call handle_error(status, "nc_get_var_int")
-      end select
-
-    type is (container_2d)
-
-      associate (s => shape(variable%dimensions))
-        allocate (integer(int32) :: container_%data(s(1), s(2)))
-      end associate
-      select type (data_ => container_%data)
-      type is (integer(int32))
-        status = nc_get_var_int (group%id, variable%id, data_)
-        call handle_error(status, "nc_get_var_int")
-      end select
-
-    type is (container_3d)
-
-      associate (s => shape(variable%dimensions))
-        allocate (integer(int32) :: container_%data(s(1), s(2), s(3)))
-      end associate
-      select type (data_ => container_%data)
-      type is (integer(int32))
-        status = nc_get_var_int (group%id, variable%id, data_)
-        call handle_error(status, "nc_get_var_int")
-      end select
-
-    type is (container_4d)
-
-      associate (s => shape(variable%dimensions))
-        allocate (integer(int32) :: container_%data(s(1), s(2), s(3), s(4)))
-      end associate
-      select type (data_ => container_%data)
-      type is (integer(int32))
-        status = nc_get_var_int (group%id, variable%id, data_)
-        call handle_error(status, "nc_get_var_int")
-      end select
-
+    associate (s => product(shape(variable%dimensions)))
+      allocate (integer(int32) :: variable%values(s))
+    end associate
+    select type (values_ => variable%values)
+    type is (integer(int32))
+      status = nc_get_var_int(group%id, variable%id, values_)
+      call handle_error(status, "nc_get_var_int")
     end select
 
   case (nc_int64)
 
-    select type (container_ => variable%container)
-    type is (container_1d)
-
-      associate (s => shape(variable%dimensions))
-        allocate (integer(int64) :: container_%data(s(1)))
-      end associate
-      select type (data_ => container_%data)
-      type is (integer(int64))
-        status = nc_get_var_longlong (group%id, variable%id, data_)
-        call handle_error(status, "nc_get_var_longlong")
-      end select
-
-    type is (container_2d)
-
-      associate (s => shape(variable%dimensions))
-        allocate (integer(int64) :: container_%data(s(1), s(2)))
-      end associate
-      select type (data_ => container_%data)
-      type is (integer(int64))
-        status = nc_get_var_longlong (group%id, variable%id, data_)
-        call handle_error(status, "nc_get_var_longlong")
-      end select
-
-    type is (container_3d)
-
-      associate (s => shape(variable%dimensions))
-        allocate (integer(int64) :: container_%data(s(1), s(2), s(3)))
-      end associate
-      select type (data_ => container_%data)
-      type is (integer(int64))
-        status = nc_get_var_longlong (group%id, variable%id, data_)
-        call handle_error(status, "nc_get_var_longlong")
-      end select
-
-    type is (container_4d)
-
-      associate (s => shape(variable%dimensions))
-        allocate (integer(int64) :: container_%data(s(1), s(2), s(3), s(4)))
-      end associate
-      select type (data_ => container_%data)
-      type is (integer(int64))
-        status = nc_get_var_longlong (group%id, variable%id, data_)
-        call handle_error(status, "nc_get_var_longlong")
-      end select
-
+    associate (s => product(shape(variable%dimensions)))
+      allocate (integer(int64) :: variable%values(s))
+    end associate
+    select type (values_ => variable%values)
+    type is (integer(int64))
+      status = nc_get_var_longlong(group%id, variable%id, values_)
+      call handle_error(status, "nc_get_var_longlong")
     end select
 
   case (nc_float)
 
-    select type (container_ => variable%container)
-    type is (container_1d)
-
-      associate (s => shape(variable%dimensions))
-        allocate (real(real32) :: container_%data(s(1)))
-      end associate
-      select type (data_ => container_%data)
-      type is (real(real32))
-        status = nc_get_var_float (group%id, variable%id, data_)
-        call handle_error(status, "nc_get_var_float")
-      end select
-
-    type is (container_2d)
-
-      associate (s => shape(variable%dimensions))
-        allocate (real(real32) :: container_%data(s(1), s(2)))
-      end associate
-      select type (data_ => container_%data)
-      type is (real(real32))
-        status = nc_get_var_float (group%id, variable%id, data_)
-        call handle_error(status, "nc_get_var_float")
-      end select
-
-    type is (container_3d)
-
-      associate (s => shape(variable%dimensions))
-        allocate (real(real32) :: container_%data(s(1), s(2), s(3)))
-      end associate
-      select type (data_ => container_%data)
-      type is (real(real32))
-        status = nc_get_var_float (group%id, variable%id, data_)
-        call handle_error(status, "nc_get_var_float")
-      end select
-
-    type is (container_4d)
-
-      associate (s => shape(variable%dimensions))
-        allocate (real(real32) :: container_%data(s(1), s(2), s(3), s(4)))
-      end associate
-      select type (data_ => container_%data)
-      type is (real(real32))
-        status = nc_get_var_float (group%id, variable%id, data_)
-        call handle_error(status, "nc_get_var_float")
-      end select
-
+    associate (s => product(shape(variable%dimensions)))
+      allocate (real(real32) :: variable%values(s))
+    end associate
+    select type (values_ => variable%values)
+    type is (real(real32))
+      status = nc_get_var_float(group%id, variable%id, values_)
+      call handle_error(status, "nc_get_var_float")
     end select
 
   case (nc_double)
 
-    select type (container_ => variable%container)
-    type is (container_1d)
+    associate (s => product(shape(variable%dimensions)))
+      allocate (real(real64) :: variable%values(s))
+    end associate
+    select type (values_ => variable%values)
+    type is (real(real64))
+      status = nc_get_var_double(group%id, variable%id, values_)
+      call handle_error(status, "nc_get_var_double")
+    end select
 
-      associate (s => shape(variable%dimensions))
-        allocate (real(real64) :: container_%data(s(1)))
-      end associate
-      select type (data_ => container_%data)
-      type is (real(real64))
-        status = nc_get_var_double (group%id, variable%id, data_)
-        call handle_error(status, "nc_get_var_double")
+  end select
+end subroutine get_var_
+
+!> Extract data
+module subroutine extract_variable(variable, data)
+  type(variable_type), intent(inout) :: variable
+  class(*), allocatable, intent(out) :: data(..)
+  integer(int64), allocatable :: s(:)
+
+  ! if (.not. allocated(variable%values)) &
+  !   & call get_var_(group, variable)
+
+  s = shape(variable%dimensions)
+  select rank (data)
+  rank (1)
+
+    if (size(variable%dimensions) /= rank(data)) &
+      & error stop "Invalid rank of data."
+
+    select type (values_ => variable%values)
+    type is (integer(int16))
+
+      allocate (integer(int16) :: data(s(1)))
+      select type (data_ => data)
+      type is (integer(int16))
+        data_ = reshape(values_, shape(data_))
       end select
 
-    type is (container_2d)
+    type is (integer(int32))
 
-      associate (s => shape(variable%dimensions))
-        allocate (real(real64) :: container_%data(s(1), s(2)))
-      end associate
-      select type (data_ => container_%data)
-      type is (real(real64))
-        status = nc_get_var_double (group%id, variable%id, data_)
-        call handle_error(status, "nc_get_var_double")
+      allocate (integer(int32) :: data(s(1)))
+      select type (data_ => data)
+      type is (integer(int32))
+        data_ = reshape(values_, shape(data_))
       end select
 
-    type is (container_3d)
+    type is (integer(int64))
 
-      associate (s => shape(variable%dimensions))
-        allocate (real(real64) :: container_%data(s(1), s(2), s(3)))
-      end associate
-      select type (data_ => container_%data)
-      type is (real(real64))
-        status = nc_get_var_double (group%id, variable%id, data_)
-        call handle_error(status, "nc_get_var_double")
+      allocate (integer(int64) :: data(s(1)))
+      select type (data_ => data)
+      type is (integer(int64))
+        data_ = reshape(values_, shape(data_))
       end select
 
-    type is (container_4d)
+    type is (real(real32))
 
-      associate (s => shape(variable%dimensions))
-        allocate (real(real64) :: container_%data(s(1), s(2), s(3), s(4)))
-      end associate
-      select type (data_ => container_%data)
+      allocate (real(real32) :: data(s(1)))
+      select type (data_ => data)
+      type is (real(real32))
+        data_ = reshape(values_, shape(data_))
+      end select
+
+    type is (real(real64))
+
+      allocate (real(real64) :: data(s(1)))
+      select type (data_ => data)
       type is (real(real64))
-        status = nc_get_var_double (group%id, variable%id, data_)
-        call handle_error(status, "nc_get_var_double")
+        data_ = reshape(values_, shape(data_))
+      end select
+
+    end select
+
+  rank (2)
+
+    if (size(variable%dimensions) /= rank(data)) &
+      & error stop "Invalid rank of data."
+
+    select type (values_ => variable%values)
+    type is (integer(int16))
+
+      allocate (integer(int16) :: data(s(1), s(2)))
+      select type (data_ => data)
+      type is (integer(int16))
+        data_ = reshape(values_, shape(data_))
+      end select
+
+    type is (integer(int32))
+
+      allocate (integer(int32) :: data(s(1), s(2)))
+      select type (data_ => data)
+      type is (integer(int32))
+        data_ = reshape(values_, shape(data_))
+      end select
+
+    type is (integer(int64))
+
+      allocate (integer(int64) :: data(s(1), s(2)))
+      select type (data_ => data)
+      type is (integer(int64))
+        data_ = reshape(values_, shape(data_))
+      end select
+
+    type is (real(real32))
+
+      allocate (real(real32) :: data(s(1), s(2)))
+      select type (data_ => data)
+      type is (real(real32))
+        data_ = reshape(values_, shape(data_))
+      end select
+
+    type is (real(real64))
+
+      allocate (real(real64) :: data(s(1), s(2)))
+      select type (data_ => data)
+      type is (real(real64))
+        data_ = reshape(values_, shape(data_))
+      end select
+
+    end select
+
+  rank (3)
+
+    if (size(variable%dimensions) /= rank(data)) &
+      & error stop "Invalid rank of data."
+
+    select type (values_ => variable%values)
+    type is (integer(int16))
+
+      allocate (integer(int16) :: data(s(1), s(2), s(3)))
+      select type (data_ => data)
+      type is (integer(int16))
+        data_ = reshape(values_, shape(data_))
+      end select
+
+    type is (integer(int32))
+
+      allocate (integer(int32) :: data(s(1), s(2), s(3)))
+      select type (data_ => data)
+      type is (integer(int32))
+        data_ = reshape(values_, shape(data_))
+      end select
+
+    type is (integer(int64))
+
+      allocate (integer(int64) :: data(s(1), s(2), s(3)))
+      select type (data_ => data)
+      type is (integer(int64))
+        data_ = reshape(values_, shape(data_))
+      end select
+
+    type is (real(real32))
+
+      allocate (real(real32) :: data(s(1), s(2), s(3)))
+      select type (data_ => data)
+      type is (real(real32))
+        data_ = reshape(values_, shape(data_))
+      end select
+
+    type is (real(real64))
+
+      allocate (real(real64) :: data(s(1), s(2), s(3)))
+      select type (data_ => data)
+      type is (real(real64))
+        data_ = reshape(values_, shape(data_))
+      end select
+
+    end select
+
+  rank (4)
+
+    if (size(variable%dimensions) /= rank(data)) &
+      & error stop "Invalid rank of data."
+
+    select type (values_ => variable%values)
+    type is (integer(int16))
+
+      allocate (integer(int16) :: data(s(1), s(2), s(3), s(4)))
+      select type (data_ => data)
+      type is (integer(int16))
+        data_ = reshape(values_, shape(data_))
+      end select
+
+    type is (integer(int32))
+
+      allocate (integer(int32) :: data(s(1), s(2), s(3), s(4)))
+      select type (data_ => data)
+      type is (integer(int32))
+        data_ = reshape(values_, shape(data_))
+      end select
+
+    type is (integer(int64))
+
+      allocate (integer(int64) :: data(s(1), s(2), s(3), s(4)))
+      select type (data_ => data)
+      type is (integer(int64))
+        data_ = reshape(values_, shape(data_))
+      end select
+
+    type is (real(real32))
+
+      allocate (real(real32) :: data(s(1), s(2), s(3), s(4)))
+      select type (data_ => data)
+      type is (real(real32))
+        data_ = reshape(values_, shape(data_))
+      end select
+
+    type is (real(real64))
+
+      allocate (real(real64) :: data(s(1), s(2), s(3), s(4)))
+      select type (data_ => data)
+      type is (real(real64))
+        data_ = reshape(values_, shape(data_))
       end select
 
     end select
 
   end select
-end subroutine get_var_
+end subroutine extract_variable
 
 !> Shape of a variable
 module function shape_variable(variable) result(shapes)

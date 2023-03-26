@@ -37,41 +37,58 @@ subroutine get_var_(group, variable)
   if (.not. associated(variable%dimensions)) &
     error stop "Dimensions not associated."
 
-  !> Select rank.
-  select case (size(variable%dimensions))
-  #: for rank in ranks
-  case (${rank}$)
-    allocate (container_${rank}$d :: variable%container)
-  #: endfor
-  case default
-    error stop "Invalid data rank."
-  end select
-
   !> Select type
   select case (variable%type)
   #:for nc_kind, kind, get_var in zip(nc_kinds, kinds, get_vars)
   case (${nc_kind}$)
 
-    select type (container_ => variable%container)
-    #:for rank in ranks
-    type is (container_${rank}$d)
-
-      associate (s => shape(variable%dimensions))
-      #: set shp = ", ".join(["s({})".format(i + 1) for i in range(int(rank))])
-        allocate (${kind}$ :: container_%data(${shp}$))
-      end associate
-      select type (data_ => container_%data)
-      type is (${kind}$)
-        status = ${get_var}$ (group%id, variable%id, data_)
-        call handle_error(status, "${get_var}$")
-      end select
-
-    #:endfor
+    associate (s => product(shape(variable%dimensions)))
+      allocate (${kind}$ :: variable%values(s))
+    end associate
+    select type (values_ => variable%values)
+    type is (${kind}$)
+      status = ${get_var}$(group%id, variable%id, values_)
+      call handle_error(status, "${get_var}$")
     end select
 
   #:endfor
   end select
 end subroutine get_var_
+
+!> Extract data
+module subroutine extract_variable(variable, data)
+  type(variable_type), intent(inout) :: variable
+  class(*), allocatable, intent(out) :: data(..)
+  integer(int64), allocatable :: s(:)
+
+  ! if (.not. allocated(variable%values)) &
+  !   & call get_var_(group, variable)
+
+  s = shape(variable%dimensions)
+  select rank (data)
+  #: for rank in ranks
+  #: set shp = ", ".join(["s({})".format(i + 1) for i in range(int(rank))])
+  rank (${rank}$)
+
+    if (size(variable%dimensions) /= rank(data)) &
+      & error stop "Invalid rank of data."
+
+    select type (values_ => variable%values)
+    #: for kind in kinds
+    type is (${kind}$)
+
+      allocate (${kind}$ :: data(${shp}$))
+      select type (data_ => data)
+      type is (${kind}$)
+        data_ = reshape(values_, shape(data_))
+      end select
+
+    #: endfor
+    end select
+
+  #: endfor
+  end select
+end subroutine extract_variable
 
 !> Shape of a variable
 module function shape_variable(variable) result(shapes)
