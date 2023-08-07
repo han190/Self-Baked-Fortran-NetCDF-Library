@@ -56,6 +56,8 @@ module module_netcdf
     integer(c_size_t) :: length = 0
     !> Attribute type
     integer(c_int) :: type = 0
+    !> Data
+    class(*), allocatable :: values(:)
   end type attribute_type
 
   !> Dimension type
@@ -82,6 +84,8 @@ module module_netcdf
     integer(c_int) :: type = 0
     !> Variable ID
     integer(c_int) :: id = 0
+    !> Group ID pointer
+    integer(c_int), pointer :: nc_id => null()
     !> Logical
     logical :: scale_offset = .false.
   end type variable_type
@@ -96,6 +100,17 @@ module module_netcdf
     module procedure :: shape_dimensions
     module procedure :: shape_variable
   end interface shape
+
+  !> Size of variable
+  interface size
+    module procedure :: size_variable
+  end interface size
+
+  !> Extract data
+  interface extract
+    ! module procedure :: extract_real32
+    module procedure :: extract_real64
+  end interface extract
 
   !> Close dataset
   interface close
@@ -123,7 +138,7 @@ module module_netcdf
 
     !> Inquire variable dimensions
     module subroutine inquire_variable_dimensions(group, variable)
-      type(group_type), intent(inout) :: group
+      type(group_type), intent(inout), target :: group
       type(variable_type), intent(inout) :: variable
     end subroutine inquire_variable_dimensions
 
@@ -138,6 +153,12 @@ module module_netcdf
       type(variable_type), intent(in) :: variable
       integer(int64), allocatable :: shapes(:)
     end function shape_variable
+
+    !> Size of a variable
+    module function size_variable(variable) result(ret)
+      type(variable_type), intent(in) :: variable
+      integer(int64) :: ret
+    end function size_variable
 
     !> Inquire variable attributes
     module subroutine inquire_variable_attributes(group, variable)
@@ -186,31 +207,46 @@ contains
   !> This routine is designed specifically for 
   !> extracting 3-dimensional ERA5 data
   !> and therefore not included in the submodules.
-  function extract(nc, name) result(ret)
-    type(group_type), intent(inout) :: nc
-    character(*), intent(in) :: name
-    real, allocatable :: ret(:, :, :)
+  function extract_real64(var) result(ret)
+    type(variable_type), intent(in) :: var
+    real(real64), allocatable :: ret(:)
     integer :: status, i
-    integer(int16), allocatable :: tmp(:, :, :)
-    type(variable_type) :: var
     real(real64) :: add_offset(1), scale_factor(1)
 
-    var = get_var(nc, name)
+    if (.not. associated(var%nc_id)) then
+      error stop "Invalid variable, no ncid associated."
+    end if
+
     if (var%scale_offset) then
-      status = nc_get_att_double(nc%id, var%id, &
+      status = nc_get_att_double(var%nc_id, var%id, &
         & "add_offset"//c_null_char, add_offset)
-      status = nc_get_att_double(nc%id, var%id, &
+      status = nc_get_att_double(var%nc_id, var%id, &
         & "scale_factor"//c_null_char, scale_factor)
     else
       add_offset = 0.
       scale_factor = 1.
     end if
 
-    associate (s => shape(var))
-      allocate (tmp(s(1), s(2), s(3)))
-    end associate
-    status = nc_get_var_short(nc%id, var%id, tmp)
-    ret = scale_factor(1)*tmp + add_offset(1)
-  end function extract
+    select case (var%type)
+    case (nc_float)
+      block
+        real(real32), allocatable :: tmp(:)
+
+        allocate (tmp(size(var)))
+        status = nc_get_var_float(var%nc_id, var%id, tmp)
+        ret = scale_factor(1)*tmp + add_offset(1)
+      end block
+    case (nc_short)
+      block
+        integer(int16), allocatable :: tmp(:)
+        
+        allocate (tmp(size(var)))
+        status = nc_get_var_short(var%nc_id, var%id, tmp)
+        ret = scale_factor(1)*tmp + add_offset(1)
+      end block
+    case default
+      error stop "Invalid type."
+    end select
+  end function extract_real64
 
 end module module_netcdf
