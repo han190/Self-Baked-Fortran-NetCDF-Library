@@ -45,4 +45,60 @@ contains
     ret = product(shape_dimensions(variable%dimensions))
   end function size_variable
 
+  !> Extract variable
+  module subroutine extract_variable_int16(variable, values)
+    type(variable_type), intent(in) :: variable
+    integer(int16), allocatable, intent(out) :: values(:)
+    integer :: status
+
+    if (allocated(values)) deallocate (values)
+    allocate (values(size(variable)))
+    status = nc_get_var_short(variable%nc_id, variable%id, values)
+    call handle_error(status, "nc_get_var_short")
+  end subroutine extract_variable_int16
+
+  module subroutine extract_variable_int32(variable, values)
+    type(variable_type), intent(in) :: variable
+    integer(int32), allocatable, intent(out) :: values(:)
+    integer :: status
+
+    if (allocated(values)) deallocate (values)
+    allocate (values(size(variable)))
+    status = nc_get_var_int(variable%nc_id, variable%id, values)
+    call handle_error(status, "nc_get_var_int")
+  end subroutine extract_variable_int32
+
+  module subroutine extract_variable_int64(variable, values)
+    type(variable_type), intent(in) :: variable
+    integer(int64), allocatable, intent(out) :: values(:)
+    integer :: status
+
+    if (allocated(values)) deallocate (values)
+    allocate (values(size(variable)))
+    status = nc_get_var_longlong(variable%nc_id, variable%id, values)
+    call handle_error(status, "nc_get_var_longlong")
+  end subroutine extract_variable_int64
+
+  module subroutine extract_variable_real32(variable, values)
+    type(variable_type), intent(in) :: variable
+    real(real32), allocatable, intent(out) :: values(:)
+    integer :: status
+
+    if (allocated(values)) deallocate (values)
+    allocate (values(size(variable)))
+    status = nc_get_var_float(variable%nc_id, variable%id, values)
+    call handle_error(status, "nc_get_var_float")
+  end subroutine extract_variable_real32
+
+  module subroutine extract_variable_real64(variable, values)
+    type(variable_type), intent(in) :: variable
+    real(real64), allocatable, intent(out) :: values(:)
+    integer :: status
+
+    if (allocated(values)) deallocate (values)
+    allocate (values(size(variable)))
+    status = nc_get_var_double(variable%nc_id, variable%id, values)
+    call handle_error(status, "nc_get_var_double")
+  end subroutine extract_variable_real64
+
 end submodule submodule_variable
