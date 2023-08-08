@@ -1,104 +1,62 @@
 #:include "module_common.fypp"
 submodule(module_netcdf) submodule_variable
-
-implicit none
+  implicit none
 contains
 
-!> Get meta data for a variable
-module function get_var(group, name) result(variable)
-  type(group_type), intent(inout) :: group
-  character(*), intent(in) :: name
-  type(variable_type) :: variable
-  integer :: status
+  !> Get meta data for a variable
+  module function get_var(group, name) result(variable)
+    type(group_type), intent(inout) :: group
+    character(*), intent(in) :: name
+    type(variable_type) :: variable
+    integer :: status
 
-  !> Inquire variable ID
-  variable%name = name
-  status = nc_inq_varid(group%id, name//c_null_char, variable%id)
-  call handle_error(status, "nc_inq_varid")
+    !> Inquire variable ID
+    variable%name = name
+    status = nc_inq_varid(group%id, name//c_null_char, variable%id)
+    call handle_error(status, "nc_inq_varid")
 
-  !> Inquire dimensions and attributes
-  call inquire_dimensions(group, variable)
-  call inquire_attributes(group, variable)
+    if (associated(variable%nc_id)) deallocate (variable%nc_id)
+    allocate (variable%nc_id, source=group%id)
 
-  !> Inquire variable type
-  status = nc_inq_vartype(group%id, variable%id, variable%type)
-  call handle_error(status, "nc_inq_vartype")
+    !> Inquire dimensions and attributes
+    call inquire_dimensions(group, variable)
+    call inquire_attributes(group, variable)
 
-  !> Get variable
-  call get_var_(group, variable)
-end function get_var
+    !> Inquire variable type
+    status = nc_inq_vartype(group%id, variable%id, variable%type)
+    call handle_error(status, "nc_inq_vartype")
+  end function get_var
 
-!> Based on the rank and type of the data, get the variable.
-subroutine get_var_(group, variable)
-  type(group_type), intent(inout) :: group
-  type(variable_type), intent(inout) :: variable
-  integer(c_int) :: status
+  !> Shape of a variable
+  module function shape_variable(variable) result(shapes)
+    type(variable_type), intent(in) :: variable
+    integer(int64), allocatable :: shapes(:)
 
-  if (.not. associated(variable%dimensions)) &
-    error stop "Dimensions not associated."
+    if (allocated(shapes)) deallocate (shapes)
+    if (.not. associated(variable%dimensions)) &
+      error stop "Variable dimensions not allocated."
+    shapes = shape_dimensions(variable%dimensions)
+  end function shape_variable
 
-  !> Select type
-  select case (variable%type)
-  #:for nc_kind, kind, get_var in zip(nc_kinds, kinds, get_vars)
-  case (${nc_kind}$)
+  !> Size of a variable
+  module function size_variable(variable) result(ret)
+    type(variable_type), intent(in) :: variable
+    integer(int64) :: ret
 
-    associate (s => product(shape(variable%dimensions)))
-      allocate (${kind}$ :: variable%values(s))
-    end associate
-    select type (values_ => variable%values)
-    type is (${kind}$)
-      status = ${get_var}$(group%id, variable%id, values_)
-      call handle_error(status, "${get_var}$")
-    end select
+    ret = product(shape_dimensions(variable%dimensions))
+  end function size_variable
 
-  #:endfor
-  end select
-end subroutine get_var_
+  #: for kind, type, get_var in zip(kinds, types, get_vars)
+  !> Extract variable ${kind}$
+  module subroutine extract_variable_${kind}$(variable, values)
+    type(variable_type), intent(in) :: variable
+    ${type}$(${kind}$), allocatable, intent(out) :: values(:)
 
-!> Extract data
-module subroutine extract_variable(variable, data)
-  type(variable_type), intent(inout) :: variable
-  class(*), allocatable, intent(out) :: data(..)
-  integer(int64), allocatable :: s(:)
-
-  ! if (.not. allocated(variable%values)) &
-  !   & call get_var_(group, variable)
-
-  s = shape(variable%dimensions)
-  select rank (data)
-  #: for rank in ranks
-  #: set shp = ", ".join(["s({})".format(i + 1) for i in range(int(rank))])
-  rank (${rank}$)
-
-    if (size(variable%dimensions) /= rank(data)) &
-      & error stop "Invalid rank of data."
-
-    select type (values_ => variable%values)
-    #: for kind in kinds
-    type is (${kind}$)
-
-      allocate (${kind}$ :: data(${shp}$))
-      select type (data_ => data)
-      type is (${kind}$)
-        data_ = reshape(values_, shape(data_))
-      end select
-
-    #: endfor
-    end select
-
+    if (allocated(values)) deallocate (values)
+    allocate (values(size(variable)))
+    status = nc_get_var_short(variable%nc_id, variable%id, values)
+    call handle_error(status, "${get_var}$")
+  end subroutine extract_variable_${kind}$
   #: endfor
-  end select
-end subroutine extract_variable
-
-!> Shape of a variable
-module function shape_variable(variable) result(shapes)
-  type(variable_type), intent(in) :: variable
-  integer(int64), allocatable :: shapes(:)
-
-  if (allocated(shapes)) deallocate (shapes)
-  if (.not. associated(variable%dimensions)) &
-    error stop "Variable dimensions not associated."
-  shapes = shape_dimensions(variable%dimensions)
-end function shape_variable
 
 end submodule submodule_variable
