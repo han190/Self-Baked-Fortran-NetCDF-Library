@@ -61,6 +61,8 @@ module module_netcdf
     integer(c_size_t) :: length = 0
     !> Attribute type
     integer(c_int) :: type = 0
+    !> Data container
+    class(*), allocatable :: values(:)
   end type attribute_type
 
   !> Dimension type

@@ -14,10 +14,6 @@ program main
   print *, var
   
   call extract(var, var_data)
-  associate (s => shape(var))
-    var_ptr(1:s(1),1:s(2),1:s(3)) => var_data
-  end associate
-
   call close_dataset(nc)
 
 end program main

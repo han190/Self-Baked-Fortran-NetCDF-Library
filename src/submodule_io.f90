@@ -56,26 +56,97 @@ contains
     integer, intent(out) :: iostat
     character(*), intent(inout) :: iomsg
     integer :: i
-    character(len=:), allocatable :: fmt, tmp
+    character(len=:), allocatable :: fmt, dim_str, tmp
+    integer, parameter :: line_width = 50
+    character(*), parameter :: indent = repeat(" ", 4)
 
     if (iotype == "DT" .or. iotype == "LISTDIRECTED") then
 
       !> Construct a character for dimensions
       !> Yes, C starts from zero.
-      tmp = ""
+      dim_str = ""
       do i = 0, size(variable%dimensions) - 1
         associate (dim => variable%dimensions(i))
-          tmp = tmp//dim%name//":"//int2char(dim%length)//", "
+          dim_str = dim_str//dim%name//":"//int2char(dim%length)//", "
         end associate
       end do
-      tmp = "("//tmp(1:len(tmp) - 2)//")"
+      dim_str = "("//dim_str(1:len(dim_str) - 2)//")"
 
       fmt = "(a, 1x, '<', a, '>', 1x, a, /)"
-      write (unit, fmt) variable%name, id_name(variable%type), tmp
+      write (unit, fmt) variable%name, id_name(variable%type), dim_str
 
       do i = 1, size(variable%attributes)
         associate (att => variable%attributes(i))
-          write (unit, "(4x, 'Attribute:', 1x, a, /)") att%name
+          select type (val_ => att%values)
+          type is (character(*))
+
+            tmp = strip(val_(1), num_chars)
+            fmt = "(a, 1x, '<', a, '>', ':', 1x, a, "
+            if (len(tmp) + len(att%name) + 2>= line_width) then
+              write (unit, fmt//"'...', /)") &
+                & indent//att%name, id_name(att%type), &
+                & tmp(1:line_width - len(att%name) - 2 - 3)
+            else
+              write (unit, fmt//"/)") &
+                & indent//att%name, id_name(att%type), tmp
+            end if
+
+          type is (integer(int16))
+
+            fmt = "(a, 1x, '<', a, '>', ':', 1x, i0, "
+            if (size(val_) > 1) then
+              write (unit, fmt//"'...', /)") &
+                & indent//att%name, id_name(att%type), val_(1)
+            else
+              write (unit, fmt//"/)") &
+                & indent//att%name, id_name(att%type), val_
+            end if
+
+          type is (integer(int32))
+
+            fmt = "(a, 1x, '<', a, '>', ':', 1x, i0, "
+            if (size(val_) > 1) then
+              write (unit, fmt//"'...', /)") &
+                & indent//att%name, id_name(att%type), val_(1)
+            else
+              write (unit, fmt//"/)") &
+                & indent//att%name, id_name(att%type), val_
+            end if
+
+          type is (integer(int64))
+
+            fmt = "(a, 1x, '<', a, '>', ':', 1x, i0, "
+            if (size(val_) > 1) then
+              write (unit, fmt//"'...', /)") &
+                & indent//att%name, id_name(att%type), val_(1)
+            else
+              write (unit, fmt//"/)") &
+                & indent//att%name, id_name(att%type), val_
+            end if
+
+          type is (real(real32))
+
+            fmt = "(a, 1x, '<', a, '>', ':', 1x, e10.3, "
+            if (size(val_) > 1) then
+              write (unit, fmt//"'...', /)") &
+                & indent//att%name, id_name(att%type), val_(1)
+            else
+              write (unit, fmt//"/)") &
+                & indent//att%name, id_name(att%type), val_
+            end if
+
+          type is (real(real64))
+
+            fmt = "(a, 1x, '<', a, '>', ':', 1x, e10.3, "
+            if (size(val_) > 1) then
+              write (unit, fmt//"'...', /)") &
+                & indent//att%name, id_name(att%type), val_(1)
+            else
+              write (unit, fmt//"/)") &
+                & indent//att%name, id_name(att%type), val_
+            end if
+            
+          end select
         end associate
       end do
     end if
