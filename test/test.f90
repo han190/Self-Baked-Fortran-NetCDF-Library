@@ -7,9 +7,8 @@ program main
   type(group_type) :: nc ! netcdf
   type(variable_type) :: var
   real, allocatable, target :: var_data(:)
-  real, pointer :: var_ptr(:,:,:)
 
-  nc = dataset("./data/sresa1b_ncar_ccsm3-example.nc", "r")
+  nc = dataset("./data/sample01.nc", "r")
   var = get_var(nc, "pr")
   print *, var
   
