@@ -2,7 +2,7 @@ submodule(module_netcdf) submodule_io
   implicit none
 contains
 
-  pure function id_name(type_id) result(type_name)
+  pure function get_type_name_(type_id) result(type_name)
     integer(c_int), intent(in) :: type_id
     character(:), allocatable :: type_name
 
@@ -10,25 +10,27 @@ contains
     case (nc_nat)
       type_name = "not a type."
     case (nc_byte)
-      type_name = "signed 1 byte integer"
+      type_name = "byte"
     case (nc_char)
-      type_name = "iso/ascii character"
+      type_name = "char"
     case (nc_short)
-      type_name = "16-bit integer"
+      type_name = "short"
     case (nc_int)
-      type_name = "32-bit integer"
+      type_name = "int"
     ! case (nc_long)
     !   type_name = "32-bit integer (deprecated)"
     case (nc_float)
-      type_name = "32-bit float"
+      type_name = "float"
     case (nc_double)
-      type_name = "64-bit float"
+      type_name = "double"
     case (nc_int64)
-      type_name = "64-bit integer"
+      type_name = "int64"
     case default
       error stop "Not supported type id."
     end select
-  end function id_name
+
+    type_name = "<"//type_name//">"
+  end function get_type_name_
 
   elemental function num_digits(value) result(ret)
     integer(int64), intent(in) :: value
@@ -56,9 +58,8 @@ contains
     integer, intent(out) :: iostat
     character(*), intent(inout) :: iomsg
     integer :: i
-    character(len=:), allocatable :: fmt, dim_str, tmp
+    character(len=:), allocatable :: fmt, dim_str, tmp, type_name
     integer, parameter :: line_width = 50
-    character(*), parameter :: indent = repeat(" ", 4)
 
     if (iotype == "DT" .or. iotype == "LISTDIRECTED") then
 
@@ -72,83 +73,78 @@ contains
       end do
       dim_str = "("//dim_str(1:len(dim_str) - 2)//")"
 
-      fmt = "(a, 1x, '<', a, '>', 1x, a, /)"
-      write (unit, fmt) variable%name, id_name(variable%type), dim_str
+      fmt = "(a, 1x, a, 1x, a, /)"
+      write (unit, fmt) variable%name, get_type_name_(variable%type), dim_str
 
       do i = 1, size(variable%attributes)
         associate (att => variable%attributes(i))
+          type_name = get_type_name_(att%type)
           select type (val_ => att%values)
           type is (character(*))
 
             tmp = strip(val_(1), num_chars)
-            fmt = "(a, 1x, '<', a, '>', ':', 1x, a, "
+            fmt = "(4x, a, 1x, a, ':', 1x, a, "
             if (len(tmp) + len(att%name) + 2>= line_width) then
-              write (unit, fmt//"'...', /)") &
-                & indent//att%name, id_name(att%type), &
+              write (unit, fmt//"'...', /)") att%name, type_name, &
                 & tmp(1:line_width - len(att%name) - 2 - 3)
             else
-              write (unit, fmt//"/)") &
-                & indent//att%name, id_name(att%type), tmp
+              write (unit, fmt//"/)") att%name, type_name, tmp
             end if
 
           type is (integer(int16))
 
-            fmt = "(a, 1x, '<', a, '>', ':', 1x, i0, "
+            fmt = "(4x, a, 1x, a, ':', 1x, i0, "
             if (size(val_) > 1) then
-              write (unit, fmt//"'...', /)") &
-                & indent//att%name, id_name(att%type), val_(1)
+              fmt = fmt//"'...', /)"
             else
-              write (unit, fmt//"/)") &
-                & indent//att%name, id_name(att%type), val_
+              fmt = fmt//"/)"
             end if
+            write (unit, fmt) att%name, type_name, val_(1)
 
           type is (integer(int32))
 
-            fmt = "(a, 1x, '<', a, '>', ':', 1x, i0, "
+            fmt = "(4x, a, 1x, a, ':', 1x, i0, "
             if (size(val_) > 1) then
-              write (unit, fmt//"'...', /)") &
-                & indent//att%name, id_name(att%type), val_(1)
+              fmt = fmt//"'...', /)"
             else
-              write (unit, fmt//"/)") &
-                & indent//att%name, id_name(att%type), val_
+              fmt = fmt//"/)"
             end if
+            write (unit, fmt) att%name, type_name, val_(1)
 
           type is (integer(int64))
 
-            fmt = "(a, 1x, '<', a, '>', ':', 1x, i0, "
+            fmt = "(4x, a, 1x, a, ':', 1x, i0, "
             if (size(val_) > 1) then
-              write (unit, fmt//"'...', /)") &
-                & indent//att%name, id_name(att%type), val_(1)
+              fmt = fmt//"'...', /)"
             else
-              write (unit, fmt//"/)") &
-                & indent//att%name, id_name(att%type), val_
+              fmt = fmt//"/)"
             end if
+            write (unit, fmt) att%name, type_name, val_(1)
 
           type is (real(real32))
 
-            fmt = "(a, 1x, '<', a, '>', ':', 1x, e10.3, "
+            fmt = "(4x, a, 1x, a, ':', 1x, e10.3, "
             if (size(val_) > 1) then
-              write (unit, fmt//"'...', /)") &
-                & indent//att%name, id_name(att%type), val_(1)
+              fmt = fmt//"'...', /)"
             else
-              write (unit, fmt//"/)") &
-                & indent//att%name, id_name(att%type), val_
+              fmt = fmt//"/)"
             end if
+            write (unit, fmt) att%name, type_name, val_(1)
 
           type is (real(real64))
 
-            fmt = "(a, 1x, '<', a, '>', ':', 1x, e10.3, "
+            fmt = "(4x, a, 1x, a, ':', 1x, e10.3, "
             if (size(val_) > 1) then
-              write (unit, fmt//"'...', /)") &
-                & indent//att%name, id_name(att%type), val_(1)
+              fmt = fmt//"'...', /)"
             else
-              write (unit, fmt//"/)") &
-                & indent//att%name, id_name(att%type), val_
+              fmt = fmt//"/)"
             end if
+            write (unit, fmt) att%name, type_name, val_(1)
             
           end select
         end associate
       end do
+
     end if
   end subroutine write_formatted_variable
 
