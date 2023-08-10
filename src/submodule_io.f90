@@ -1,7 +1,10 @@
 submodule(module_netcdf) submodule_io
+
   implicit none
   integer, parameter :: line_width = 50
-  integer, parameter :: num_indents = 3
+  integer, parameter :: num_indents = 2
+  character(len=*), parameter :: space = " "
+
 contains
 
   pure function get_type_name_(type_id) result(type_name)
@@ -51,6 +54,38 @@ contains
     write (ret, "(i0)") value
   end function int2char
 
+  pure function split_string(string, width) result(ret)
+    character(len=*), intent(in) :: string
+    integer, intent(in) :: width
+    character(len=:), allocatable :: ret(:)
+    integer :: num_lines, i, n
+
+    num_lines = len(string)/width + 1
+    if (allocated(ret)) deallocate (ret)
+    allocate (character(len=nc_max_char) :: ret(num_lines))
+
+    n = 0
+    do i = 1, num_lines, width
+      if (i + width - 1 > num_lines) then
+        ret(i) = adjustl(adjustr(string(i:)))
+        n = n + 1
+        exit
+      else
+        ret(i) = adjustl(adjustr(string(i:i + width - 1)))
+        n = n + 1
+      end if
+    end do
+    ! ret = ret(1:n)
+  end function split_string
+
+  pure function indent_level(string, level) result(ret)
+    character(len=*), intent(in) :: string
+    integer, intent(in) :: level
+    character(:), allocatable :: ret
+
+    ret = repeat(space, num_indents*level)//string
+  end function indent_level
+
   module subroutine write_formatted_attribute( &
     & attribute, unit, iotype, v_list, iostat, iomsg)
     class(attribute_type), intent(in) :: attribute
@@ -59,78 +94,85 @@ contains
     integer, intent(in) :: v_list (:)
     integer, intent(out) :: iostat
     character(*), intent(inout) :: iomsg
-    character(len=:), allocatable :: fmt, tmp, type_name, indent
+    character(len=:), allocatable :: fmt, tmp, att_type, att_name
+    integer :: i, j, level
 
     !> Indent spaces
     if (size(v_list) == 0) then
-      indent = ""
+      level = 0
     else
-      indent = repeat(" ", v_list(1))
+      level = v_list(1)
     end if
 
     if (iotype == "DT" .or. iotype == "LISTDIRECTED") then
-      type_name = get_type_name_(attribute%type)
+      att_type = get_type_name_(attribute%type)
+      att_name = indent_level(attribute%name, level)
+
       select type (val_ => attribute%values)
       type is (character(*))
 
-        tmp = strip(val_(1))
-        fmt = "(a,1x,a,':',1x,a,/)"
-        if (len(tmp) + len(attribute%name) + 4 >= line_width) then
-          tmp = tmp(1:line_width - len(attribute%name) - 7)
-          write (unit, fmt) indent//attribute%name, type_name, '"'//tmp//'..."'
+        if (size(val_) > 1) then
+          !!TODO
+          ! write (unit, "(a,/)") val_
         else
-          write (unit, fmt) indent//attribute%name, type_name, '"'//tmp//'"'
+          tmp = att_name//" "//att_type//' "'//strip(val_(1))//'"'
+          if (len(tmp) > line_width) then
+            !!TODO
+            ! write (unit, "(a,/)") tmp
+          else
+            write (unit, "(a,/)") tmp
+          end if
         end if
 
       type is (integer(int16))
 
-        fmt = "(a,1x,a,':',1x,i0, "
+        fmt = "(a,1x,a,1x,i0, "
         if (size(val_) > 1) then
           fmt = fmt//"'...', /)"
         else
           fmt = fmt//"/)"
         end if
-        write (unit, fmt) indent//attribute%name, type_name, val_(1)
+        write (unit, fmt) att_name, att_type, val_(1)
 
       type is (integer(int32))
 
-        fmt = "(a,1x,a,':',1x,i0, "
+        fmt = "(a,1x,a,1x,i0, "
         if (size(val_) > 1) then
           fmt = fmt//"'...', /)"
         else
           fmt = fmt//"/)"
         end if
-        write (unit, fmt) indent//attribute%name, type_name, val_(1)
+        write (unit, fmt) att_name, att_type, val_(1)
 
       type is (integer(int64))
 
-        fmt = "(a,1x,a,':',1x,i0, "
+        fmt = "(a,1x,a,1x,i0, "
         if (size(val_) > 1) then
           fmt = fmt//"'...', /)"
         else
           fmt = fmt//"/)"
         end if
-        write (unit, fmt) indent//attribute%name, type_name, val_(1)
+        write (unit, fmt) att_name, att_type, val_(1)
 
       type is (real(real32))
 
-        fmt = "(a,1x,a,':',1x,e10.3, "
+        fmt = "(a,1x,a,1x,e10.3, "
         if (size(val_) > 1) then
           fmt = fmt//"'...', /)"
         else
           fmt = fmt//"/)"
         end if
-        write (unit, fmt) indent//attribute%name, type_name, val_(1)
+        write (unit, fmt) att_name, att_type, val_(1)
 
       type is (real(real64))
 
-        fmt = "(a,1x,a,':',1x,e10.3, "
+        fmt = "(a,1x,a,1x,e10.3, "
         if (size(val_) > 1) then
           fmt = fmt//"'...', /)"
         else
           fmt = fmt//"/)"
         end if
-        write (unit, fmt) indent//attribute%name, type_name, val_(1)
+        write (unit, fmt) att_name, att_type, val_(1)
 
       end select
     end if
@@ -144,23 +186,22 @@ contains
     integer, intent(in) :: v_list (:)
     integer, intent(out) :: iostat
     character(*), intent(inout) :: iomsg
-    character(len=:), allocatable :: indent
+    integer :: level
+    character(len=:), allocatable :: fmt, dim_name
 
-    !> Indent spaces
-    if (size(v_list) == 0) then
-      indent = ""
-    else
-      indent = repeat(" ", v_list(1))
-    end if
+    !> Indent level
+    level = merge(0, v_list(1), size(v_list) == 0)
 
     if (iotype == "DT" .or. iotype == "LISTDIRECTED") then
-      if (dimension_%is_unlimited) then
-        write (unit, "(a, ':', 1x, i0, ' (unlimited)', /)") &
-          & indent//dimension_%name, dimension_%length
-      else
-        write (unit, "(a, ':', 1x, i0, /)") &
-          & indent//dimension_%name, dimension_%length
-      end if
+      associate (dim => dimension_)
+        dim_name = indent_level(dim%name, level)
+        if (dim%is_unlimited) then
+          fmt = "(a, ':', 1x, i0, ' (unlimited)', /)"
+        else
+          fmt = "(a, ':', 1x, i0, /)"
+        end if
+        write (unit, fmt) dim_name, dim%length
+      end associate
     end if
   end subroutine write_formatted_dimension
 
@@ -175,6 +216,7 @@ contains
     integer :: i
     character(len=:), allocatable :: fmt, dim_str
     integer, allocatable :: v_list_(:)
+    integer :: level
 
     if (iotype == "DT" .or. iotype == "LISTDIRECTED") then
 
@@ -189,16 +231,17 @@ contains
       dim_str = "("//dim_str(1:len(dim_str) - 2)//")"
 
       if (size(v_list) == 0) then
-        v_list_ = [0]
+        v_list_ = [1]
       else
         v_list_ = v_list
       end if
+      level = v_list_(1)
 
       fmt = "(a, 1x, a, 1x, a, /)"
-      write (unit, fmt) repeat(" ", v_list_(1))//variable%name, &
+      write (unit, fmt) indent_level(variable%name, level), &
         & get_type_name_(variable%type), dim_str
 
-      v_list_ = v_list_ + num_indents
+      v_list_ = v_list_ + 1
       do i = 1, size(variable%attributes)
         associate (att => variable%attributes(i))
           call write_formatted_attribute( &
@@ -221,14 +264,14 @@ contains
     integer, allocatable :: v_list_(:)
 
     if (size(v_list) == 0) then
-      v_list_ = [num_indents]
+      v_list_ = [1]
     else
       v_list_ = v_list
     end if
 
     if (iotype == "DT" .or. iotype == "LISTDIRECTED") then
-      write (unit, "(a,1x,'(',a,')',':')") "GROUP", group%name
-      write (unit, "(/,a,/)") "DIMENSIONS:"
+      write (unit, "(a,1x,'(',a,')',':',/)") "GROUP", group%name
+      write (unit, "(a,/)") "DIMENSIONS:"
       do i = 1, size(group%dimensions)
         associate (dim => group%dimensions(i))
           call write_formatted_dimension( &
@@ -237,7 +280,7 @@ contains
       end do
 
       if (allocated(group%variables)) then
-        write (unit, "(/,a,/)") "VARIABLES:"
+        write (unit, "(a,/)") "VARIABLES:"
         do i = 1, size(group%variables)
           associate (var => group%variables(i))
             call write_formatted_variable( &
@@ -247,7 +290,7 @@ contains
       end if
 
       if (allocated(group%attributes)) then
-        write (unit, "(/,a,/)") "ATTRIBUTES:"
+        write (unit, "(a,/)") "ATTRIBUTES:"
         do i = 1, size(group%attributes)
           associate (att => group%attributes(i))
             call write_formatted_attribute( &

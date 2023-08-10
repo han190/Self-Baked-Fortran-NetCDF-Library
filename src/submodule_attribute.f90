@@ -7,7 +7,7 @@ contains
     type(group_type), intent(inout) :: group
     integer(c_int) :: status
     integer :: num_atts, i
-    character(kind=c_char, len=num_chars) :: att_name
+    character(kind=c_char, len=nc_max_name) :: att_name
 
     !> Inquire number of attributes
     status = nc_inq_natts(group%id, num_atts)
@@ -38,7 +38,7 @@ contains
     type(variable_type), intent(inout) :: variable
     integer(c_int) :: status
     integer :: num_atts, i
-    character(kind=c_char, len=num_chars) :: att_name
+    character(kind=c_char, len=nc_max_name) :: att_name
     logical :: scale_offset(2)
 
     !> Inquire number of attributes
@@ -82,7 +82,14 @@ contains
       associate (att => group%attributes(i))
         select case (att%type)
         case (nc_char)
-          allocate (character(kind=c_char, len=att%length) :: att%values(1))
+          !> If attribute is too long, store it
+          !> in a character array.
+          if (att%length > nc_max_char) then
+            allocate (character(kind=c_char, len=nc_max_char) :: &
+              & att%values(att%length/nc_max_char + 1))
+          else
+            allocate (character(kind=c_char, len=att%length) :: att%values(1))
+          end if
         case (nc_short)
           allocate (integer(int16) :: att%values(att%length))
         case (nc_int)
@@ -130,7 +137,14 @@ contains
       associate (att => variable%attributes(i))
         select case (att%type)
         case (nc_char)
-          allocate (character(kind=c_char, len=att%length) :: att%values(1))
+          !> If attribute is too long, store it
+          !> in a character array.
+          if (att%length > nc_max_char) then
+            allocate (character(kind=c_char, len=nc_max_char) :: &
+              & att%values(att%length/nc_max_char + 1))
+          else
+            allocate (character(kind=c_char, len=att%length) :: att%values(1))
+          end if
         case (nc_short)
           allocate (integer(int16) :: att%values(att%length))
         case (nc_int)

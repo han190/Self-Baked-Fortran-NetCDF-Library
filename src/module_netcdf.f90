@@ -291,6 +291,4 @@ module module_netcdf
 
   end interface
 
-  integer, parameter :: num_chars = 500
-
 end module module_netcdf

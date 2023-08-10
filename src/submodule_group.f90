@@ -28,7 +28,7 @@ contains
 
       !> Inquire root group
       deallocate (tmp)
-      allocate (character(len=num_chars, kind=c_char) :: tmp)
+      allocate (character(len=nc_max_name, kind=c_char) :: tmp)
       status = nc_inq_grpname(group%id, tmp)
       call handle_error(status, "nc_inq_grpname")
       group%name = strip(tmp)

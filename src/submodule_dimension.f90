@@ -24,7 +24,7 @@ contains
 
     !> Inquire dimension lengths and names
     allocate (dimensions(num_dims))
-    allocate (character(kind=c_char, len=num_chars) :: dim_name)
+    allocate (character(kind=c_char, len=nc_max_name) :: dim_name)
 
     status = nc_inq_unlimdim(group%id, unlimited_dim)
     call handle_error(status, "nc_inq_unlimdim")

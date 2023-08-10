@@ -8,7 +8,7 @@ contains
     integer(c_int) :: status
     integer :: num_vars, i
     integer(c_int), allocatable :: var_ids(:)
-    character(kind=c_char, len=num_chars) :: var_name
+    character(kind=c_char, len=nc_max_name) :: var_name
 
     !> Inquire number of variables
     status = nc_inq_nvars(group%id, num_vars)
