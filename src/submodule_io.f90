@@ -73,7 +73,7 @@ contains
       select type (val_ => attribute%values)
       type is (character(*))
 
-        tmp = strip(val_(1), num_chars)
+        tmp = strip(val_(1))
         fmt = "(a,1x,a,':',1x,a,/)"
         if (len(tmp) + len(attribute%name) + 4 >= line_width) then
           tmp = tmp(1:line_width - len(attribute%name) - 7)

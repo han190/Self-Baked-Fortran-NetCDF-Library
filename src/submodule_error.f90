@@ -4,9 +4,8 @@ contains
 
   !> Check function with error messages. Credit:
   !> https://github.com/Unidata/netcdf-fortran/blob/main/fortran/nf_misc.F90
-  module function strip(cstring, nlen) result(string)
+  module function strip(cstring) result(string)
     character(len=*), intent(in) :: cstring
-    integer, intent(in) :: nlen
     character(:), allocatable :: string
     integer :: ie, inull
 
@@ -14,7 +13,7 @@ contains
     inull = scan(cstring, c_null_char)
 
     if (inull > 1) ie = inull - 1
-    ie = max(1, min(ie, nlen))
+    ie = max(1, min(ie, nc_max_name)) ! nx_max_name = 256
     string = cstring(1:ie)
   end function strip
 

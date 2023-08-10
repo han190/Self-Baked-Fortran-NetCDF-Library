@@ -31,7 +31,7 @@ contains
       allocate (character(len=num_chars, kind=c_char) :: tmp)
       status = nc_inq_grpname(group%id, tmp)
       call handle_error(status, "nc_inq_grpname")
-      group%name = strip(tmp, num_chars)
+      group%name = strip(tmp)
 
       !> Copy dimension info
       call inquire_dimensions(group)

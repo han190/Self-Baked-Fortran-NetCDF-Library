@@ -207,9 +207,8 @@ module module_netcdf
     end subroutine handle_error
 
     !> Strip c string
-    module function strip(cstring, nlen) result(string)
+    module function strip(cstring) result(string)
       character(len=*), intent(in) :: cstring
-      integer, intent(in) :: nlen
       character(:), allocatable :: string
     end function strip
 

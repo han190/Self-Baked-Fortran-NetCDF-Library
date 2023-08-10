@@ -22,7 +22,7 @@ contains
       associate (att => group%attributes(i))
         status = nc_inq_attname(group%id, nc_global, i - 1, att_name)
         call handle_error(status, "nc_inq_attname")
-        att%name = strip(att_name, num_chars)
+        att%name = strip(att_name)
 
         status = nc_inq_att(group%id, nc_global, att_name, att%type, att%length)
         call handle_error(status, "nc_inq_att")
@@ -55,7 +55,7 @@ contains
       associate (att => variable%attributes(i))
         status = nc_inq_attname(group%id, variable%id, i - 1, att_name)
         call handle_error(status, "nc_inq_attname")
-        att%name = strip(att_name, num_chars)
+        att%name = strip(att_name)
 
         if (att%name == "add_offset") then
           scale_offset(1) = .true.

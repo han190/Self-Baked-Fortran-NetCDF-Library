@@ -37,7 +37,7 @@ contains
 
       status = nc_inq_dimname(group%id, dimensions(i)%id, dim_name)
       call handle_error(status, "nc_inq_dimname")
-      dimensions(i)%name = strip(dim_name, num_chars)
+      dimensions(i)%name = strip(dim_name)
       dimensions(i)%is_unlimited = dim_ids(i) == unlimited_dim
     end do
 

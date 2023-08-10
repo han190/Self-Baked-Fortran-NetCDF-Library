@@ -41,7 +41,7 @@ contains
         !> Inquire variable name
         status = nc_inq_varname(group%id, var%id, var_name)
         call handle_error(status, "nc_inq_varname")
-        var%name = strip(var_name, num_chars)
+        var%name = strip(var_name)
       end associate
     end do
   end subroutine inquire_group_variables
