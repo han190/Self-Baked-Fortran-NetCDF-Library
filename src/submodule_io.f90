@@ -83,17 +83,17 @@ contains
           type is (character(*))
 
             tmp = strip(val_(1), num_chars)
-            fmt = "(4x, a, 1x, a, ':', 1x, a, "
-            if (len(tmp) + len(att%name) + 2>= line_width) then
-              write (unit, fmt//"'...', /)") att%name, type_name, &
-                & tmp(1:line_width - len(att%name) - 2 - 3)
+            fmt = "(4x,a,1x,a,':',1x,a,/)"
+            if (len(tmp) + len(att%name) + 4 >= line_width) then
+              tmp = tmp(1:line_width - len(att%name) - 7)
+              write (unit, fmt) att%name, type_name, '"'//tmp//'..."'
             else
-              write (unit, fmt//"/)") att%name, type_name, tmp
+              write (unit, fmt) att%name, type_name, '"'//tmp//'"'
             end if
 
           type is (integer(int16))
 
-            fmt = "(4x, a, 1x, a, ':', 1x, i0, "
+            fmt = "(4x,a,1x,a,':',1x,i0, "
             if (size(val_) > 1) then
               fmt = fmt//"'...', /)"
             else
@@ -103,7 +103,7 @@ contains
 
           type is (integer(int32))
 
-            fmt = "(4x, a, 1x, a, ':', 1x, i0, "
+            fmt = "(4x,a,1x,a,':',1x,i0, "
             if (size(val_) > 1) then
               fmt = fmt//"'...', /)"
             else
@@ -113,7 +113,7 @@ contains
 
           type is (integer(int64))
 
-            fmt = "(4x, a, 1x, a, ':', 1x, i0, "
+            fmt = "(4x,a,1x,a,':',1x,i0, "
             if (size(val_) > 1) then
               fmt = fmt//"'...', /)"
             else
@@ -123,7 +123,7 @@ contains
 
           type is (real(real32))
 
-            fmt = "(4x, a, 1x, a, ':', 1x, e10.3, "
+            fmt = "(4x,a,1x,a,':',1x,e10.3, "
             if (size(val_) > 1) then
               fmt = fmt//"'...', /)"
             else
@@ -133,7 +133,7 @@ contains
 
           type is (real(real64))
 
-            fmt = "(4x, a, 1x, a, ':', 1x, e10.3, "
+            fmt = "(4x,a,1x,a,':',1x,e10.3, "
             if (size(val_) > 1) then
               fmt = fmt//"'...', /)"
             else
@@ -147,5 +147,26 @@ contains
 
     end if
   end subroutine write_formatted_variable
+
+  module subroutine write_formatted_group( &
+    & group, unit, iotype, v_list, iostat, iomsg)
+    class(group_type), intent(in) :: group
+    integer, intent(in) :: unit
+    character(*), intent(in) :: iotype
+    integer, intent(in) :: v_list (:)
+    integer, intent(out) :: iostat
+    character(*), intent(inout) :: iomsg
+    integer :: i
+
+    if (iotype == "DT" .or. iotype == "LISTDIRECTED") then
+      write (unit, "(a,/)") "VARIABLES:"
+      do i = 1, size(group%variables)
+        associate (var => group%variables(i))
+          call write_formatted_variable( &
+            & var, unit, iotype, v_list, iostat, iomsg)
+        end associate
+      end do
+    end if
+  end subroutine write_formatted_group
 
 end submodule submodule_io

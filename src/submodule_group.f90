@@ -7,7 +7,7 @@ contains
     character(*), intent(in) :: path, mode
     type(group_type) :: group
     integer :: status
-    character(kind=c_char, len=:), allocatable :: temp
+    character(kind=c_char, len=:), allocatable :: tmp
 
     select case (trim(mode))
     case ("r", "read")
@@ -17,8 +17,8 @@ contains
       group%mode = nc_nowrite
 
       !> Open file
-      temp = group%filename//c_null_char
-      status = nc_open(temp, group%mode, group%id)
+      tmp = group%filename//c_null_char
+      status = nc_open(tmp, group%mode, group%id)
       call handle_error(status, group%filename)
 
       !> Inquire format
@@ -27,6 +27,9 @@ contains
 
       !> Copy dimension info
       call inquire_dimensions(group)
+
+      !> Copy variable info
+      call inquire_variables(group)
 
     case default
       error stop "Invalid mode."

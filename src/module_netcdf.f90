@@ -123,6 +123,7 @@ module module_netcdf
   !> I/O
   interface write(formatted)
     module procedure :: write_formatted_variable
+    module procedure :: write_formatted_group
   end interface write(formatted)
 
   !> Inquire dimensions (internal)
@@ -135,6 +136,11 @@ module module_netcdf
   interface inquire_attributes
     module procedure :: inquire_variable_attributes
   end interface inquire_attributes
+
+  !> Inquire variables (internal)
+  interface inquire_variables
+    module procedure :: inquire_group_variables
+  end interface inquire_variables
 
   !> Interface to submodules
   interface
@@ -198,6 +204,11 @@ module module_netcdf
       character(:), allocatable :: string
     end function strip
 
+    !> Inquire variables from a group
+    module subroutine inquire_group_variables(group)
+      type(group_type), intent(inout) :: group
+    end subroutine inquire_group_variables
+
     !> Get variable
     module function get_var(group, name) result(variable)
       type(group_type), intent(inout) :: group
@@ -239,6 +250,16 @@ module module_netcdf
       integer, intent(out) :: iostat
       character(*), intent(inout) :: iomsg
     end subroutine write_formatted_variable
+
+    module subroutine write_formatted_group( &
+      & group, unit, iotype, v_list, iostat, iomsg)
+      class(group_type), intent(in) :: group
+      integer, intent(in) :: unit
+      character(*), intent(in) :: iotype
+      integer, intent(in) :: v_list (:)
+      integer, intent(out) :: iostat
+      character(*), intent(inout) :: iomsg
+    end subroutine write_formatted_group
 
   end interface
 

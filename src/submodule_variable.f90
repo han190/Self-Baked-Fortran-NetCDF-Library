@@ -2,6 +2,50 @@ submodule(module_netcdf) submodule_variable
   implicit none
 contains
 
+  !> Inquire variables from a group
+  module subroutine inquire_group_variables(group)
+    type(group_type), intent(inout) :: group
+    integer(c_int) :: status
+    integer :: num_vars, i
+    integer(c_int), allocatable :: var_ids(:)
+    character(kind=c_char, len=num_chars) :: var_name
+
+    !> Inquire number of variables
+    status = nc_inq_nvars(group%id, num_vars)
+    call handle_error(status, "nc_inq_nvars")
+
+    !> Inquire variable IDs
+    if (allocated(group%variables)) deallocate (group%variables)
+    allocate (group%variables(num_vars), var_ids(num_vars))
+    status = nc_inq_varids(group%id, num_vars, var_ids)
+    call handle_error(status, "nc_inq_varids")
+
+    !> Get variable metadata one by one
+    do i = 1, size(group%variables)
+      associate (var => group%variables(i))
+        !> Link group id
+        if (associated(var%nc_id)) deallocate (var%nc_id)
+        allocate (var%nc_id, source=group%id)
+
+        !> Copy variable id
+        var%id = var_ids(i)
+
+        !> Inquire dimensions and attributes
+        call inquire_dimensions(group, var)
+        call inquire_attributes(group, var)
+
+        !> Inquire variable type
+        status = nc_inq_vartype(group%id, var%id, var%type)
+        call handle_error(status, "nc_inq_vartype")
+
+        !> Inquire variable name
+        status = nc_inq_varname(group%id, var%id, var_name)
+        call handle_error(status, "nc_inq_varname")
+        var%name = strip(var_name, num_chars)
+      end associate
+    end do
+  end subroutine inquire_group_variables
+
   !> Get meta data for a variable
   module function get_var(group, name) result(variable)
     type(group_type), intent(inout) :: group

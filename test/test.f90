@@ -10,7 +10,7 @@ program main
 
   nc = dataset("./data/sample01.nc", "r")
   var = get_var(nc, "pr")
-  print *, var
+  print "(dt)", nc
   
   call extract(var, var_data)
   call close_dataset(nc)
