@@ -124,6 +124,8 @@ module module_netcdf
   interface write(formatted)
     module procedure :: write_formatted_variable
     module procedure :: write_formatted_group
+    module procedure :: write_formatted_attribute
+    module procedure :: write_formatted_dimension
   end interface write(formatted)
 
   !> Inquire dimensions (internal)
@@ -135,6 +137,7 @@ module module_netcdf
   !> Inquire attributes (internal)
   interface inquire_attributes
     module procedure :: inquire_variable_attributes
+    module procedure :: inquire_group_attributes
   end interface inquire_attributes
 
   !> Inquire variables (internal)
@@ -180,9 +183,15 @@ module module_netcdf
       type(variable_type), intent(inout) :: variable
     end subroutine inquire_variable_attributes
 
+    !> Inquire group attributes
+    module subroutine inquire_group_attributes(group)
+      type(group_type), intent(inout) :: group
+    end subroutine inquire_group_attributes
+
     !> Group constructor
-    module function open_dataset(path, mode) result(group)
+    module function open_dataset(path, mode, inq_att, inq_var) result(group)
       character(*), intent(in) :: path, mode
+      logical, intent(in), optional :: inq_att, inq_var
       type(group_type) :: group
     end function open_dataset
 
@@ -240,6 +249,26 @@ module module_netcdf
       type(variable_type), intent(in) :: variable
       real(real64), allocatable, intent(out) :: values(:)
     end subroutine extract_variable_real64
+
+    module subroutine write_formatted_attribute( &
+      & attribute, unit, iotype, v_list, iostat, iomsg)
+      class(attribute_type), intent(in) :: attribute
+      integer, intent(in) :: unit
+      character(*), intent(in) :: iotype
+      integer, intent(in) :: v_list (:)
+      integer, intent(out) :: iostat
+      character(*), intent(inout) :: iomsg
+    end subroutine write_formatted_attribute
+
+    module subroutine write_formatted_dimension( &
+      & dimension_, unit, iotype, v_list, iostat, iomsg)
+      class(dimension_type), intent(in) :: dimension_
+      integer, intent(in) :: unit
+      character(*), intent(in) :: iotype
+      integer, intent(in) :: v_list (:)
+      integer, intent(out) :: iostat
+      character(*), intent(inout) :: iomsg
+    end subroutine write_formatted_dimension
 
     module subroutine write_formatted_variable( &
       & variable, unit, iotype, v_list, iostat, iomsg)

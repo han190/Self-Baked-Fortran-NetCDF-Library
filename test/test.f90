@@ -4,7 +4,7 @@ program main
   use iso_fortran_env
   implicit none
 
-  type(group_type) :: nc ! netcdf
+  type(group_type), allocatable :: nc ! netcdf
   type(variable_type) :: var
   real, allocatable, target :: var_data(:)
 
@@ -13,6 +13,7 @@ program main
   print "(dt)", nc
   
   call extract(var, var_data)
-  call close_dataset(nc)
+  deallocate (nc)
+  ! call close_dataset(nc)
 
 end program main
