@@ -11,6 +11,7 @@ program main
   nc = dataset("./data/sample01.nc", "r")
   var = get_var(nc, "pr")
   print "(dt)", nc
+  print "(dt)", var
   
   call extract(var, var_data)
   deallocate (nc)

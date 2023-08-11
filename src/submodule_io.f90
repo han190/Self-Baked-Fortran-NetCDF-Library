@@ -2,7 +2,7 @@ submodule(module_netcdf) submodule_io
 
   implicit none
   integer, parameter :: line_width = 50
-  integer, parameter :: num_indents = 2
+  integer, parameter :: num_indents = 4
   character(len=*), parameter :: space = " "
 
 contains
@@ -101,7 +101,7 @@ contains
     if (size(v_list) == 0) then
       level = 0
     else
-      level = v_list(1)
+      level = v_list(1) + 1
     end if
 
     if (iotype == "DT" .or. iotype == "LISTDIRECTED") then
@@ -111,17 +111,14 @@ contains
       select type (val_ => attribute%values)
       type is (character(*))
 
-        if (size(val_) > 1) then
-          !!TODO
-          ! write (unit, "(a,/)") val_
+        !!TODO Find a way to remove all blackslash
+        !! and split long lines into shorter lines with
+        !! correct indentation.
+        tmp = att_name//" "//att_type//' "'//strip(val_(1))//'"'
+        if (len(tmp) > line_width) then
+          write (unit, "(a,/)") tmp(1:line_width - 4)//'..."'
         else
-          tmp = att_name//" "//att_type//' "'//strip(val_(1))//'"'
-          if (len(tmp) > line_width) then
-            !!TODO
-            ! write (unit, "(a,/)") tmp
-          else
-            write (unit, "(a,/)") tmp
-          end if
+          write (unit, "(a,/)") tmp
         end if
 
       type is (integer(int16))
@@ -190,7 +187,7 @@ contains
     character(len=:), allocatable :: fmt, dim_name
 
     !> Indent level
-    level = merge(0, v_list(1), size(v_list) == 0)
+    level = merge(0, v_list(1) + 1, size(v_list) == 0)
 
     if (iotype == "DT" .or. iotype == "LISTDIRECTED") then
       associate (dim => dimension_)
@@ -231,9 +228,9 @@ contains
       dim_str = "("//dim_str(1:len(dim_str) - 2)//")"
 
       if (size(v_list) == 0) then
-        v_list_ = [1]
+        v_list_ = [0]
       else
-        v_list_ = v_list
+        v_list_ = v_list + 1
       end if
       level = v_list_(1)
 
@@ -241,7 +238,6 @@ contains
       write (unit, fmt) indent_level(variable%name, level), &
         & get_type_name_(variable%type), dim_str
 
-      v_list_ = v_list_ + 1
       do i = 1, size(variable%attributes)
         associate (att => variable%attributes(i))
           call write_formatted_attribute( &
@@ -264,7 +260,7 @@ contains
     integer, allocatable :: v_list_(:)
 
     if (size(v_list) == 0) then
-      v_list_ = [1]
+      v_list_ = [0]
     else
       v_list_ = v_list
     end if
@@ -278,6 +274,7 @@ contains
             & dim, unit, iotype, v_list_, iostat, iomsg)
         end associate
       end do
+      write (unit, "(/)")
 
       if (allocated(group%variables)) then
         write (unit, "(a,/)") "VARIABLES:"
@@ -287,6 +284,7 @@ contains
               & var, unit, iotype, v_list_, iostat, iomsg)
           end associate
         end do
+        write (unit, "(/)")
       end if
 
       if (allocated(group%attributes)) then
@@ -297,7 +295,9 @@ contains
               & att, unit, iotype, v_list_, iostat, iomsg)
           end associate
         end do
+        write (unit, "(/)")
       end if
+
     end if
   end subroutine write_formatted_group
 
