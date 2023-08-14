@@ -2,88 +2,39 @@ submodule(module_netcdf) submodule_attribute
   implicit none
 contains
 
-  !> Inquire attributes based on group id
-  module subroutine inquire_group_attributes(group)
-    type(group_type), intent(inout) :: group
-    integer(c_int) :: status
-    integer :: num_atts, i
-    character(kind=c_char, len=nc_max_name) :: att_name
-
-    !> Inquire number of attributes
-    status = nc_inq_natts(group%id, num_atts)
-    call handle_error(status, "status")
-
-    !> Allocate group attributes
-    if (allocated(group%attributes)) deallocate (group%attributes)
-    allocate (group%attributes(num_atts))
-
-    !> Iteratively copy metadata to attributes
-    do i = 1, num_atts
-      associate (att => group%attributes(i))
-        status = nc_inq_attname(group%id, nc_global, i - 1, att_name)
-        call handle_error(status, "nc_inq_attname")
-        att%name = strip(att_name)
-
-        status = nc_inq_att(group%id, nc_global, att_name, att%type, att%length)
-        call handle_error(status, "nc_inq_att")
-      end associate
-    end do
-
-    call get_grp_att_(group)
-  end subroutine inquire_group_attributes
-
-  !> Inquire attributes based on nc_id
-  module subroutine inquire_variable_attributes(group, variable)
-    type(group_type), intent(inout) :: group
-    type(variable_type), intent(inout) :: variable
-    integer(c_int) :: status
-    integer :: num_atts, i
-    character(kind=c_char, len=nc_max_name) :: att_name
-    logical :: scale_offset(2)
-
-    !> Inquire number of attributes
-    status = nc_inq_varnatts(group%id, variable%id, num_atts)
-    call handle_error(status, "nc_inq_natts")
-
-    !> Reallocate attributes
-    if (allocated(variable%attributes)) deallocate (variable%attributes)
-    allocate (variable%attributes(num_atts))
-
-    !> Iteratively copy metadata to attributes.
-    scale_offset = .false.
-    do i = 1, num_atts
-      associate (att => variable%attributes(i))
-        status = nc_inq_attname(group%id, variable%id, i - 1, att_name)
-        call handle_error(status, "nc_inq_attname")
-        att%name = strip(att_name)
-
-        if (att%name == "add_offset") then
-          scale_offset(1) = .true.
-        else if (att%name == "scale_factor") then
-          scale_offset(2) = .true.
-        end if
-
-        status = nc_inq_att(group%id, variable%id, att_name, att%type, att%length)
-        call handle_error(status, "nc_inq_att")
-      end associate
-    end do
-
-    variable%scale_offset = all(scale_offset)
-    call get_var_att_(group, variable)
-  end subroutine inquire_variable_attributes
-
-  !> Get variable attribute
-  subroutine get_grp_att_(group)
-    type(group_type), intent(inout) :: group
-    integer(c_int) :: status
+  !> Inquire attributes (internal)
+  subroutine inq_atts_(grpid, varid, natts, atts)
+    integer(c_int), intent(in) :: grpid, varid, natts
+    type(attribute_type), intent(inout) :: atts(:)
+    integer(c_int) :: stat
+    character(kind=c_char, len=nc_max_name) :: tmp
     integer :: i
 
-    do i = 1, size(group%attributes)
-      associate (att => group%attributes(i))
+    do i = 1, natts
+      associate (att => atts(i))
+        att%id = i - 1
+        stat = nc_inq_attname(grpid, varid, att%id, tmp)
+        call handle_error(stat, "nc_inq_attname")
+        att%name = strip(tmp)
+
+        stat = nc_inq_att(grpid, varid, tmp, att%type, att%length)
+        call handle_error(stat, "nc_inq_att")
+      end associate
+    end do
+  end subroutine inq_atts_
+
+  !> Get attributes (internal)
+  subroutine get_atts_(grpid, varid, natts, atts)
+    integer(c_int), intent(in) :: grpid, varid, natts
+    type(attribute_type), intent(inout) :: atts(:)
+    integer(c_int) :: stat
+    integer :: i
+    character(kind=c_char, len=:), allocatable :: tmp
+
+    do i = 1, natts
+      associate (att => atts(i))
         select case (att%type)
         case (nc_char)
-          !> If attribute is too long, store it
-          !> in a character array.
           if (att%length > nc_max_char) then
             allocate (character(kind=c_char, len=nc_max_char) :: &
               & att%values(att%length/nc_max_char + 1))
@@ -102,83 +53,61 @@ contains
           allocate (real(real64) :: att%values(att%length))
         end select
 
-        select type (val_ => att%values)
-        type is (character(kind=c_char, len=*))
-          status = nc_get_att_text(group%id, nc_global, att%name, val_)
-          call handle_error(status, "nc_get_att_text")
-        type is (integer(int16))
-          status = nc_get_att_short(group%id, nc_global, att%name, val_)
-          call handle_error(status, "nc_get_att_short")
-        type is (integer(int32))
-          status = nc_get_att_int(group%id, nc_global, att%name, val_)
-          call handle_error(status, "nc_get_att_int")
-        type is (integer(int64))
-          status = nc_get_att_longlong(group%id, nc_global, att%name, val_)
-          call handle_error(status, "nc_get_att_longlong")
-        type is (real(real32))
-          status = nc_get_att_float(group%id, nc_global, att%name, val_)
-          call handle_error(status, "nc_get_att_float")
-        type is (real(real64))
-          status = nc_get_att_double(group%id, nc_global, att%name, val_)
-          call handle_error(status, "nc_get_att_double")
-        end select
-      end associate
-    end do
-  end subroutine get_grp_att_
-
-  !> Get variable attribute
-  subroutine get_var_att_(group, variable)
-    type(group_type), intent(in) :: group
-    type(variable_type), intent(inout) :: variable
-    integer(c_int) :: status
-    integer :: i
-
-    do i = 1, size(variable%attributes)
-      associate (att => variable%attributes(i))
-        select case (att%type)
-        case (nc_char)
-          !> If attribute is too long, store it
-          !> in a character array.
-          if (att%length > nc_max_char) then
-            allocate (character(kind=c_char, len=nc_max_char) :: &
-              & att%values(att%length/nc_max_char + 1))
-          else
-            allocate (character(kind=c_char, len=att%length) :: att%values(1))
-          end if
-        case (nc_short)
-          allocate (integer(int16) :: att%values(att%length))
-        case (nc_int)
-          allocate (integer(int32) :: att%values(att%length))
-        case (nc_int64)
-          allocate (integer(int64) :: att%values(att%length))
-        case (nc_float)
-          allocate (real(real32) :: att%values(att%length))
-        case (nc_double)
-          allocate (real(real64) :: att%values(att%length))
-        end select
+        tmp = att%name//c_null_char
 
         select type (val_ => att%values)
         type is (character(kind=c_char, len=*))
-          status = nc_get_att_text(group%id, variable%id, att%name, val_)
-          call handle_error(status, "nc_get_att_text")
+          stat = nc_get_att_text(grpid, varid, tmp, val_)
+          call handle_error(stat, "nc_get_att_text")
         type is (integer(int16))
-          status = nc_get_att_short(group%id, variable%id, att%name, val_)
-          call handle_error(status, "nc_get_att_short")
+          stat = nc_get_att_short(grpid, varid, tmp, val_)
+          call handle_error(stat, "nc_get_att_short")
         type is (integer(int32))
-          status = nc_get_att_int(group%id, variable%id, att%name, val_)
-          call handle_error(status, "nc_get_att_int")
+          stat = nc_get_att_int(grpid, varid, tmp, val_)
+          call handle_error(stat, "nc_get_att_int")
         type is (integer(int64))
-          status = nc_get_att_longlong(group%id, variable%id, att%name, val_)
-          call handle_error(status, "nc_get_att_longlong")
+          stat = nc_get_att_longlong(grpid, varid, tmp, val_)
+          call handle_error(stat, "nc_get_att_longlong")
         type is (real(real32))
-          status = nc_get_att_float(group%id, variable%id, att%name, val_)
-          call handle_error(status, "nc_get_att_float")
+          stat = nc_get_att_float(grpid, varid, tmp, val_)
+          call handle_error(stat, "nc_get_att_float")
         type is (real(real64))
-          status = nc_get_att_double(group%id, variable%id, att%name, val_)
-          call handle_error(status, "nc_get_att_double")
+          stat = nc_get_att_double(grpid, varid, tmp, val_)
+          call handle_error(stat, "nc_get_att_double")
         end select
       end associate
-    end do
-  end subroutine get_var_att_
+    end do 
+  end subroutine get_atts_
+
+  !> Inquire group attribute
+  module subroutine inq_grp_atts(grp)
+    type(group_type), intent(inout) :: grp
+    integer(c_int) :: stat, natts
+
+    !> inquire number of attributes
+    stat = nc_inq_natts(grp%id, natts)
+    call handle_error(stat, "nc_inq_natts")
+
+    if (allocated(grp%atts)) deallocate (grp%atts)
+    allocate (grp%atts(natts))
+    call inq_atts_(grp%id, nc_global, natts, grp%atts)
+    call get_atts_(grp%id, nc_global, natts, grp%atts)
+  end subroutine inq_grp_atts
+
+  !> Inquire variable attributes
+  module subroutine inq_var_atts(grp, var)
+    type(group_type), intent(inout) :: grp
+    type(variable_type), intent(inout) :: var
+    integer(c_int) :: stat, natts
+
+    !> inquire number of attributes
+    stat = nc_inq_varnatts(grp%id, var%id, natts)
+    call handle_error(stat, "nc_inq_varnatts")
+
+    if (allocated(var%atts)) deallocate (var%atts)
+    allocate (var%atts(natts))
+    call inq_atts_(grp%id, var%id, natts, var%atts)
+    call get_atts_(grp%id, var%id, natts, var%atts)
+  end subroutine inq_var_atts
 
 end submodule submodule_attribute

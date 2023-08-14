@@ -1,4 +1,4 @@
-submodule(module_netcdf) submodule_error
+submodule(module_netcdf) submodule_utility
   implicit none
 contains
 
@@ -19,20 +19,20 @@ contains
 
   !> Check function with error messages. Credit:
   !> https://github.com/Unidata/netcdf-fortran/blob/main/fortran/nf_misc.F90
-  module subroutine handle_error(status, error_message)
-    integer(c_int), intent(in) :: status
-    character(*), intent(in), optional :: error_message
+  module subroutine handle_error(stat, err_msg)
+    integer(c_int), intent(in) :: stat
+    character(*), intent(in), optional :: err_msg
     character(:), pointer :: fptr => null()
     type(c_ptr) :: cptr
     integer :: inull, iptr, nptr
     character(:), allocatable :: message
 
-    if (status /= nc_noerr) then
+    if (stat /= nc_noerr) then
 
-      nptr = 80
+      nptr = nc_max_name
       allocate (character(len=nptr + 1) :: fptr)
 
-      cptr = nc_strerror(status)
+      cptr = nc_strerror(stat)
       call c_f_pointer(cptr, fptr)
 
       iptr = len_trim(fptr)
@@ -40,8 +40,8 @@ contains
       if (inull /= 0) iptr = inull - 1
       iptr = max(1, min(iptr, nptr))
 
-      if (present(error_message)) then
-        message = fptr(1:iptr)//" ("//error_message//")"
+      if (present(err_msg)) then
+        message = fptr(1:iptr)//" ("//err_msg//")"
       else
         message = fptr(1:iptr)
       end if
@@ -51,4 +51,4 @@ contains
     nullify(fptr)
   end subroutine handle_error
 
-end submodule submodule_error
+end submodule submodule_utility

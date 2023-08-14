@@ -7,51 +7,51 @@ submodule(module_netcdf) submodule_io
 
 contains
 
-  pure function get_type_name_(type_id) result(type_name)
-    integer(c_int), intent(in) :: type_id
-    character(:), allocatable :: type_name
+  pure function type_name(id) result(ret)
+    integer(c_int), intent(in) :: id
+    character(:), allocatable :: ret
 
-    select case (type_id)
+    select case (id)
     case (nc_nat)
-      type_name = "not a type."
+      ret = "not a type."
     case (nc_byte)
-      type_name = "byte"
+      ret = "byte"
     case (nc_char)
-      type_name = "char"
+      ret = "char"
     case (nc_short)
-      type_name = "short"
+      ret = "short"
     case (nc_int)
-      type_name = "int"
+      ret = "int"
       ! case (nc_long)
-      !   type_name = "32-bit integer (deprecated)"
+      !   ret = "32-bit integer (deprecated)"
     case (nc_float)
-      type_name = "float"
+      ret = "float"
     case (nc_double)
-      type_name = "double"
+      ret = "double"
     case (nc_int64)
-      type_name = "int64"
+      ret = "int64"
     case default
       error stop "Not supported type id."
     end select
 
-    type_name = "<"//type_name//">"
-  end function get_type_name_
+    ret = "<"//ret//">"
+  end function type_name
 
-  elemental function num_digits(value) result(ret)
-    integer(int64), intent(in) :: value
+  elemental function num_digits(val) result(ret)
+    integer(int64), intent(in) :: val
     integer(int64) :: ret
 
-    ret = merge(1, floor(log10(real(value))) + 1, &
-      & abs(value - 0.) < tiny(0.))
+    ret = merge(1, floor(log10(real(val))) + 1, &
+      & abs(val - 0.) < tiny(0.))
   end function num_digits
 
-  pure function int2char(value) result(ret)
-    integer(int64), intent(in) :: value
+  pure function int2char(val) result(ret)
+    integer(int64), intent(in) :: val
     character(:), allocatable :: ret
 
     if (allocated(ret)) deallocate(ret)
-    allocate (character(len=num_digits(value)) :: ret)
-    write (ret, "(i0)") value
+    allocate (character(len=num_digits(val)) :: ret)
+    write (ret, "(i0)") val
   end function int2char
 
   pure function split_string(string, width) result(ret)
@@ -86,9 +86,9 @@ contains
     ret = repeat(space, num_indents*level)//string
   end function indent_level
 
-  module subroutine write_formatted_attribute( &
-    & attribute, unit, iotype, v_list, iostat, iomsg)
-    class(attribute_type), intent(in) :: attribute
+  module subroutine write_formatted_att( &
+    & att, unit, iotype, v_list, iostat, iomsg)
+    class(attribute_type), intent(in) :: att
     integer, intent(in) :: unit
     character(*), intent(in) :: iotype
     integer, intent(in) :: v_list (:)
@@ -105,10 +105,10 @@ contains
     end if
 
     if (iotype == "DT" .or. iotype == "LISTDIRECTED") then
-      att_type = get_type_name_(attribute%type)
-      att_name = indent_level(attribute%name, level)
+      att_type = type_name(att%type)
+      att_name = indent_level(att%name, level)
 
-      select type (val_ => attribute%values)
+      select type (val_ => att%values)
       type is (character(*))
 
         !!TODO Find a way to remove all blackslash
@@ -173,11 +173,11 @@ contains
 
       end select
     end if
-  end subroutine write_formatted_attribute
+  end subroutine write_formatted_att
 
-  module subroutine write_formatted_dimension( &
-    & dimension_, unit, iotype, v_list, iostat, iomsg)
-    class(dimension_type), intent(in) :: dimension_
+  module subroutine write_formatted_dim( &
+    & dim, unit, iotype, v_list, iostat, iomsg)
+    class(dimension_type), intent(in) :: dim
     integer, intent(in) :: unit
     character(*), intent(in) :: iotype
     integer, intent(in) :: v_list (:)
@@ -190,7 +190,7 @@ contains
     level = merge(0, v_list(1) + 1, size(v_list) == 0)
 
     if (iotype == "DT" .or. iotype == "LISTDIRECTED") then
-      associate (dim => dimension_)
+      associate (dim => dim)
         dim_name = indent_level(dim%name, level)
         if (dim%is_unlimited) then
           fmt = "(a, ':', 1x, i0, ' (unlimited)', /)"
@@ -200,11 +200,11 @@ contains
         write (unit, fmt) dim_name, dim%length
       end associate
     end if
-  end subroutine write_formatted_dimension
+  end subroutine write_formatted_dim
 
-  module subroutine write_formatted_variable( &
-    & variable, unit, iotype, v_list, iostat, iomsg)
-    class(variable_type), intent(in) :: variable
+  module subroutine write_formatted_var( &
+    & var, unit, iotype, v_list, iostat, iomsg)
+    class(variable_type), intent(in) :: var
     integer, intent(in) :: unit
     character(*), intent(in) :: iotype
     integer, intent(in) :: v_list (:)
@@ -218,11 +218,13 @@ contains
     if (iotype == "DT" .or. iotype == "LISTDIRECTED") then
 
       !> Construct a character for dimensions
-      !> Yes, C starts from zero.
+      !> Yes, C starts from zero. Also, keep in mind Fortran
+      !> is column major so loop backwards.
       dim_str = ""
-      do i = 0, size(variable%dimensions) - 1
-        associate (dim => variable%dimensions(i))
-          dim_str = dim_str//dim%name//":"//int2char(dim%length)//", "
+      do i = rank(var), 1, -1
+        associate (dim => var%dims%ptrs(i)%ptr)
+          dim_str = dim_str//dim%name//":"// &
+            & int2char(dim%length)//", "
         end associate
       end do
       dim_str = "("//dim_str(1:len(dim_str) - 2)//")"
@@ -235,22 +237,22 @@ contains
       level = v_list_(1)
 
       fmt = "(a, 1x, a, 1x, a, /)"
-      write (unit, fmt) indent_level(variable%name, level), &
-        & get_type_name_(variable%type), dim_str
+      write (unit, fmt) indent_level(var%name, level), &
+        & type_name(var%type), dim_str
 
-      do i = 1, size(variable%attributes)
-        associate (att => variable%attributes(i))
-          call write_formatted_attribute( &
+      do i = 1, size(var%atts)
+        associate (att => var%atts(i))
+          call write_formatted_att( &
             & att, unit, iotype, v_list_, iostat, iomsg)
         end associate
       end do
 
     end if
-  end subroutine write_formatted_variable
+  end subroutine write_formatted_var
 
-  module subroutine write_formatted_group( &
-    & group, unit, iotype, v_list, iostat, iomsg)
-    class(group_type), intent(in) :: group
+  module subroutine write_formatted_grp( &
+    & grp, unit, iotype, v_list, iostat, iomsg)
+    class(group_type), intent(in) :: grp
     integer, intent(in) :: unit
     character(*), intent(in) :: iotype
     integer, intent(in) :: v_list (:)
@@ -266,32 +268,32 @@ contains
     end if
 
     if (iotype == "DT" .or. iotype == "LISTDIRECTED") then
-      write (unit, "(a,1x,'(',a,')',':',/)") "GROUP", group%name
+      write (unit, "(a,1x,'(',a,')',':',/)") "GROUP", grp%name
       write (unit, "(a,/)") "DIMENSIONS:"
-      do i = 1, size(group%dimensions)
-        associate (dim => group%dimensions(i))
-          call write_formatted_dimension( &
+      do i = 1, size(grp%dims)
+        associate (dim => grp%dims(i))
+          call write_formatted_dim( &
             & dim, unit, iotype, v_list_, iostat, iomsg)
         end associate
       end do
       write (unit, "(/)")
 
-      if (allocated(group%variables)) then
+      if (allocated(grp%vars)) then
         write (unit, "(a,/)") "VARIABLES:"
-        do i = 1, size(group%variables)
-          associate (var => group%variables(i))
-            call write_formatted_variable( &
+        do i = 1, size(grp%vars)
+          associate (var => grp%vars(i))
+            call write_formatted_var( &
               & var, unit, iotype, v_list_, iostat, iomsg)
           end associate
         end do
         write (unit, "(/)")
       end if
 
-      if (allocated(group%attributes)) then
+      if (allocated(grp%atts)) then
         write (unit, "(a,/)") "ATTRIBUTES:"
-        do i = 1, size(group%attributes)
-          associate (att => group%attributes(i))
-            call write_formatted_attribute( &
+        do i = 1, size(grp%atts)
+          associate (att => grp%atts(i))
+            call write_formatted_att( &
               & att, unit, iotype, v_list_, iostat, iomsg)
           end associate
         end do
@@ -299,6 +301,6 @@ contains
       end if
 
     end if
-  end subroutine write_formatted_group
+  end subroutine write_formatted_grp
 
 end submodule submodule_io
