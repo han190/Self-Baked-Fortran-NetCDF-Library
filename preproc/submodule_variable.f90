@@ -217,4 +217,5 @@ contains
     call handle_error(stat, "nc_get_var_double")
   end subroutine get_var_real64
 
+
 end submodule submodule_variable

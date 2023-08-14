@@ -4,5 +4,6 @@
 #:set types = ['integer', 'integer', 'integer', 'real', 'real']
 #:set c_names = ['short', 'int', 'longlong', 'float', 'double']
 #:set get_vars = ['nc_get_var_' + c_name for c_name in c_names]
+#:set get_atts = ['nc_get_att_' + c_name for c_name in c_names]
 
 #:endmute

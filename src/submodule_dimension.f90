@@ -5,7 +5,7 @@ contains
   !> Inquire group dimension
   module subroutine inq_grp_dims(grp)
     type(group_type), intent(inout) :: grp
-    integer(c_int) :: stat, ndims, include_parents
+    integer(c_int) :: stat, ndims, include_parents, unlim_dim
     integer(c_int), allocatable :: dimids(:)
     integer(c_size_t), allocatable :: dimlens(:)
     character(kind=c_char, len=nc_max_name) :: tmp
@@ -24,24 +24,28 @@ contains
     if (allocated(grp%dims)) deallocate (grp%dims)
     allocate (grp%dims(ndims))
 
+    !> inquire unlimited dimension
+    stat = nc_inq_unlimdim(grp%id, unlim_dim)
+    call handle_error(stat, "nc_inq_unlimdim")
+
     !> Iteratively copy info to dim
     do i = 1, ndims
       associate (dim => grp%dims(i))
         dim%id = dimids(i)
-
         stat = nc_inq_dimlen(grp%id, dim%id, dim%length)
         call handle_error(stat, "nc_inq_dimlen")
 
         stat = nc_inq_dimname(grp%id, dim%id, tmp)
         call handle_error(stat, "nc_inq_dimname")
         dim%name = strip(tmp)
+        dim%is_unlimited = dim%id == unlim_dim
       end associate
     end do
   end subroutine inq_grp_dims
 
   !> Inquire variable dimensions
   module subroutine inq_var_dims(grp, var)
-    type(group_type), target, intent(inout) :: grp
+    type(group_type), target, intent(in) :: grp
     type(variable_type), intent(inout) :: var
     integer(c_int) :: stat, ndims
     integer(c_int), allocatable :: dimids(:), grp_dimids(:)

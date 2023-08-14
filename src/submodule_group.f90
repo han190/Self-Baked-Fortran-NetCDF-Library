@@ -37,15 +37,11 @@ contains
       !> copy attribute info (default: true)
       if (present(inq_atts)) then
         if (inq_atts) call inq_grp_atts(file)
-      else 
-        call inq_grp_atts(file)
       end if
 
       !> copy variable info
       if (present(inq_vars)) then
         if (inq_vars) call inq_grp_vars(file)
-      else
-        call inq_grp_vars(file)
       end if
 
     case default

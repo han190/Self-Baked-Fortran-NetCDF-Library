@@ -45,7 +45,7 @@ contains
           allocate (integer(int16) :: att%values(att%length))
         case (nc_int)
           allocate (integer(int32) :: att%values(att%length))
-        case (nc_int64)
+        case (nc_longlong)
           allocate (integer(int64) :: att%values(att%length))
         case (nc_float)
           allocate (real(real32) :: att%values(att%length))
@@ -76,7 +76,7 @@ contains
           call handle_error(stat, "nc_get_att_double")
         end select
       end associate
-    end do
+    end do 
   end subroutine get_atts_
 
   !> Inquire group attribute

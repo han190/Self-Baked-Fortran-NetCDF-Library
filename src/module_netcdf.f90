@@ -12,7 +12,7 @@ module module_netcdf
 
   public :: dimension_type, attribute_type
   public :: group_type, variable_type
-  public :: inq_var, dataset, extract
+  public :: inq_var, dataset, get_var, get_att
   public :: write(formatted), shape, size, rank
   private
 
@@ -30,13 +30,26 @@ module module_netcdf
     module procedure :: rank_var
   end interface rank
 
-  interface extract
-    module procedure :: extract_var_int16
-    module procedure :: extract_var_int32
-    module procedure :: extract_var_int64
-    module procedure :: extract_var_real32
-    module procedure :: extract_var_real64
-  end interface extract
+  interface get_att
+    module procedure :: get_att_name_scalar_int16
+    module procedure :: get_att_name_scalar_int32
+    module procedure :: get_att_name_scalar_int64
+    module procedure :: get_att_name_scalar_real32
+    module procedure :: get_att_name_scalar_real64
+  end interface get_att
+
+  interface get_var
+    module procedure :: get_var_int16
+    module procedure :: get_var_int32
+    module procedure :: get_var_int64
+    module procedure :: get_var_real32
+    module procedure :: get_var_real64
+    module procedure :: get_var_name_int16
+    module procedure :: get_var_name_int32
+    module procedure :: get_var_name_int64
+    module procedure :: get_var_name_real32
+    module procedure :: get_var_name_real64
+  end interface get_var
 
   interface write(formatted)
     module procedure :: write_formatted_var
@@ -71,7 +84,7 @@ module module_netcdf
 
     !> Inquire variable dimensions
     module subroutine inq_var_dims(grp, var)
-      type(group_type), target, intent(inout) :: grp
+      type(group_type), target, intent(in) :: grp
       type(variable_type), intent(inout) :: var
     end subroutine inq_var_dims
 
@@ -103,9 +116,39 @@ module module_netcdf
 
     !> Inquire variable attributes
     module subroutine inq_var_atts(grp, var)
-      type(group_type), intent(inout) :: grp
+      type(group_type), intent(in) :: grp
       type(variable_type), intent(inout) :: var
     end subroutine inq_var_atts
+
+    module subroutine get_att_name_scalar_int16(var, name, val)
+      type(variable_type), intent(in) :: var
+      character(len=*), intent(in) :: name
+      integer(int16), intent(out) :: val
+    end subroutine get_att_name_scalar_int16
+    
+    module subroutine get_att_name_scalar_int32(var, name, val)
+      type(variable_type), intent(in) :: var
+      character(len=*), intent(in) :: name
+      integer(int32), intent(out) :: val
+    end subroutine get_att_name_scalar_int32
+    
+    module subroutine get_att_name_scalar_int64(var, name, val)
+      type(variable_type), intent(in) :: var
+      character(len=*), intent(in) :: name
+      integer(int64), intent(out) :: val
+    end subroutine get_att_name_scalar_int64
+    
+    module subroutine get_att_name_scalar_real32(var, name, val)
+      type(variable_type), intent(in) :: var
+      character(len=*), intent(in) :: name
+      real(real32), intent(out) :: val
+    end subroutine get_att_name_scalar_real32
+    
+    module subroutine get_att_name_scalar_real64(var, name, val)
+      type(variable_type), intent(in) :: var
+      character(len=*), intent(in) :: name
+      real(real64), intent(out) :: val
+    end subroutine get_att_name_scalar_real64
 
     !> submodule variable
     !> ------------------
@@ -117,7 +160,7 @@ module module_netcdf
 
     !> Inquire variable
     module function inq_var(grp, name) result(var)
-      type(group_type), target, intent(inout) :: grp
+      type(group_type), target, intent(in) :: grp
       character(len=*), intent(in) :: name
       type(variable_type) :: var
     end function inq_var
@@ -140,35 +183,60 @@ module module_netcdf
       integer(int64) :: ret
     end function rank_var
 
-    !> Extract variable int16
-    module subroutine extract_var_int16(var, vals)
-      type(variable_type), intent(in) :: var
-      integer(int16), intent(out) :: vals(*)
-    end subroutine extract_var_int16
+    module subroutine get_var_name_int16(grp, name, vals)
+      type(group_type), intent(in) :: grp
+      character(len=*), intent(in) :: name
+      integer(int16), allocatable, intent(out) :: vals(:)
+    end subroutine get_var_name_int16
 
-    !> Extract variable int32
-    module subroutine extract_var_int32(var, vals)
+    module subroutine get_var_int16(var, vals)
       type(variable_type), intent(in) :: var
-      integer(int32), intent(out) :: vals(*)
-    end subroutine extract_var_int32
+      integer(int16), allocatable, intent(out) :: vals(:)
+    end subroutine get_var_int16
+    
+    module subroutine get_var_name_int32(grp, name, vals)
+      type(group_type), intent(in) :: grp
+      character(len=*), intent(in) :: name
+      integer(int32), allocatable, intent(out) :: vals(:)
+    end subroutine get_var_name_int32
 
-    !> Extract variable int64
-    module subroutine extract_var_int64(var, vals)
+    module subroutine get_var_int32(var, vals)
       type(variable_type), intent(in) :: var
-      integer(int64), intent(out) :: vals(*)
-    end subroutine extract_var_int64
+      integer(int32), allocatable, intent(out) :: vals(:)
+    end subroutine get_var_int32
+    
+    module subroutine get_var_name_int64(grp, name, vals)
+      type(group_type), intent(in) :: grp
+      character(len=*), intent(in) :: name
+      integer(int64), allocatable, intent(out) :: vals(:)
+    end subroutine get_var_name_int64
 
-    !> Extract variable real32
-    module subroutine extract_var_real32(var, vals)
+    module subroutine get_var_int64(var, vals)
       type(variable_type), intent(in) :: var
-      real(real32), intent(out) :: vals(*)
-    end subroutine extract_var_real32
+      integer(int64), allocatable, intent(out) :: vals(:)
+    end subroutine get_var_int64
+    
+    module subroutine get_var_name_real32(grp, name, vals)
+      type(group_type), intent(in) :: grp
+      character(len=*), intent(in) :: name
+      real(real32), allocatable, intent(out) :: vals(:)
+    end subroutine get_var_name_real32
 
-    !> Extract variable real64
-    module subroutine extract_var_real64(var, vals)
+    module subroutine get_var_real32(var, vals)
       type(variable_type), intent(in) :: var
-      real(real64), intent(out) :: vals(*)
-    end subroutine extract_var_real64
+      real(real32), allocatable, intent(out) :: vals(:)
+    end subroutine get_var_real32
+    
+    module subroutine get_var_name_real64(grp, name, vals)
+      type(group_type), intent(in) :: grp
+      character(len=*), intent(in) :: name
+      real(real64), allocatable, intent(out) :: vals(:)
+    end subroutine get_var_name_real64
+
+    module subroutine get_var_real64(var, vals)
+      type(variable_type), intent(in) :: var
+      real(real64), allocatable, intent(out) :: vals(:)
+    end subroutine get_var_real64
 
     !> submodule group
     !> ---------------
