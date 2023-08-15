@@ -2,7 +2,7 @@ module module_constant
 
   !> This module is converted from netcdf.h
   !> https://github.com/Unidata/netcdf-c/blob/main/include/netcdf.h
-  use iso_c_binding
+  use :: iso_c_binding
   implicit none
   public
 

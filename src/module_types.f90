@@ -1,6 +1,6 @@
 module module_types
 
-  use iso_c_binding, only: c_int, c_size_t
+  use :: iso_c_binding, only: c_int, c_size_t
   implicit none
   public
 

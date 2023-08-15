@@ -11,7 +11,7 @@ module module_interface
   implicit none
 
   public :: dimension_type, attribute_type
-  public :: group_type, variable_type
+  public :: group_type, variable_type, handle_error
   public :: inq_var, dataset, get_var, get_att
   public :: write (formatted), shape, size, rank
   private
