@@ -82,7 +82,7 @@ contains
     if (allocated(ret)) deallocate(ret)
     lbnd = lbound(dims%ptrs, dim=1)
     ubnd = ubound(dims%ptrs, dim=1)
-    ret = [(dims%ptrs(i)%ptr%length, i=lbnd, ubnd)]
+    ret = [(dims%ptrs(i)%ptr%length, i=ubnd, lbnd, -1)]
   end function shape_dims
 
   !> size of dimensions

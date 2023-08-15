@@ -201,5 +201,4 @@ contains
     val = tmp(1)
   end subroutine get_att_name_scalar_real64
 
-
 end submodule submodule_attribute

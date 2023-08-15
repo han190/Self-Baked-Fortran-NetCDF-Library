@@ -18,6 +18,7 @@ module module_netcdf
 
   interface shape
     module procedure :: shape_dims
+    module procedure :: shape_var
   end interface shape
 
   interface size
