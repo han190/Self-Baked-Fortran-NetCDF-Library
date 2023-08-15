@@ -1,4 +1,4 @@
-submodule(module_netcdf) submodule_io
+submodule(module_interface) submodule_io
 
   implicit none
   integer, parameter :: line_width = 50

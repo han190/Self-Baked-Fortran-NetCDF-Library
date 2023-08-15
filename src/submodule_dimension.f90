@@ -1,4 +1,4 @@
-submodule(module_netcdf) submodule_dimension
+submodule(module_interface) submodule_dimension
   implicit none
 contains
 

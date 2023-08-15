@@ -1,4 +1,4 @@
-submodule(module_netcdf) submodule_group
+submodule(module_interface) submodule_group
   implicit none
 contains
 
