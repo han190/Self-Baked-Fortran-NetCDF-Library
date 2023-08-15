@@ -19,10 +19,6 @@ program main
   call get_att(var, "scale_factor", scale_factor)
   call get_att(var, "add_offset", add_offset)
 
-  print *, scale_factor, add_offset
-  print "(a, *(i0, 1x))", "shape of var = ", shape(var)
-  print "(a, i0)", "rank of var = ", rank(var)
-  print "(a, i0)", "size of var = ", size(var)
   vals = raw*scale_factor + add_offset
   associate (s => shape(var))
     ptr(1:s(1), 1:s(2), 1:s(3)) => vals
