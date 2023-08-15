@@ -87,11 +87,10 @@ contains
     !> inquire number of dimensions
     stat = nc_inq_varndims(grp%id, var%id, ndims)
     call handle_error(stat, "nc_inq_varndims")
-    var%dims%length = ndims
 
     !> inquire variable dimension ids
-    if (allocated(var%dims%ptrs)) deallocate (var%dims%ptrs)
-    allocate (var%dims%ptrs(ndims), dimids(ndims))
+    if (allocated(var%dims)) deallocate (var%dims)
+    allocate (var%dims(ndims), dimids(ndims))
     stat = nc_inq_vardimid(grp%id, var%id, dimids)
     call handle_error(stat, "nc_inq_vardimid")
 
@@ -99,7 +98,7 @@ contains
     do i = 1, ndims
       loc = findloc(grp_dimids, dimids(i), dim=1)
       if (loc >= 1) then
-        var%dims%ptrs(i)%ptr => grp%dims(loc)
+        var%dims(i)%ptr => grp%dims(loc)
       else
         error stop "Invalid location."
       end if
@@ -108,26 +107,26 @@ contains
 
   !> shape of dimensions
   module function shape_dims(dims) result(ret)
-    type(dimensions_type), intent(in) :: dims
+    type(dimension_pointer), intent(in) :: dims(:)
     integer(int64), allocatable :: ret(:)
     integer :: i, lbnd, ubnd
 
     if (allocated(ret)) deallocate (ret)
-    lbnd = lbound(dims%ptrs, dim=1)
-    ubnd = ubound(dims%ptrs, dim=1)
-    ret = [(dims%ptrs(i)%ptr%length, i=ubnd, lbnd, -1)]
+    lbnd = lbound(dims, dim=1)
+    ubnd = ubound(dims, dim=1)
+    ret = [(dims(i)%ptr%length, i=ubnd, lbnd, -1)]
   end function shape_dims
 
   !> size of dimensions
   module function size_dims(dims) result(ret)
-    type(dimensions_type), intent(in) :: dims
+    type(dimension_pointer), intent(in) :: dims(:)
     integer(int64) :: ret
     integer :: i
 
     ret = 1
-    do i = 1, dims%length
-      if (associated(dims%ptrs(i)%ptr)) then
-        ret = ret*dims%ptrs(i)%ptr%length
+    do i = 1, size(dims)
+      if (associated(dims(i)%ptr)) then
+        ret = ret*dims(i)%ptr%length
       else
         error stop "Invalid dimension pointer."
       end if
@@ -136,10 +135,10 @@ contains
 
   !> rank of dimensions
   module function rank_dims(dims) result(ret)
-    type(dimensions_type), intent(in) :: dims
+    type(dimension_pointer), intent(in) :: dims(:)
     integer(int64) :: ret
 
-    ret = dims%length
+    ret = size(dims)
   end function rank_dims
 
 end submodule submodule_dimension

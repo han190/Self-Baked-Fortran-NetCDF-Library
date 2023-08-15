@@ -12,8 +12,8 @@ contains
     integer(c_int) :: ndims, i, j, stat
 
     ndims = size(dim_names)
-    if (allocated(var%dims%ptrs)) deallocate (var%dims%ptrs)
-    allocate (var%dims%ptrs(ndims), dimids(ndims))
+    if (allocated(var%dims)) deallocate (var%dims)
+    allocate (var%dims(ndims), dimids(ndims))
 
     var%type = type
     var%name = name
@@ -21,7 +21,7 @@ contains
     do i = 1, ndims
       inner: do j = 1, size(grp%dims)
         if (trim(dim_names(i)) == trim(grp%dims(j)%name)) then
-          var%dims%ptrs(i)%ptr => grp%dims(j)
+          var%dims(i)%ptr => grp%dims(j)
           dimids(i) = grp%dims(i)%id
           exit inner
         end if

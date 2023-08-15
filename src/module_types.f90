@@ -27,17 +27,9 @@ module module_types
   end type dimension_type
 
   !> Dimension pointer type
-  type :: dimension_pointer_type
+  type :: dimension_pointer
     type(dimension_type), pointer :: ptr => null()
-  end type dimension_pointer_type
-
-  !> Dimensions type
-  type :: dimensions_type
-    !> Rank
-    integer :: length
-    !> Pointers
-    type(dimension_pointer_type), allocatable :: ptrs(:)
-  end type dimensions_type
+  end type dimension_pointer
 
   !> Attribute type
   type, extends(netcdf_type) :: attribute_type
@@ -52,7 +44,7 @@ module module_types
   !> Variable type
   type, extends(netcdf_type) :: variable_type
     !> dimensions
-    type(dimensions_type) :: dims
+    type(dimension_pointer), allocatable :: dims(:)
     !> attribute
     type(attribute_type), allocatable :: atts(:)
     !> group id

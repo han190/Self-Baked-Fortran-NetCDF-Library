@@ -222,7 +222,7 @@ contains
       !> is column major so loop backwards.
       dim_str = ""
       do i = rank(var), 1, -1
-        associate (dim => var%dims%ptrs(i)%ptr)
+        associate (dim => var%dims(i)%ptr)
           dim_str = dim_str//dim%name//":"// &
             & int2char(dim%length)//", "
         end associate
@@ -278,7 +278,6 @@ contains
             & dim, unit, iotype, v_list_, iostat, iomsg)
         end associate
       end do
-      write (unit, "(/)")
 
       if (allocated(grp%vars)) then
         write (unit, "(a,/)") "VARIABLES:"
@@ -288,7 +287,6 @@ contains
               & var, unit, iotype, v_list_, iostat, iomsg)
           end associate
         end do
-        write (unit, "(/)")
       end if
 
       if (allocated(grp%atts)) then
@@ -299,7 +297,6 @@ contains
               & att, unit, iotype, v_list_, iostat, iomsg)
           end associate
         end do
-        write (unit, "(/)")
       end if
 
     end if

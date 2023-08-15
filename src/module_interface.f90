@@ -23,7 +23,7 @@ module module_interface
   end interface shape
 
   interface size
-    module procedure :: size_dims
+    ! module procedure :: size_dims ! recursive defined
     module procedure :: size_var
   end interface size
 
@@ -118,19 +118,19 @@ module module_interface
 
     !> shape of dimensions
     module function shape_dims(dims) result(ret)
-      type(dimensions_type), intent(in) :: dims
+      type(dimension_pointer), intent(in) :: dims(:)
       integer(int64), allocatable :: ret(:)
     end function shape_dims
 
     !> size of dimensions
     module function size_dims(dims) result(ret)
-      type(dimensions_type), intent(in) :: dims
+      type(dimension_pointer), intent(in) :: dims(:)
       integer(int64) :: ret
     end function size_dims
 
     !> rank of dimensions
     module function rank_dims(dims) result(ret)
-      type(dimensions_type), intent(in) :: dims
+      type(dimension_pointer), intent(in) :: dims(:)
       integer(int64) :: ret
     end function rank_dims
 
