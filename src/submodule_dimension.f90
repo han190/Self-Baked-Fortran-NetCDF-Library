@@ -2,6 +2,39 @@ submodule(module_interface) submodule_dimension
   implicit none
 contains
 
+  !> Define group dimension
+  function def_grp_dim(grp, name, ndim) result(dim)
+    type(group_type), intent(in) :: grp
+    character(len=*), intent(in) :: name
+    integer, intent(in) :: ndim
+    type(dimension_type) :: dim
+    integer(c_int) :: stat
+
+    dim%name = trim(name)
+    dim%length = ndim
+    stat = nc_def_dim(grp%id, to_cstr(name), &
+      & int(ndim, c_size_t), dim%id)
+    call handle_error(stat, "nc_def_dim")
+  end function def_grp_dim
+
+  !> Define group dimensions
+  module subroutine def_grp_dims(grp, names, ndims)
+    type(group_type), intent(inout) :: grp
+    character(len=*), intent(in) :: names(:)
+    integer, intent(in) :: ndims(:)
+    integer(c_int) :: stat
+    integer :: i
+
+    if (size(names) /= size(ndims)) &
+      & error stop "size(names) /= size(ndims)"
+    if (allocated(grp%dims)) deallocate (grp%dims)
+    allocate (grp%dims(size(names)))
+
+    do i = 1, size(names)
+      grp%dims(i) = def_grp_dim(grp, names(i), ndims(i))
+    end do
+  end subroutine def_grp_dims
+
   !> Inquire group dimension
   module subroutine inq_grp_dims(grp)
     type(group_type), intent(inout) :: grp

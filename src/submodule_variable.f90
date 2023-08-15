@@ -2,6 +2,46 @@ submodule(module_interface) submodule_variable
   implicit none
 contains
 
+  !> Define variable
+  module function def_grp_var(grp, name, type, dim_names) result(var)
+    type(group_type), target, intent(in) :: grp
+    character(len=*), intent(in) :: name, dim_names(:)
+    integer(nc_type), intent(in) :: type
+    type(variable_type) :: var
+    integer(c_int), allocatable :: dimids(:)
+    integer(c_int) :: ndims, i, j, stat
+
+    ndims = size(dim_names)
+    if (allocated(var%dims%ptrs)) deallocate (var%dims%ptrs)
+    allocate (var%dims%ptrs(ndims), dimids(ndims))
+
+    var%type = type
+    var%name = name
+    var%grp_id => grp%id
+    do i = 1, ndims
+      inner: do j = 1, size(grp%dims)
+        if (trim(dim_names(i)) == trim(grp%dims(j)%name)) then
+          var%dims%ptrs(i)%ptr => grp%dims(j)
+          dimids(i) = grp%dims(i)%id
+          exit inner
+        end if
+      end do inner
+    end do
+
+    stat = nc_def_var(grp%id, to_cstr(name), &
+      & type, ndims, dimids, var%id)
+    call handle_error(stat, "nc_def_var")
+  end function def_grp_var
+
+  !> Put variable
+  module subroutine put_var_int(var, vals)
+    type(variable_type), intent(in) :: var
+    integer, intent(in) :: vals(*)
+    integer(c_int) :: stat
+
+    stat = nc_put_var_int(var%grp_id, var%id, vals)
+  end subroutine put_var_int
+
   !> Inquire group variables
   module subroutine inq_grp_vars(grp)
     type(group_type), target, intent(inout) :: grp

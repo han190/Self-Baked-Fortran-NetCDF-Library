@@ -240,12 +240,14 @@ contains
       write (unit, fmt) indent_level(var%name, level), &
         & type_name(var%type), dim_str
 
-      do i = 1, size(var%atts)
-        associate (att => var%atts(i))
-          call write_formatted_att( &
-            & att, unit, iotype, v_list_, iostat, iomsg)
-        end associate
-      end do
+      if (allocated(var%atts)) then
+        do i = 1, size(var%atts)
+          associate (att => var%atts(i))
+            call write_formatted_att( &
+              & att, unit, iotype, v_list_, iostat, iomsg)
+          end associate
+        end do
+      end if
 
     end if
   end subroutine write_formatted_var

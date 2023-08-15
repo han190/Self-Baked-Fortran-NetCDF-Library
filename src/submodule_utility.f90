@@ -2,6 +2,14 @@ submodule(module_interface) submodule_utility
   implicit none
 contains
 
+  !> Convert string to cstring
+  module pure function to_cstr(string) result(cstring)
+    character(len=*), intent(in) :: string
+    character(kind=c_char, len=:), allocatable :: cstring
+
+    cstring = adjustl(adjustr(string))//c_null_char
+  end function to_cstr
+
   !> Check function with error messages. Credit:
   !> https://github.com/Unidata/netcdf-fortran/blob/main/fortran/nf_misc.F90
   module function strip(cstring) result(string)

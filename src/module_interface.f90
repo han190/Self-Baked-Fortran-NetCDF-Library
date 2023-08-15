@@ -13,6 +13,7 @@ module module_interface
   public :: dimension_type, attribute_type
   public :: group_type, variable_type, handle_error
   public :: inq_var, dataset, get_var, get_att
+  public :: def_dim, def_var, put_var
   public :: write (formatted), shape, size, rank
   private
 
@@ -30,6 +31,18 @@ module module_interface
     module procedure :: rank_dims
     module procedure :: rank_var
   end interface rank
+
+  interface def_dim
+    module procedure :: def_grp_dims
+  end interface def_dim
+
+  interface def_var
+    module procedure :: def_grp_var
+  end interface def_var
+
+  interface put_var
+    module procedure :: put_var_int
+  end interface put_var
 
   interface get_att
     module procedure :: get_att_name_scalar_int16
@@ -63,6 +76,12 @@ module module_interface
     !> submodule utility
     !> -----------------
 
+    !> Convert string to cstring
+    module pure function to_cstr(string) result(cstring)
+      character(len=*), intent(in) :: string
+      character(kind=c_char, len=:), allocatable :: cstring
+    end function to_cstr
+
     !> cstring to fstring
     module function strip(cstring) result(string)
       character(len=*), intent(in) :: cstring
@@ -77,6 +96,14 @@ module module_interface
 
     !> submodule dimension
     !> -------------------
+
+    !> Define group dimensions
+    module subroutine def_grp_dims(grp, names, ndims)
+      type(group_type), intent(inout) :: grp
+      character(len=*), intent(in) :: names(:)
+      integer, intent(in) :: ndims(:)
+      type(dimension_type), allocatable :: dims(:)
+    end subroutine def_grp_dims
 
     !> Inquire group dimension
     module subroutine inq_grp_dims(grp)
@@ -153,6 +180,19 @@ module module_interface
 
     !> submodule variable
     !> ------------------
+
+    !> Define variable
+    module function def_grp_var(grp, name, type, dim_names) result(var)
+      type(group_type), target, intent(in) :: grp
+      character(len=*), intent(in) :: name, dim_names(:)
+      integer(nc_type), intent(in) :: type
+      type(variable_type) :: var
+    end function def_grp_var
+
+    module subroutine put_var_int(var, vals)
+      type(variable_type), intent(in) :: var
+      integer, intent(in) :: vals(*)
+    end subroutine put_var_int
 
     !> Inquire group variables
     module subroutine inq_grp_vars(grp)
