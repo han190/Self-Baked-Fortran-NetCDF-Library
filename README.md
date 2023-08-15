@@ -14,34 +14,37 @@ and you are ready to use `module_netcdf`.
 ## Quick tutorial
 Here is an example
 
-```fortran
+```Fortran
 program main
+
   use module_netcdf
+  use iso_fortran_env, only: int16, real64, int64
   implicit none
 
   type(group_type) :: nc
   type(variable_type) :: var
+  integer(int16), allocatable :: raw(:)
+  real(real64) :: scale_factor, add_offset
+  real, allocatable, target :: vals(:)
+  integer(int64) :: r
 
-  nc = dataset("sample.nc", "r")
-  print *, nc
-  var = get_var(nc, "variable_name")
+  nc = dataset("./data/sample02.nc", "r")
+  var = inq_var(nc, "t2m")
+  print "(dt)", var
+
+  call get_var(var, raw)
+  call get_att(var, "scale_factor", scale_factor)
+  call get_att(var, "add_offset", add_offset)
+  vals = raw*scale_factor + add_offset
+
+  r = rank(var)
+  block
+    real, rank(r), pointer :: ptr => null()
+    
+    associate (l => [(1, i=1, r)], u => shape(var))
+      ptr(@l:u) => vals
+    end associate
+  end block
+
 end program main
 ```
-
-Note that `get_var` does not really read data from the NC dataset, but only the meta data (for example, name, type and dimensions of the variable). To actually "get" the data, you need the subroutine `extract`.
-
-```fortran
-!> Fortran2023
-real, allocatable, target :: var_data(:)
-integer :: var_rank
-
-call extract(var, var_data)
-var_rank = rank(var)
-
-block
-  real, rank(var_rank), pointer :: var_ptr => null()
-
-  var_ptr(@shape(var)) => var
-end block
-```
-
