@@ -48,7 +48,7 @@ contains
       error stop message
 
     end if
-    nullify(fptr)
+    nullify (fptr)
   end subroutine handle_error
 
 end submodule submodule_utility

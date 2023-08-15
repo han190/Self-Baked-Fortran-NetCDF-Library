@@ -98,7 +98,7 @@ contains
     integer(int16), allocatable, intent(out) :: vals(:)
     integer :: stat
     type(variable_type) :: var
-    
+
     var = inq_var(grp, name)
     if (allocated(vals)) deallocate (vals)
     allocate (vals(size(var)))
@@ -110,7 +110,7 @@ contains
     type(variable_type), intent(in) :: var
     integer(int16), allocatable, intent(out) :: vals(:)
     integer :: stat
-    
+
     if (allocated(vals)) deallocate (vals)
     allocate (vals(size(var)))
     stat = nc_get_var_short(var%grp_id, var%id, vals)
@@ -123,7 +123,7 @@ contains
     integer(int32), allocatable, intent(out) :: vals(:)
     integer :: stat
     type(variable_type) :: var
-    
+
     var = inq_var(grp, name)
     if (allocated(vals)) deallocate (vals)
     allocate (vals(size(var)))
@@ -135,7 +135,7 @@ contains
     type(variable_type), intent(in) :: var
     integer(int32), allocatable, intent(out) :: vals(:)
     integer :: stat
-    
+
     if (allocated(vals)) deallocate (vals)
     allocate (vals(size(var)))
     stat = nc_get_var_int(var%grp_id, var%id, vals)
@@ -148,7 +148,7 @@ contains
     integer(int64), allocatable, intent(out) :: vals(:)
     integer :: stat
     type(variable_type) :: var
-    
+
     var = inq_var(grp, name)
     if (allocated(vals)) deallocate (vals)
     allocate (vals(size(var)))
@@ -160,7 +160,7 @@ contains
     type(variable_type), intent(in) :: var
     integer(int64), allocatable, intent(out) :: vals(:)
     integer :: stat
-    
+
     if (allocated(vals)) deallocate (vals)
     allocate (vals(size(var)))
     stat = nc_get_var_longlong(var%grp_id, var%id, vals)
@@ -173,7 +173,7 @@ contains
     real(real32), allocatable, intent(out) :: vals(:)
     integer :: stat
     type(variable_type) :: var
-    
+
     var = inq_var(grp, name)
     if (allocated(vals)) deallocate (vals)
     allocate (vals(size(var)))
@@ -185,7 +185,7 @@ contains
     type(variable_type), intent(in) :: var
     real(real32), allocatable, intent(out) :: vals(:)
     integer :: stat
-    
+
     if (allocated(vals)) deallocate (vals)
     allocate (vals(size(var)))
     stat = nc_get_var_float(var%grp_id, var%id, vals)
@@ -198,7 +198,7 @@ contains
     real(real64), allocatable, intent(out) :: vals(:)
     integer :: stat
     type(variable_type) :: var
-    
+
     var = inq_var(grp, name)
     if (allocated(vals)) deallocate (vals)
     allocate (vals(size(var)))
@@ -210,7 +210,7 @@ contains
     type(variable_type), intent(in) :: var
     real(real64), allocatable, intent(out) :: vals(:)
     integer :: stat
-    
+
     if (allocated(vals)) deallocate (vals)
     allocate (vals(size(var)))
     stat = nc_get_var_double(var%grp_id, var%id, vals)

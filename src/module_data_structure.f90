@@ -52,7 +52,7 @@ contains
   pure function new_node(pair) result(node)
     type(pair_type), intent(in) :: pair
     type(node_type) :: node
-    
+
     node%pair = new_pair(pair%key, pair%value)
   end function new_node
 
@@ -65,7 +65,7 @@ contains
       allocate (list%tail%next, source=.node.pair)
       list%tail => list%tail%next
     else
-      allocate(list%head, source=.node.pair)
+      allocate (list%head, source=.node.pair)
       list%tail => list%head
     end if
 
@@ -122,7 +122,7 @@ contains
     end do
 
     !> Put hash value into one of the buckets.
-    if (hash_value < 0) hash_value = -hash_value 
+    if (hash_value < 0) hash_value = -hash_value
     hash_value = mod(hash_value, num_items) + 1
 
     if (hash_value < 1 .or. hash_value > num_items) &

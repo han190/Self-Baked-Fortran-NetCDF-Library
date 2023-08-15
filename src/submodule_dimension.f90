@@ -61,7 +61,7 @@ contains
     allocate (var%dims%ptrs(ndims), dimids(ndims))
     stat = nc_inq_vardimid(grp%id, var%id, dimids)
     call handle_error(stat, "nc_inq_vardimid")
-    
+
     grp_dimids = [(grp%dims(i)%id, i=1, size(grp%dims))]
     do i = 1, ndims
       loc = findloc(grp_dimids, dimids(i), dim=1)
@@ -79,7 +79,7 @@ contains
     integer(int64), allocatable :: ret(:)
     integer :: i, lbnd, ubnd
 
-    if (allocated(ret)) deallocate(ret)
+    if (allocated(ret)) deallocate (ret)
     lbnd = lbound(dims%ptrs, dim=1)
     ubnd = ubound(dims%ptrs, dim=1)
     ret = [(dims%ptrs(i)%ptr%length, i=ubnd, lbnd, -1)]

@@ -110,12 +110,12 @@ module module_types
 
   !> Dictionary type (PDT)
   type :: dictionary_type(len)
-    !> length of buckets
-    integer, len :: len
-    !> length of dictionary
-    integer :: length
-    !> buckets
-    type(list_type) :: items(len)
+  !> length of buckets
+  integer, len :: len
+  !> length of dictionary
+  integer :: length
+  !> buckets
+  type(list_type) :: items(len)
   end type dictionary_type
 
 end module module_types

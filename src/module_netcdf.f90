@@ -13,7 +13,7 @@ module module_netcdf
   public :: dimension_type, attribute_type
   public :: group_type, variable_type
   public :: inq_var, dataset, get_var, get_att
-  public :: write(formatted), shape, size, rank
+  public :: write (formatted), shape, size, rank
   private
 
   interface shape
@@ -52,10 +52,10 @@ module module_netcdf
     module procedure :: get_var_name_real64
   end interface get_var
 
-  interface write(formatted)
-    module procedure :: write_formatted_var
-    module procedure :: write_formatted_grp
-  end interface write(formatted)
+  interface write (formatted)
+  module procedure :: write_formatted_var
+  module procedure :: write_formatted_grp
+  end interface write (formatted)
 
   !> Interface to submodules
   interface
@@ -126,25 +126,25 @@ module module_netcdf
       character(len=*), intent(in) :: name
       integer(int16), intent(out) :: val
     end subroutine get_att_name_scalar_int16
-    
+
     module subroutine get_att_name_scalar_int32(var, name, val)
       type(variable_type), intent(in) :: var
       character(len=*), intent(in) :: name
       integer(int32), intent(out) :: val
     end subroutine get_att_name_scalar_int32
-    
+
     module subroutine get_att_name_scalar_int64(var, name, val)
       type(variable_type), intent(in) :: var
       character(len=*), intent(in) :: name
       integer(int64), intent(out) :: val
     end subroutine get_att_name_scalar_int64
-    
+
     module subroutine get_att_name_scalar_real32(var, name, val)
       type(variable_type), intent(in) :: var
       character(len=*), intent(in) :: name
       real(real32), intent(out) :: val
     end subroutine get_att_name_scalar_real32
-    
+
     module subroutine get_att_name_scalar_real64(var, name, val)
       type(variable_type), intent(in) :: var
       character(len=*), intent(in) :: name
@@ -194,7 +194,7 @@ module module_netcdf
       type(variable_type), intent(in) :: var
       integer(int16), allocatable, intent(out) :: vals(:)
     end subroutine get_var_int16
-    
+
     module subroutine get_var_name_int32(grp, name, vals)
       type(group_type), intent(in) :: grp
       character(len=*), intent(in) :: name
@@ -205,7 +205,7 @@ module module_netcdf
       type(variable_type), intent(in) :: var
       integer(int32), allocatable, intent(out) :: vals(:)
     end subroutine get_var_int32
-    
+
     module subroutine get_var_name_int64(grp, name, vals)
       type(group_type), intent(in) :: grp
       character(len=*), intent(in) :: name
@@ -216,7 +216,7 @@ module module_netcdf
       type(variable_type), intent(in) :: var
       integer(int64), allocatable, intent(out) :: vals(:)
     end subroutine get_var_int64
-    
+
     module subroutine get_var_name_real32(grp, name, vals)
       type(group_type), intent(in) :: grp
       character(len=*), intent(in) :: name
@@ -227,7 +227,7 @@ module module_netcdf
       type(variable_type), intent(in) :: var
       real(real32), allocatable, intent(out) :: vals(:)
     end subroutine get_var_real32
-    
+
     module subroutine get_var_name_real64(grp, name, vals)
       type(group_type), intent(in) :: grp
       character(len=*), intent(in) :: name
@@ -258,7 +258,7 @@ module module_netcdf
       class(variable_type), intent(in) :: var
       integer, intent(in) :: unit
       character(*), intent(in) :: iotype
-      integer, intent(in) :: v_list (:)
+      integer, intent(in) :: v_list(:)
       integer, intent(out) :: iostat
       character(*), intent(inout) :: iomsg
     end subroutine write_formatted_var
@@ -269,7 +269,7 @@ module module_netcdf
       class(group_type), intent(in) :: grp
       integer, intent(in) :: unit
       character(*), intent(in) :: iotype
-      integer, intent(in) :: v_list (:)
+      integer, intent(in) :: v_list(:)
       integer, intent(out) :: iostat
       character(*), intent(inout) :: iomsg
     end subroutine write_formatted_grp

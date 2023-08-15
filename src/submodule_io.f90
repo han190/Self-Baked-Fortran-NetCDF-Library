@@ -49,7 +49,7 @@ contains
     integer(int64), intent(in) :: val
     character(:), allocatable :: ret
 
-    if (allocated(ret)) deallocate(ret)
+    if (allocated(ret)) deallocate (ret)
     allocate (character(len=num_digits(val)) :: ret)
     write (ret, "(i0)") val
   end function int2char
@@ -91,7 +91,7 @@ contains
     class(attribute_type), intent(in) :: att
     integer, intent(in) :: unit
     character(*), intent(in) :: iotype
-    integer, intent(in) :: v_list (:)
+    integer, intent(in) :: v_list(:)
     integer, intent(out) :: iostat
     character(*), intent(inout) :: iomsg
     character(len=:), allocatable :: fmt, tmp, att_type, att_name
@@ -180,7 +180,7 @@ contains
     class(dimension_type), intent(in) :: dim
     integer, intent(in) :: unit
     character(*), intent(in) :: iotype
-    integer, intent(in) :: v_list (:)
+    integer, intent(in) :: v_list(:)
     integer, intent(out) :: iostat
     character(*), intent(inout) :: iomsg
     integer :: level
@@ -207,7 +207,7 @@ contains
     class(variable_type), intent(in) :: var
     integer, intent(in) :: unit
     character(*), intent(in) :: iotype
-    integer, intent(in) :: v_list (:)
+    integer, intent(in) :: v_list(:)
     integer, intent(out) :: iostat
     character(*), intent(inout) :: iomsg
     integer :: i
@@ -255,7 +255,7 @@ contains
     class(group_type), intent(in) :: grp
     integer, intent(in) :: unit
     character(*), intent(in) :: iotype
-    integer, intent(in) :: v_list (:)
+    integer, intent(in) :: v_list(:)
     integer, intent(out) :: iostat
     character(*), intent(inout) :: iomsg
     integer :: i

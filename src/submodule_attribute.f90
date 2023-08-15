@@ -54,7 +54,6 @@ contains
         end select
 
         tmp = att%name//c_null_char
-
         select type (val_ => att%values)
         type is (character(kind=c_char, len=*))
           stat = nc_get_att_text(grpid, varid, tmp, val_)

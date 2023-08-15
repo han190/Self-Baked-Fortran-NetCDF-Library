@@ -42,14 +42,13 @@ contains
           else
             allocate (character(kind=c_char, len=att%length) :: att%values(1))
           end if
-        #: for c_name, kind, type in zip(c_names, kinds, types)
-        case (nc_${c_name}$)
+        #: for nc_type, kind, type in zip(nc_types, kinds, types)
+        case (${nc_type}$)
           allocate (${type}$(${kind}$) :: att%values(att%length))
         #: endfor
         end select
 
         tmp = att%name//c_null_char
-
         select type (val_ => att%values)
         type is (character(kind=c_char, len=*))
           stat = nc_get_att_text(grpid, varid, tmp, val_)
