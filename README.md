@@ -1,4 +1,4 @@
-# Self-baked NetCDF Fortran library
+# Self-baked NetCDF Fortran Library
 
 ## Get started
 The Self-baked NetCDF Fortran library is a light weighted NetCDF C Library wrapper and an intermediate interface written in modern Fortran. This project is designed as a solution of the current fpm/NetCDF incoherence (see [fpm discussion](https://github.com/fortran-lang/fpm/discussions/458), [fpm issue](https://github.com/fortran-lang/fpm/issues/17), [discussion on discourse](https://fortran-lang.discourse.group/t/using-netcdf-with-fpm/4225)). The major difference between this library and most of the other implementations (for example [nc4fortran](https://github.com/geospace-code/nc4fortran)) is that this library is built on top of NetCDF C library directly, thus you won't need the official NetCDF Fortran library as a dependence. If you are intereseted in using this project with [fpm](https://github.com/fortran-lang/fpm), add the following lines in your `fpm.toml`
@@ -14,7 +14,7 @@ and make sure you have NetCDF C library properly installed.
 ## Quick tutorial
 Here is an example of reading a 3 dimensional value from a NetCDF file. The data `sample02.nc` can be found in folder `data`. You could also download it from [the fifth generation ECMWF reanalysis (ERA5) website](https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-single-levels?tab=overview).
 
-```Fortran
+```
 program main
 
   use module_netcdf
