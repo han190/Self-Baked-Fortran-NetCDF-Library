@@ -4,7 +4,7 @@
 The self-baked NetCDF Fortran library is a light weighted NetCDF C Library wrapper and an intermediate interface written in modern Fortran. The major difference between this library and most of the other implementations (for example [nc4fortran](https://github.com/geospace-code/nc4fortran)) is that this library is built on top of netcdf-c library directly. If you build your project with [fpm](https://github.com/fortran-lang/fpm), add the following lines in your `fpm.toml`
 ```
 [dependencies]
-self-baked-nc = {git="https://github.com/han190/Self-Baked-Fortran-NetCDF"}
+self-baked-nf = {git="https://github.com/han190/Self-Baked-Fortran-NetCDF"}
 
 [build]
 link = "netcdf"

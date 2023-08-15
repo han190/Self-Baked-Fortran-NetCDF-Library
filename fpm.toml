@@ -1,4 +1,4 @@
-name = "netcdf_fortran"
+name = "self-baked-nf"
 version = "0.0.1"
 maintainer = "htang2@alaska.edu"
 author = "Han Tang"
