@@ -30,6 +30,11 @@ contains
     call def_dim(nc, ["x", "y"], [NX, NY])
     var = def_var(nc, "data", nc_int, ["x", "y"])
     call put_var(var, vals)
+
+    call put_att(nc, "global attribute", "Dataset")
+    call put_att(var, "unit", "Dummy Unit")
+    call put_att(var, "add offset", 273.15)
+    call put_att(var, "scale factor", 1.0e-6)
     stat = nc_close(nc%id)
     succeed = .true.
   end function test_simple_xy_wr
@@ -40,7 +45,7 @@ contains
     type(group_type) :: nc
 
     nc = dataset(path//"simple_xy_wr.nc", "r", &
-      & inq_vars=.true.)
+      & inq_vars=.true., inq_atts=.true.)
     print "(dt)", nc
     succeed = .true.
   end function test_simple_xy_rd

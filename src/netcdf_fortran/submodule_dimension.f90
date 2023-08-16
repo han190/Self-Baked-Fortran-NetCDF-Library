@@ -78,7 +78,7 @@ contains
 
   !> Inquire variable dimensions
   module subroutine inq_var_dims(grp, var)
-    type(group_type), target, intent(in) :: grp
+    type(group_type), target, intent(inout) :: grp
     type(variable_type), intent(inout) :: var
     integer(c_int) :: stat, ndims
     integer(c_int), allocatable :: dimids(:), grp_dimids(:)

@@ -6,16 +6,82 @@ module module_interface
     & c_ptr, c_f_pointer, c_null_char
   use :: module_constant
   use :: module_c_interface
-  use :: module_types
   use :: module_data_structure
   implicit none
 
   public :: dimension_type, attribute_type
   public :: group_type, variable_type, handle_error
   public :: inq_var, dataset, get_var, get_att
-  public :: def_dim, def_var, put_var
+  public :: def_dim, def_var, put_var, put_att
   public :: write (formatted), shape, size, rank
   private
+
+  !> NetCDF Data Model
+  !> -----------------
+
+  !> The data model follows the netCDF data model introduced
+  !> https://docs.unidata.ucar.edu/netcdf-c/current/netcdf_data_model.html
+
+  !> Abstract NetCDF type
+  type, abstract :: netcdf_type
+    !> grp, var, dim, att ID
+    integer(c_int) :: id = 0
+    !> grp, var, dim, att name
+    character(len=:), allocatable :: name
+  end type netcdf_type
+
+  !> Dimension type
+  type, extends(netcdf_type) :: dimension_type
+    !> length
+    integer(c_size_t) :: length = 0
+    !> is unlimited
+    logical :: is_unlimited = .false.
+  end type dimension_type
+
+  !> Dimension pointer type
+  type :: dimension_pointer
+    type(dimension_type), pointer :: ptr => null()
+  end type dimension_pointer
+
+  !> Attribute type
+  type, extends(netcdf_type) :: attribute_type
+    !> length
+    integer(c_size_t) :: length = 0
+    !> type (default: not a type)
+    integer(c_int) :: type = 0
+    !> container
+    class(*), allocatable :: values(:)
+  end type attribute_type
+
+  !> Variable type
+  type, extends(netcdf_type) :: variable_type
+    !> dimensions
+    type(dimension_pointer), allocatable :: dims(:)
+    !> attribute
+    type(dictionary_type) :: atts
+    !> group id
+    integer(c_int), pointer :: grp_id => null()
+    !> type
+    integer(c_int) :: type = 0
+  end type variable_type
+
+  !> Group type
+  type, extends(netcdf_type) :: group_type
+    !> subgroups
+    type(group_type), allocatable :: grps(:)
+    !> dimensions
+    type(dimension_type), allocatable :: dims(:)
+    !> attribute
+    type(dictionary_type) :: atts
+    !> variables
+    type(variable_type), allocatable :: vars(:)
+    !> mode (read, write, etc.)
+    integer(c_int) :: mode = 0
+    !> format (NetCDF3, NetCDF4, etc.)
+    integer(c_int) :: format = 0
+    !> filename
+    character(len=:), allocatable :: filename
+  end type group_type
 
   interface shape
     module procedure :: shape_dims
@@ -39,6 +105,11 @@ module module_interface
   interface def_var
     module procedure :: def_grp_var
   end interface def_var
+
+  interface put_att
+    module procedure :: put_grp_att
+    module procedure :: put_var_att
+  end interface put_att
 
   interface put_var
     module procedure :: put_var_int
@@ -112,7 +183,7 @@ module module_interface
 
     !> Inquire variable dimensions
     module subroutine inq_var_dims(grp, var)
-      type(group_type), target, intent(in) :: grp
+      type(group_type), target, intent(inout) :: grp
       type(variable_type), intent(inout) :: var
     end subroutine inq_var_dims
 
@@ -137,6 +208,20 @@ module module_interface
     !> submodule attribute
     !> -------------------
 
+    !> Put group attribute
+    module subroutine put_grp_att(grp, name, val)
+      type(group_type), intent(inout) :: grp
+      character(len=*), intent(in) :: name
+      class(*), intent(in) :: val
+    end subroutine put_grp_att
+
+    !> Put variable attribute
+    module subroutine put_var_att(var, name, val)
+      type(variable_type), intent(inout) :: var
+      character(len=*), intent(in) :: name
+      class(*), intent(in) :: val
+    end subroutine put_var_att
+
     !> Inquire group attribute
     module subroutine inq_grp_atts(grp)
       type(group_type), intent(inout) :: grp
@@ -144,7 +229,7 @@ module module_interface
 
     !> Inquire variable attributes
     module subroutine inq_var_atts(grp, var)
-      type(group_type), intent(in) :: grp
+      type(group_type), intent(inout) :: grp
       type(variable_type), intent(inout) :: var
     end subroutine inq_var_atts
 
@@ -201,7 +286,7 @@ module module_interface
 
     !> Inquire variable
     module function inq_var(grp, name) result(var)
-      type(group_type), target, intent(in) :: grp
+      type(group_type), target, intent(inout) :: grp
       character(len=*), intent(in) :: name
       type(variable_type) :: var
     end function inq_var
@@ -225,7 +310,7 @@ module module_interface
     end function rank_var
 
     module subroutine get_var_name_int16(grp, name, vals)
-      type(group_type), intent(in) :: grp
+      type(group_type), intent(inout) :: grp
       character(len=*), intent(in) :: name
       integer(int16), allocatable, intent(out) :: vals(:)
     end subroutine get_var_name_int16
@@ -236,7 +321,7 @@ module module_interface
     end subroutine get_var_int16
 
     module subroutine get_var_name_int32(grp, name, vals)
-      type(group_type), intent(in) :: grp
+      type(group_type), intent(inout) :: grp
       character(len=*), intent(in) :: name
       integer(int32), allocatable, intent(out) :: vals(:)
     end subroutine get_var_name_int32
@@ -247,7 +332,7 @@ module module_interface
     end subroutine get_var_int32
 
     module subroutine get_var_name_int64(grp, name, vals)
-      type(group_type), intent(in) :: grp
+      type(group_type), intent(inout) :: grp
       character(len=*), intent(in) :: name
       integer(int64), allocatable, intent(out) :: vals(:)
     end subroutine get_var_name_int64
@@ -258,7 +343,7 @@ module module_interface
     end subroutine get_var_int64
 
     module subroutine get_var_name_real32(grp, name, vals)
-      type(group_type), intent(in) :: grp
+      type(group_type), intent(inout) :: grp
       character(len=*), intent(in) :: name
       real(real32), allocatable, intent(out) :: vals(:)
     end subroutine get_var_name_real32
@@ -269,7 +354,7 @@ module module_interface
     end subroutine get_var_real32
 
     module subroutine get_var_name_real64(grp, name, vals)
-      type(group_type), intent(in) :: grp
+      type(group_type), intent(inout) :: grp
       character(len=*), intent(in) :: name
       real(real64), allocatable, intent(out) :: vals(:)
     end subroutine get_var_name_real64

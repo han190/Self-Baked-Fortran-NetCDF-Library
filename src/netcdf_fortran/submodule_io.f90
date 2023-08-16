@@ -240,13 +240,23 @@ contains
       write (unit, fmt) indent_level(var%name, level), &
         & type_name(var%type), dim_str
 
-      if (allocated(var%atts)) then
-        do i = 1, size(var%atts)
-          associate (att => var%atts(i))
-            call write_formatted_att( &
-              & att, unit, iotype, v_list_, iostat, iomsg)
-          end associate
-        end do
+      if (size(var%atts) /= 0) then
+        block
+          type(node_type), pointer :: current_node
+
+          do i = 1, var%atts%len
+            current_node => var%atts%buckets(i)%head
+            do while (associated(current_node))
+              select type (att => current_node%pair%val)
+              type is (attribute_type)
+                call write_formatted_att( &
+                  & att, unit, iotype, v_list_, iostat, iomsg)
+              end select
+              current_node => current_node%next
+            end do
+            nullify (current_node)
+          end do
+        end block
       end if
 
     end if
@@ -289,14 +299,24 @@ contains
         end do
       end if
 
-      if (allocated(grp%atts)) then
+      if (size(grp%atts) /= 0) then
         write (unit, "(a,/)") "ATTRIBUTES:"
-        do i = 1, size(grp%atts)
-          associate (att => grp%atts(i))
-            call write_formatted_att( &
-              & att, unit, iotype, v_list_, iostat, iomsg)
-          end associate
-        end do
+        block
+          type(node_type), pointer :: current_node
+
+          do i = 1, grp%atts%len
+            current_node => grp%atts%buckets(i)%head
+            do while (associated(current_node))
+              select type (att => current_node%pair%val)
+              type is (attribute_type)
+                call write_formatted_att( &
+                  & att, unit, iotype, v_list_, iostat, iomsg)
+              end select
+              current_node => current_node%next
+            end do
+            nullify (current_node)
+          end do
+        end block
       end if
 
     end if
