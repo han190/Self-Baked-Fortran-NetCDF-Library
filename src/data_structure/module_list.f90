@@ -56,16 +56,15 @@ contains
     do while (associated(current))
       if (key == current%pair%key) then
         pair = current%pair
+        nullify (current)
         return
       end if
       current => current%next
     end do
 
-    !> If not found
-    pair%key = "NaN"
-
     !> Pointer does not auto deallocate
     nullify (current)
+    error stop "key: "//key//" not found."
   end function scan_list
 
 end submodule submodule_list
