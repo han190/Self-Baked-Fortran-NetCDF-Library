@@ -35,7 +35,7 @@ contains
   end function def_grp_var
 
   !> Put variable
-  module subroutine put_var(var, vals)
+  subroutine put_var_(var, vals)
     type(variable_type), intent(in) :: var
     class(*), intent(in) :: vals(:)
     integer(c_int) :: stat
@@ -62,6 +62,28 @@ contains
     class default
       error stop "Invalid variable type."
     end select
+  end subroutine put_var_
+
+  module subroutine put_var(var, vals)
+    type(variable_type), intent(in) :: var
+    class(*), intent(in) :: vals(..)
+    class(*), pointer :: ptr(:) => null()
+
+    select rank (vals)
+    rank (1)
+      ptr(1:size(vals)) => vals
+    rank (2)
+      ptr(1:size(vals)) => vals
+    rank (3)
+      ptr(1:size(vals)) => vals
+    rank (4)
+      ptr(1:size(vals)) => vals
+    rank (5)
+      ptr(1:size(vals)) => vals
+    end select
+
+    call put_var_(var, ptr)
+    nullify (ptr)
   end subroutine put_var
 
   !> Inquire group variables

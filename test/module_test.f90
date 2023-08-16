@@ -20,7 +20,6 @@ contains
     integer, target :: t2m(nlat, nlon)
     real(real64), target :: slp(nlat, nlon)
     real, target :: ght(nlat, nlon, nlvl, nitme)
-    class(*), pointer :: vals(:)
 
     type(group_type) :: nc
     type(variable_type) :: var
@@ -39,9 +38,7 @@ contains
 
     !> Define temperature at 2 metre
     var = def_var(nc, "t2m", nc_int, ["lat", "lon"])
-    vals(1:size(var)) => t2m !> Map 2d data to 1d pointer
-    call put_var(var, vals)
-    nullify (vals)
+    call put_var(var, t2m)
     call put_att(var, "units", "Kelvin")
     call put_att(var, "long_name", "temperature at 2 metre")
     call put_att(var, "add_offset", 1.0)
@@ -49,9 +46,7 @@ contains
 
     !> Define sea level pressure
     var = def_var(nc, "slp", nc_double, ["lat", "lon"])
-    vals(1:size(var)) => slp
-    call put_var(var, vals)
-    nullify (vals)
+    call put_var(var, slp)
     call put_att(var, "units", "hPa")
     call put_att(var, "long_name", "sea level pressure")
 
@@ -61,9 +56,7 @@ contains
     !> Define geopotential height
     var = def_var(nc, "ght", nc_float, &
       & [character(len=4) :: "lat", "lon", "lvl", "time"])
-    vals(1:size(var)) => ght
-    call put_var(var, vals)
-    nullify (vals)
+    call put_var(var, ght)
     call put_att(var, "units", "m2 s-2")
     call put_att(var, "long_name", "geopotential height")
     call put_att(var, "FillValue", 99999)
@@ -71,7 +64,6 @@ contains
     !> Add global attribute
     call put_att(nc, "global attribute", "Dummy ERA5 Dataset")
     stat = nc_close(nc%id)
-    nullify (vals)
     succeed = .true.
   end function test_simple_xy_wr
 

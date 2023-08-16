@@ -268,7 +268,7 @@ module module_interface
     !> Put variable
     module subroutine put_var(var, vals)
       type(variable_type), intent(in) :: var
-      class(*), intent(in) :: vals(:)
+      class(*), intent(in) :: vals(..)
     end subroutine put_var
 
     ! module subroutine put_var_int(var, vals)
