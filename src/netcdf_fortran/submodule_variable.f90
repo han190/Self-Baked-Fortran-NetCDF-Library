@@ -10,22 +10,23 @@ contains
     type(variable_type) :: var
     integer(c_int), allocatable :: dimids(:)
     integer(c_int) :: ndims, i, j, stat
+    type(pair_type) :: pair
 
     ndims = size(dim_names)
-    if (allocated(var%dims)) deallocate (var%dims)
-    allocate (var%dims(ndims), dimids(ndims))
+    allocate (dimids(ndims))
 
     var%type = type
     var%name = name
     var%grp_id => grp%id
+
     do i = 1, ndims
-      inner: do j = 1, size(grp%dims)
-        if (trim(dim_names(i)) == trim(grp%dims(j)%name)) then
-          var%dims(i)%ptr => grp%dims(j)
-          dimids(i) = grp%dims(i)%id
-          exit inner
-        end if
-      end do inner
+      pair = scan(grp%dims, trim(dim_names(i)))
+      call append(var%dims, pair)
+
+      select type (dim => pair%val)
+      type is (dimension_type)
+        dimids(i) = dim%id
+      end select
     end do
 
     stat = nc_def_var(grp%id, to_cstr(name), &
@@ -34,13 +35,34 @@ contains
   end function def_grp_var
 
   !> Put variable
-  module subroutine put_var_int(var, vals)
+  module subroutine put_var(var, vals)
     type(variable_type), intent(in) :: var
-    integer, intent(in) :: vals(*)
+    class(*), intent(in) :: vals(:)
     integer(c_int) :: stat
 
-    stat = nc_put_var_int(var%grp_id, var%id, vals)
-  end subroutine put_var_int
+    select type (v => vals)
+    type is (integer(int16))
+      stat = nc_put_var_short(var%grp_id, var%id, v)
+      call handle_error(stat, "nc_put_var_short")
+    type is (integer(int32))
+      stat = nc_put_var_int(var%grp_id, var%id, v)
+      call handle_error(stat, "nc_put_var_int")
+    type is (integer(int64))
+      stat = nc_put_var_longlong(var%grp_id, var%id, v)
+      call handle_error(stat, "nc_put_var_longlong")
+    type is (real(real32))
+      stat = nc_put_var_float(var%grp_id, var%id, v)
+      call handle_error(stat, "nc_put_var_float")
+    type is (real(real64))
+      stat = nc_put_var_double(var%grp_id, var%id, v)
+      call handle_error(stat, "nc_put_var_double")
+    type is (character(*))
+      stat = nc_put_var_text(var%grp_id, var%id, v)
+      call handle_error(stat, "nc_put_var_text")
+    class default
+      error stop "Invalid variable type."
+    end select
+  end subroutine put_var
 
   !> Inquire group variables
   module subroutine inq_grp_vars(grp)
@@ -110,7 +132,7 @@ contains
     integer(int64), allocatable :: ret(:)
 
     if (allocated(ret)) deallocate (ret)
-    ret = shape_dims(var%dims)
+    ret = shape_dict(var%dims)
   end function shape_var
 
   !> Size of a variable
@@ -118,7 +140,7 @@ contains
     type(variable_type), intent(in) :: var
     integer(int64) :: ret
 
-    ret = size_dims(var%dims)
+    ret = product(shape(var%dims))
   end function size_var
 
   !> Rank of a variable
@@ -126,7 +148,7 @@ contains
     type(variable_type), intent(in) :: var
     integer(int64) :: ret
 
-    ret = rank_dims(var%dims)
+    ret = var%dims%length
   end function rank_var
 
   !> Extract variable
@@ -141,7 +163,7 @@ contains
 
     var = inq_var(grp, name)
     if (allocated(vals)) deallocate (vals)
-    allocate (vals(size(var)))
+    allocate (vals(size_var(var)))
     stat = nc_get_var_short(grp%id, var%id, vals)
     call handle_error(stat, "nc_get_var_short")
   end subroutine get_var_name_int16
@@ -152,7 +174,7 @@ contains
     integer :: stat
 
     if (allocated(vals)) deallocate (vals)
-    allocate (vals(size(var)))
+    allocate (vals(size_var(var)))
     stat = nc_get_var_short(var%grp_id, var%id, vals)
     call handle_error(stat, "nc_get_var_short")
   end subroutine get_var_int16
@@ -166,7 +188,7 @@ contains
 
     var = inq_var(grp, name)
     if (allocated(vals)) deallocate (vals)
-    allocate (vals(size(var)))
+    allocate (vals(size_var(var)))
     stat = nc_get_var_int(grp%id, var%id, vals)
     call handle_error(stat, "nc_get_var_int")
   end subroutine get_var_name_int32
@@ -177,7 +199,7 @@ contains
     integer :: stat
 
     if (allocated(vals)) deallocate (vals)
-    allocate (vals(size(var)))
+    allocate (vals(size_var(var)))
     stat = nc_get_var_int(var%grp_id, var%id, vals)
     call handle_error(stat, "nc_get_var_int")
   end subroutine get_var_int32
@@ -191,7 +213,7 @@ contains
 
     var = inq_var(grp, name)
     if (allocated(vals)) deallocate (vals)
-    allocate (vals(size(var)))
+    allocate (vals(size_var(var)))
     stat = nc_get_var_longlong(grp%id, var%id, vals)
     call handle_error(stat, "nc_get_var_longlong")
   end subroutine get_var_name_int64
@@ -202,7 +224,7 @@ contains
     integer :: stat
 
     if (allocated(vals)) deallocate (vals)
-    allocate (vals(size(var)))
+    allocate (vals(size_var(var)))
     stat = nc_get_var_longlong(var%grp_id, var%id, vals)
     call handle_error(stat, "nc_get_var_longlong")
   end subroutine get_var_int64
@@ -216,7 +238,7 @@ contains
 
     var = inq_var(grp, name)
     if (allocated(vals)) deallocate (vals)
-    allocate (vals(size(var)))
+    allocate (vals(size_var(var)))
     stat = nc_get_var_float(grp%id, var%id, vals)
     call handle_error(stat, "nc_get_var_float")
   end subroutine get_var_name_real32
@@ -227,7 +249,7 @@ contains
     integer :: stat
 
     if (allocated(vals)) deallocate (vals)
-    allocate (vals(size(var)))
+    allocate (vals(size_var(var)))
     stat = nc_get_var_float(var%grp_id, var%id, vals)
     call handle_error(stat, "nc_get_var_float")
   end subroutine get_var_real32
@@ -241,7 +263,7 @@ contains
 
     var = inq_var(grp, name)
     if (allocated(vals)) deallocate (vals)
-    allocate (vals(size(var)))
+    allocate (vals(size_var(var)))
     stat = nc_get_var_double(grp%id, var%id, vals)
     call handle_error(stat, "nc_get_var_double")
   end subroutine get_var_name_real64
@@ -252,7 +274,7 @@ contains
     integer :: stat
 
     if (allocated(vals)) deallocate (vals)
-    allocate (vals(size(var)))
+    allocate (vals(size_var(var)))
     stat = nc_get_var_double(var%grp_id, var%id, vals)
     call handle_error(stat, "nc_get_var_double")
   end subroutine get_var_real64

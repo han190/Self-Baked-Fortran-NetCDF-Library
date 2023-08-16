@@ -214,6 +214,7 @@ contains
     character(len=:), allocatable :: fmt, dim_str
     integer, allocatable :: v_list_(:)
     integer :: level
+    type(node_type), pointer :: current
 
     if (iotype == "DT" .or. iotype == "LISTDIRECTED") then
 
@@ -221,12 +222,18 @@ contains
       !> Yes, C starts from zero. Also, keep in mind Fortran
       !> is column major so loop backwards.
       dim_str = ""
-      do i = rank(var), 1, -1
-        associate (dim => var%dims(i)%ptr)
-          dim_str = dim_str//dim%name//":"// &
-            & int2char(dim%length)//", "
-        end associate
+      do i = 1, var%dims%len
+        current => var%dims%buckets(i)%head
+        do while (associated(current))
+          select type (dim => current%pair%val)
+          type is (dimension_type)
+            dim_str = dim_str//dim%name//":"// &
+              & int2char(dim%length)//", "
+          end select
+          current => current%next
+        end do
       end do
+      nullify (current)
       dim_str = "("//dim_str(1:len(dim_str) - 2)//")"
 
       if (size(v_list) == 0) then
@@ -272,6 +279,7 @@ contains
     character(*), intent(inout) :: iomsg
     integer :: i
     integer, allocatable :: v_list_(:)
+    type(node_type), pointer :: current
 
     if (size(v_list) == 0) then
       v_list_ = [0]
@@ -282,12 +290,18 @@ contains
     if (iotype == "DT" .or. iotype == "LISTDIRECTED") then
       write (unit, "(a,1x,'(',a,')',':',/)") "GROUP", grp%name
       write (unit, "(a,/)") "DIMENSIONS:"
-      do i = 1, size(grp%dims)
-        associate (dim => grp%dims(i))
-          call write_formatted_dim( &
-            & dim, unit, iotype, v_list_, iostat, iomsg)
-        end associate
+      do i = 1, grp%dims%len
+        current => grp%dims%buckets(i)%head
+        do while (associated(current))
+          select type (dim => current%pair%val)
+          type is (dimension_type)
+            call write_formatted_dim( &
+              & dim, unit, iotype, v_list_, iostat, iomsg)
+          end select
+          current => current%next
+        end do
       end do
+      nullify (current)
 
       if (allocated(grp%vars)) then
         write (unit, "(a,/)") "VARIABLES:"

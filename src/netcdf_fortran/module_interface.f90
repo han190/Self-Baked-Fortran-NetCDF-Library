@@ -38,11 +38,6 @@ module module_interface
     logical :: is_unlimited = .false.
   end type dimension_type
 
-  !> Dimension pointer type
-  type :: dimension_pointer
-    type(dimension_type), pointer :: ptr => null()
-  end type dimension_pointer
-
   !> Attribute type
   type, extends(netcdf_type) :: attribute_type
     !> length
@@ -56,7 +51,7 @@ module module_interface
   !> Variable type
   type, extends(netcdf_type) :: variable_type
     !> dimensions
-    type(dimension_pointer), allocatable :: dims(:)
+    type(dictionary_type) :: dims
     !> attribute
     type(dictionary_type) :: atts
     !> group id
@@ -70,7 +65,7 @@ module module_interface
     !> subgroups
     type(group_type), allocatable :: grps(:)
     !> dimensions
-    type(dimension_type), allocatable :: dims(:)
+    type(dictionary_type) :: dims
     !> attribute
     type(dictionary_type) :: atts
     !> variables
@@ -84,7 +79,7 @@ module module_interface
   end type group_type
 
   interface shape
-    module procedure :: shape_dims
+    module procedure :: shape_dict
     module procedure :: shape_var
   end interface shape
 
@@ -94,7 +89,7 @@ module module_interface
   end interface size
 
   interface rank
-    module procedure :: rank_dims
+    ! module procedure :: rank_dims
     module procedure :: rank_var
   end interface rank
 
@@ -110,10 +105,6 @@ module module_interface
     module procedure :: put_grp_att
     module procedure :: put_var_att
   end interface put_att
-
-  interface put_var
-    module procedure :: put_var_int
-  end interface put_var
 
   interface get_att
     module procedure :: get_att_name_scalar_int16
@@ -188,22 +179,22 @@ module module_interface
     end subroutine inq_var_dims
 
     !> shape of dimensions
-    module function shape_dims(dims) result(ret)
-      type(dimension_pointer), intent(in) :: dims(:)
+    module function shape_dict(dict) result(ret)
+      type(dictionary_type), intent(in) :: dict
       integer(int64), allocatable :: ret(:)
-    end function shape_dims
+    end function shape_dict
 
-    !> size of dimensions
-    module function size_dims(dims) result(ret)
-      type(dimension_pointer), intent(in) :: dims(:)
-      integer(int64) :: ret
-    end function size_dims
+    ! !> size of dimensions
+    ! module function size_dims(dims) result(ret)
+    !   type(dictionary_type), intent(in) :: dims
+    !   integer(int64) :: ret
+    ! end function size_dims
 
-    !> rank of dimensions
-    module function rank_dims(dims) result(ret)
-      type(dimension_pointer), intent(in) :: dims(:)
-      integer(int64) :: ret
-    end function rank_dims
+    ! !> rank of dimensions
+    ! module function rank_dims(dims) result(ret)
+    !   type(dictionary_type), intent(in) :: dims
+    !   integer(int64) :: ret
+    ! end function rank_dims
 
     !> submodule attribute
     !> -------------------
@@ -274,10 +265,16 @@ module module_interface
       type(variable_type) :: var
     end function def_grp_var
 
-    module subroutine put_var_int(var, vals)
+    !> Put variable
+    module subroutine put_var(var, vals)
       type(variable_type), intent(in) :: var
-      integer, intent(in) :: vals(*)
-    end subroutine put_var_int
+      class(*), intent(in) :: vals(:)
+    end subroutine put_var
+
+    ! module subroutine put_var_int(var, vals)
+    !   type(variable_type), intent(in) :: var
+    !   integer, intent(in) :: vals(*)
+    ! end subroutine put_var_int
 
     !> Inquire group variables
     module subroutine inq_grp_vars(grp)
