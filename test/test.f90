@@ -6,17 +6,17 @@ program test
   character(*), parameter :: path = "./data/"
 
   call execute_command_line("mkdir -p "//path)
-  if (test_simple_xy_wr(path)) then
-    print "(a)", "Test simple_xy_wr... passed."
+  if (test_write(path)) then
+    print "(a)", "Test write to NetCDF... passed."
   else
-    print "(a)", "Test simple_xy_wr... failed."
+    print "(a)", "Test write to NetCDF... failed."
     stop
   end if
 
-  if (test_simple_xy_rd(path)) then
-    print "(a)", "Test simple_xy_wr... passed."
+  if (test_read(path)) then
+    print "(a)", "Test read from NetCDF... passed."
   else
-    print "(a)", "Test simple_xy_wr... failed."
+    print "(a)", "Test read from NetCDF... failed."
     stop
   end if
 

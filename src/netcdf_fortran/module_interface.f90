@@ -10,7 +10,7 @@ module module_interface
   implicit none
 
   public :: dimension_type, attribute_type
-  public :: group_type, variable_type, handle_error
+  public :: file_type, group_type, variable_type, handle_error
   public :: inq_var, dataset, get_var, get_att
   public :: def_dim, def_var, put_var, put_att
   public :: write (formatted), shape, size, rank
@@ -74,9 +74,13 @@ module module_interface
     integer(c_int) :: mode = 0
     !> format (NetCDF3, NetCDF4, etc.)
     integer(c_int) :: format = 0
+  end type group_type
+
+  !> File type (root group)
+  type, extends(group_type) :: file_type
     !> filename
     character(len=:), allocatable :: filename
-  end type group_type
+  end type file_type
 
   interface shape
     module procedure :: shape_dict
@@ -161,7 +165,7 @@ module module_interface
 
     !> Define group dimensions
     module subroutine def_grp_dims(grp, names, ndims)
-      type(group_type), intent(inout) :: grp
+      class(group_type), intent(inout) :: grp
       character(len=*), intent(in) :: names(:)
       integer, intent(in) :: ndims(:)
       type(dimension_type), allocatable :: dims(:)
@@ -169,12 +173,12 @@ module module_interface
 
     !> Inquire group dimension
     module subroutine inq_grp_dims(grp)
-      type(group_type), intent(inout) :: grp
+      class(group_type), intent(inout) :: grp
     end subroutine inq_grp_dims
 
     !> Inquire variable dimensions
     module subroutine inq_var_dims(grp, var)
-      type(group_type), target, intent(inout) :: grp
+      class(group_type), target, intent(inout) :: grp
       type(variable_type), intent(inout) :: var
     end subroutine inq_var_dims
 
@@ -184,24 +188,12 @@ module module_interface
       integer(int64), allocatable :: ret(:)
     end function shape_dict
 
-    ! !> size of dimensions
-    ! module function size_dims(dims) result(ret)
-    !   type(dictionary_type), intent(in) :: dims
-    !   integer(int64) :: ret
-    ! end function size_dims
-
-    ! !> rank of dimensions
-    ! module function rank_dims(dims) result(ret)
-    !   type(dictionary_type), intent(in) :: dims
-    !   integer(int64) :: ret
-    ! end function rank_dims
-
     !> submodule attribute
     !> -------------------
 
     !> Put group attribute
     module subroutine put_grp_att(grp, name, val)
-      type(group_type), intent(inout) :: grp
+      class(group_type), intent(inout) :: grp
       character(len=*), intent(in) :: name
       class(*), intent(in) :: val
     end subroutine put_grp_att
@@ -215,12 +207,12 @@ module module_interface
 
     !> Inquire group attribute
     module subroutine inq_grp_atts(grp)
-      type(group_type), intent(inout) :: grp
+      class(group_type), intent(inout) :: grp
     end subroutine inq_grp_atts
 
     !> Inquire variable attributes
     module subroutine inq_var_atts(grp, var)
-      type(group_type), intent(inout) :: grp
+      class(group_type), intent(inout) :: grp
       type(variable_type), intent(inout) :: var
     end subroutine inq_var_atts
 
@@ -259,7 +251,7 @@ module module_interface
 
     !> Define variable
     module function def_grp_var(grp, name, type, dim_names) result(var)
-      type(group_type), target, intent(in) :: grp
+      class(group_type), target, intent(in) :: grp
       character(len=*), intent(in) :: name, dim_names(:)
       integer(nc_type), intent(in) :: type
       type(variable_type) :: var
@@ -271,19 +263,14 @@ module module_interface
       class(*), intent(in) :: vals(..)
     end subroutine put_var
 
-    ! module subroutine put_var_int(var, vals)
-    !   type(variable_type), intent(in) :: var
-    !   integer, intent(in) :: vals(*)
-    ! end subroutine put_var_int
-
     !> Inquire group variables
     module subroutine inq_grp_vars(grp)
-      type(group_type), target, intent(inout) :: grp
+      class(group_type), target, intent(inout) :: grp
     end subroutine inq_grp_vars
 
     !> Inquire variable
     module function inq_var(grp, name) result(var)
-      type(group_type), target, intent(inout) :: grp
+      class(group_type), target, intent(inout) :: grp
       character(len=*), intent(in) :: name
       type(variable_type) :: var
     end function inq_var
@@ -307,7 +294,7 @@ module module_interface
     end function rank_var
 
     module subroutine get_var_name_int16(grp, name, vals)
-      type(group_type), intent(inout) :: grp
+      class(group_type), intent(inout) :: grp
       character(len=*), intent(in) :: name
       integer(int16), allocatable, intent(out) :: vals(:)
     end subroutine get_var_name_int16
@@ -318,7 +305,7 @@ module module_interface
     end subroutine get_var_int16
 
     module subroutine get_var_name_int32(grp, name, vals)
-      type(group_type), intent(inout) :: grp
+      class(group_type), intent(inout) :: grp
       character(len=*), intent(in) :: name
       integer(int32), allocatable, intent(out) :: vals(:)
     end subroutine get_var_name_int32
@@ -329,7 +316,7 @@ module module_interface
     end subroutine get_var_int32
 
     module subroutine get_var_name_int64(grp, name, vals)
-      type(group_type), intent(inout) :: grp
+      class(group_type), intent(inout) :: grp
       character(len=*), intent(in) :: name
       integer(int64), allocatable, intent(out) :: vals(:)
     end subroutine get_var_name_int64
@@ -340,7 +327,7 @@ module module_interface
     end subroutine get_var_int64
 
     module subroutine get_var_name_real32(grp, name, vals)
-      type(group_type), intent(inout) :: grp
+      class(group_type), intent(inout) :: grp
       character(len=*), intent(in) :: name
       real(real32), allocatable, intent(out) :: vals(:)
     end subroutine get_var_name_real32
@@ -351,7 +338,7 @@ module module_interface
     end subroutine get_var_real32
 
     module subroutine get_var_name_real64(grp, name, vals)
-      type(group_type), intent(inout) :: grp
+      class(group_type), intent(inout) :: grp
       character(len=*), intent(in) :: name
       real(real64), allocatable, intent(out) :: vals(:)
     end subroutine get_var_name_real64
@@ -368,7 +355,7 @@ module module_interface
     module function dataset(path, mode, inq_atts, inq_vars) result(file)
       character(len=*), intent(in) :: path, mode
       logical, intent(in), optional :: inq_atts, inq_vars
-      type(group_type) :: file
+      type(file_type) :: file
     end function dataset
 
     !> submodule io

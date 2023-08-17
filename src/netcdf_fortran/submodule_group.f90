@@ -3,10 +3,10 @@ submodule(module_interface) submodule_group
 contains
 
   !> Open dataset
-  module function dataset(path, mode, inq_atts, inq_vars) result(grp)
+  module function dataset(path, mode, inq_atts, inq_vars) result(file)
     character(len=*), intent(in) :: path, mode
     logical, intent(in), optional :: inq_atts, inq_vars
-    type(group_type) :: grp
+    type(file_type) :: file
     integer :: stat
     character(kind=c_char, len=nc_max_name) :: tmp
 
@@ -14,47 +14,51 @@ contains
     case ("r", "read")
 
       !> copy metadata
-      grp%filename = path
-      grp%mode = nc_nowrite
+      file%filename = path
+      file%mode = nc_nowrite
 
-      !> open grp
-      stat = nc_open(to_cstr(grp%filename), grp%mode, grp%id)
+      !> open file
+      stat = nc_open(to_cstr(file%filename), file%mode, file%id)
       call handle_error(stat, "nc_open")
 
       !> inquire format
-      stat = nc_inq_format(grp%id, grp%format)
+      stat = nc_inq_format(file%id, file%format)
       call handle_error(stat, "nc_inq_format")
 
-      !> inquire grp type (root group)
-      stat = nc_inq_grpname(grp%id, tmp)
+      !> inquire file type (root group)
+      stat = nc_inq_grpname(file%id, tmp)
       call handle_error(stat, "nc_inq_grpname")
-      grp%name = strip(tmp)
+      file%name = strip(tmp)
 
       !> copy dimension info
-      call inq_grp_dims(grp)
+      call inq_grp_dims(file)
 
       !> copy attribute info (default: true)
       if (present(inq_atts)) then
-        if (inq_atts) call inq_grp_atts(grp)
+        if (inq_atts) call inq_grp_atts(file)
+      else
+        call inq_grp_atts(file)
       end if
 
       !> copy variable info
       if (present(inq_vars)) then
-        if (inq_vars) call inq_grp_vars(grp)
+        if (inq_vars) call inq_grp_vars(file)
+      else
+        call inq_grp_atts(file)
       end if
 
     case ("w", "write")
 
       !> copy metadata
-      grp%filename = path
-      grp%mode = ior(nc_netcdf4, nc_clobber)
+      file%filename = path
+      file%mode = ior(nc_netcdf4, nc_clobber)
 
       !> create
-      stat = nc_create(to_cstr(path), grp%mode, grp%id)
+      stat = nc_create(to_cstr(path), file%mode, file%id)
       call handle_error(stat, "nc_create")
 
       !> rootgroup name
-      grp%name = to_cstr("/")
+      file%name = to_cstr("/")
 
     case default
       error stop "Invalid mode."

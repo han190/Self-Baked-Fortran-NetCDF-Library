@@ -65,7 +65,7 @@ contains
 
   !> Inquire group attribute
   module subroutine inq_grp_atts(grp)
-    type(group_type), intent(inout) :: grp
+    class(group_type), intent(inout) :: grp
     integer(c_int) :: stat, natts
 
     !> inquire number of attributes
@@ -80,7 +80,7 @@ contains
 
   !> Inquire variable attributes
   module subroutine inq_var_atts(grp, var)
-    type(group_type), intent(in) :: grp
+    class(group_type), intent(in) :: grp
     type(variable_type), intent(inout) :: var
     integer(c_int) :: stat, natts
 

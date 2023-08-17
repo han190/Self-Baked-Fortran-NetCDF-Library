@@ -278,7 +278,10 @@ contains
     end if
 
     if (iotype == "DT" .or. iotype == "LISTDIRECTED") then
-      write (unit, "(a,':',1x,a,/)") "file", '"'//grp%filename//'"'
+      ! select type (g => grp)
+      ! type is (file_type)
+      !   write (unit, "(a,':',1x,a,/)") "file", '"'//g%filename//'"'
+      ! end select
       write (unit, "(a,1x,'(',a,')',':',/)") "group", grp%name
       write (unit, "(a,/)") "dimensions:"
       do i = 1, grp%dims%len

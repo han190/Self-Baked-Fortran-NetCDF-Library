@@ -58,7 +58,7 @@ contains
 
   !> Put group attribute
   module subroutine put_grp_att(grp, name, val)
-    type(group_type), intent(inout) :: grp
+    class(group_type), intent(inout) :: grp
     character(len=*), intent(in) :: name
     class(*), intent(in) :: val
     class(*), allocatable :: val_(:)
@@ -135,7 +135,7 @@ contains
 
   !> Inquire attributes (internal)
   subroutine inq_atts_(grp, atts, varid, natts)
-    type(group_type), intent(inout) :: grp
+    class(group_type), intent(inout) :: grp
     type(dictionary_type), intent(inout) :: atts
     integer(c_int), intent(in) :: varid, natts
     integer(c_int) :: stat
@@ -162,7 +162,7 @@ contains
 
   !> Inquire group attribute
   module subroutine inq_grp_atts(grp)
-    type(group_type), intent(inout) :: grp
+    class(group_type), intent(inout) :: grp
     integer(c_int) :: stat, natts
 
     !> inquire number of attributes
@@ -173,7 +173,7 @@ contains
 
   !> Inquire variable attributes
   module subroutine inq_var_atts(grp, var)
-    type(group_type), intent(inout) :: grp
+    class(group_type), intent(inout) :: grp
     type(variable_type), intent(inout) :: var
     integer(c_int) :: stat, natts
 

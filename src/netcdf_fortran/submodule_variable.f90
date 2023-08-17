@@ -4,7 +4,7 @@ contains
 
   !> Define variable
   module function def_grp_var(grp, name, type, dim_names) result(var)
-    type(group_type), target, intent(in) :: grp
+    class(group_type), target, intent(in) :: grp
     character(len=*), intent(in) :: name, dim_names(:)
     integer(nc_type), intent(in) :: type
     type(variable_type) :: var
@@ -88,7 +88,7 @@ contains
 
   !> Inquire group variables
   module subroutine inq_grp_vars(grp)
-    type(group_type), target, intent(inout) :: grp
+    class(group_type), target, intent(inout) :: grp
     integer(c_int) :: stat, nvars
     integer(c_int), allocatable :: varids(:)
     character(kind=c_char, len=nc_max_name) :: tmp
@@ -128,7 +128,7 @@ contains
 
   !> Inquire variable
   module function inq_var(grp, name) result(var)
-    type(group_type), target, intent(inout) :: grp
+    class(group_type), target, intent(inout) :: grp
     character(len=*), intent(in) :: name
     type(variable_type) :: var
     integer :: stat
@@ -177,7 +177,7 @@ contains
   !> ----------------
 
   module subroutine get_var_name_int16(grp, name, vals)
-    type(group_type), intent(inout) :: grp
+    class(group_type), intent(inout) :: grp
     character(len=*), intent(in) :: name
     integer(int16), allocatable, intent(out) :: vals(:)
     integer :: stat
@@ -202,7 +202,7 @@ contains
   end subroutine get_var_int16
 
   module subroutine get_var_name_int32(grp, name, vals)
-    type(group_type), intent(inout) :: grp
+    class(group_type), intent(inout) :: grp
     character(len=*), intent(in) :: name
     integer(int32), allocatable, intent(out) :: vals(:)
     integer :: stat
@@ -227,7 +227,7 @@ contains
   end subroutine get_var_int32
 
   module subroutine get_var_name_int64(grp, name, vals)
-    type(group_type), intent(inout) :: grp
+    class(group_type), intent(inout) :: grp
     character(len=*), intent(in) :: name
     integer(int64), allocatable, intent(out) :: vals(:)
     integer :: stat
@@ -252,7 +252,7 @@ contains
   end subroutine get_var_int64
 
   module subroutine get_var_name_real32(grp, name, vals)
-    type(group_type), intent(inout) :: grp
+    class(group_type), intent(inout) :: grp
     character(len=*), intent(in) :: name
     real(real32), allocatable, intent(out) :: vals(:)
     integer :: stat
@@ -277,7 +277,7 @@ contains
   end subroutine get_var_real32
 
   module subroutine get_var_name_real64(grp, name, vals)
-    type(group_type), intent(inout) :: grp
+    class(group_type), intent(inout) :: grp
     character(len=*), intent(in) :: name
     real(real64), allocatable, intent(out) :: vals(:)
     integer :: stat

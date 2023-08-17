@@ -4,7 +4,7 @@ contains
 
   !> Define group dimension
   function def_grp_dim(grp, name, ndim) result(dim)
-    type(group_type), intent(in) :: grp
+    class(group_type), intent(in) :: grp
     character(len=*), intent(in) :: name
     integer, intent(in) :: ndim
     type(dimension_type) :: dim
@@ -19,7 +19,7 @@ contains
 
   !> Define group dimensions
   module subroutine def_grp_dims(grp, names, ndims)
-    type(group_type), intent(inout) :: grp
+    class(group_type), intent(inout) :: grp
     character(len=*), intent(in) :: names(:)
     integer, intent(in) :: ndims(:)
     integer(c_int) :: stat, i
@@ -39,7 +39,7 @@ contains
 
   !> Inquire group dimension
   module subroutine inq_grp_dims(grp)
-    type(group_type), intent(inout) :: grp
+    class(group_type), intent(inout) :: grp
     integer(c_int) :: stat, ndims, include_parents, unlim_dim, i
     integer(c_int), allocatable :: dimids(:)
     integer(c_size_t), allocatable :: dimlens(:)
@@ -79,7 +79,7 @@ contains
 
   !> Inquire variable dimensions
   module subroutine inq_var_dims(grp, var)
-    type(group_type), target, intent(inout) :: grp
+    class(group_type), target, intent(inout) :: grp
     type(variable_type), intent(inout) :: var
     integer(c_int) :: stat, ndims, i, unlim_dim
     integer(c_int), allocatable :: dimids(:)

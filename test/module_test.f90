@@ -6,7 +6,7 @@ module module_test
 
 contains
 
-  function test_simple_xy_wr(path) result(succeed)
+  function test_write(path) result(succeed)
     character(len=*), intent(in) :: path
     logical :: succeed
 
@@ -21,7 +21,7 @@ contains
     real(real64) :: slp(nlat, nlon)
     real :: ght(nlat, nlon, nlvl, nitme)
 
-    type(group_type) :: nc
+    type(file_type) :: nc
     type(variable_type) :: var
 
     !> Fill arrays with some values
@@ -30,7 +30,7 @@ contains
     ght = 3.0
 
     !> Open file, prepare to write
-    filename = path//"simple_xy_wr.nc"
+    filename = path//"dummy.nc"
     nc = dataset(filename, "w")
 
     !> Define dimension
@@ -80,19 +80,18 @@ contains
     call put_att(nc, "global attribute", "Dummy ERA5 Dataset")
     stat = nc_close(nc%id)
     succeed = .true.
-  end function test_simple_xy_wr
+  end function test_write
 
-  function test_simple_xy_rd(path) result(succeed)
+  function test_read(path) result(succeed)
     character(len=*), intent(in) :: path
     logical :: succeed
-    type(group_type) :: nc
+    type(file_type) :: nc
     type(variable_type) :: var
 
-    nc = dataset(path//"simple_xy_wr.nc", "r", &
-      & inq_vars=.true., inq_atts=.true.)
-    print "(dt)", nc
+    nc = dataset(path//"dummy.nc", "r")
     var = inq_var(nc, "t2m")
+    print "(dt)", var
     succeed = .true.
-  end function test_simple_xy_rd
+  end function test_read
 
 end module module_test
