@@ -13,13 +13,12 @@ contains
     character(len=:), allocatable :: filename
     integer, parameter :: nlat = 361
     integer, parameter :: nlon = 1440
-    integer, parameter :: nitme = 24
-    integer, parameter :: nlvl = 40
+    integer, parameter :: ntime = 24
+    integer, parameter :: nlvl = 5
 
-    integer :: i, j, k, l, stat
     integer :: t2m(nlat, nlon)
     real(real64) :: slp(nlat, nlon)
-    real :: ght(nlat, nlon, nlvl, nitme)
+    real :: ght(nlat, nlon, nlvl, ntime)
 
     type(file_type) :: nc
     type(variable_type) :: var
@@ -34,9 +33,9 @@ contains
     nc = dataset(filename, "w")
 
     !> Define dimension
-    call def_dim(nc, ["lat", "lon"], [nlat, nlon])
-    !> Add more dimensions
-    call def_dim(nc, [character(len=4) :: "time", "lvl"], [nitme, nlvl])
+    call def_dim(nc, &
+      & [character(len=4) :: "lat", "lon", "time", "lvl"], &
+      & [nlat, nlon, ntime, nlvl])
 
     var = def_var(nc, "lat", nc_float, ["lat"])
     call put_att(var, "units", "deg")
@@ -77,8 +76,9 @@ contains
     call put_att(var, "FillValue", 99999)
 
     !> Add global attribute
-    call put_att(nc, "global attribute", "Dummy ERA5 Dataset")
-    stat = nc_close(nc%id)
+    call put_att(nc, "created by", "Self baked NetCDF")
+    call put_att(nc, "description", "Dummy ERA5 dataset")
+    call close_dataset(nc)
     succeed = .true.
   end function test_write
 

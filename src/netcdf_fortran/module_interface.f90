@@ -10,10 +10,14 @@ module module_interface
   implicit none
 
   public :: dimension_type, attribute_type
-  public :: file_type, group_type, variable_type, handle_error
-  public :: inq_var, dataset, get_var, get_att
-  public :: def_dim, def_var, put_var, put_att
-  public :: write (formatted), shape, size, rank
+  public :: file_type, group_type, variable_type
+  public :: handle_error
+  public :: dataset, close_dataset
+  public :: def_dim
+  public :: get_att, put_att
+  public :: def_var, inq_var, get_var, put_var
+  public :: shape, size, rank
+  public :: write (formatted) 
   private
 
   !> NetCDF Data Model
@@ -348,6 +352,10 @@ module module_interface
       real(real64), allocatable, intent(out) :: vals(:)
     end subroutine get_var_real64
 
+    module subroutine destroy_variable(var)
+      type(variable_type), intent(inout) :: var
+    end subroutine destroy_variable
+
     !> submodule group
     !> ---------------
 
@@ -357,6 +365,11 @@ module module_interface
       logical, intent(in), optional :: inq_atts, inq_vars
       type(file_type) :: file
     end function dataset
+
+    !> Close dataset
+    module subroutine close_dataset(file)
+      type(file_type), intent(inout) :: file
+    end subroutine close_dataset
 
     !> submodule io
     !> ------------

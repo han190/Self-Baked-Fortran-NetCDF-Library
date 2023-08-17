@@ -301,4 +301,12 @@ contains
     call handle_error(stat, "nc_get_var_double")
   end subroutine get_var_real64
 
+  module subroutine destroy_variable(var)
+    type(variable_type), intent(inout) :: var
+
+    if (associated(var%grp_id)) deallocate (var%grp_id)
+    call destroy(var%atts)
+    call destroy(var%dims)
+  end subroutine destroy_variable
+
 end submodule submodule_variable

@@ -65,4 +65,23 @@ contains
     end select
   end function dataset
 
+  !> Close dataset
+  module subroutine close_dataset(file)
+    type(file_type), intent(inout) :: file
+    integer(c_int) :: stat, i
+
+    stat = nc_close(file%id)
+    call handle_error(stat, "nc_close")
+
+    if (allocated(file%grps)) deallocate(file%grps)
+    if (allocated(file%vars)) then
+      do i = 1, size(file%vars)
+        call destroy_variable(file%vars(i))
+      end do
+      deallocate (file%vars)
+    end if
+    call destroy(file%dims)
+    call destroy(file%atts)
+  end subroutine close_dataset
+
 end submodule submodule_group

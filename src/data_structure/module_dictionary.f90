@@ -55,4 +55,14 @@ contains
     pair = scan_list(dictionary%buckets(idx), key)
   end function scan_dictionary
 
+  !> Dictionary destructor
+  module subroutine destroy_dictionary(dictionary)
+    type(dictionary_type), intent(inout) :: dictionary
+    integer :: i
+
+    do i = 1, dictionary%len
+      call destroy_list(dictionary%buckets(i))
+    end do
+  end subroutine destroy_dictionary
+
 end submodule submodule_dictionary

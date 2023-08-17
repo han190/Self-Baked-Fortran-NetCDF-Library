@@ -13,6 +13,14 @@ contains
     allocate (pair%val, source=val)
   end function new_pair
 
+  !> Pair destructor
+  pure module subroutine destroy_pair(pair)
+    type(pair_type), intent(inout) :: pair
+
+    if (allocated(pair%key)) deallocate (pair%key)
+    if (allocated(pair%val)) deallocate (pair%val)
+  end subroutine destroy_pair
+
   !> Node constructor
   pure module function new_node(pair) result(node)
     type(pair_type), intent(in) :: pair
@@ -21,6 +29,14 @@ contains
     node%pair = new_pair(pair%key, pair%val)
   end function new_node
 
+  !> Node destructor
+  pure module subroutine destroy_node(node)
+    type(node_type), intent(inout) :: node
+
+    call destroy_pair(node%pair)
+    nullify (node%prev, node%next)
+  end subroutine destroy_node
+
   !> Append list
   module subroutine append_list(list, pair)
     type(list_type), intent(inout) :: list
@@ -28,6 +44,7 @@ contains
 
     if (associated(list%tail)) then
       allocate (list%tail%next, source=new_node(pair))
+      list%tail%next%prev => list%tail
       list%tail => list%tail%next
     else
       allocate (list%head, source=new_node(pair))
@@ -66,5 +83,23 @@ contains
     nullify (current)
     error stop "key: "//key//" not found."
   end function scan_list
+
+  !> List destructor
+  module subroutine destroy_list(list)
+    type(list_type), intent(inout) :: list
+    type(node_type), pointer :: current
+
+    do while (list%length > 0)
+      current => list%head
+      if (associated(current%next)) then
+        nullify (current%next%prev)
+        list%head => current%next
+      end if
+
+      call destroy_node(current)
+      deallocate (current)
+      list%length = list%length - 1
+    end do
+  end subroutine destroy_list
 
 end submodule submodule_list
