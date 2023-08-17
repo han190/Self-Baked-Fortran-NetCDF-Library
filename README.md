@@ -27,6 +27,7 @@ program main
   nc = dataset("simple_example.nc", "w")
   call def_dim(nc, ["x", "y"], [nx, ny])
   var = def_var(nc, "data", nc_float, ["x", "y"])
+  call put_var(var, data)
   call close_dataset(nc)
 end program main
 ```
