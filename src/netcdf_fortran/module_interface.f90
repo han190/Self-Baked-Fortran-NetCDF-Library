@@ -137,7 +137,7 @@ module module_interface
 
   interface write (formatted)
     module procedure :: write_formatted_var
-    module procedure :: write_formatted_grp
+    module procedure :: write_formatted_file
   end interface write (formatted)
 
   !> Interface to submodules
@@ -386,15 +386,15 @@ module module_interface
     end subroutine write_formatted_var
 
     !> write(formatted) of group
-    module subroutine write_formatted_grp( &
-      & grp, unit, iotype, v_list, iostat, iomsg)
-      class(group_type), intent(in) :: grp
+    module subroutine write_formatted_file( &
+      & file, unit, iotype, v_list, iostat, iomsg)
+      class(file_type), intent(in) :: file
       integer, intent(in) :: unit
       character(*), intent(in) :: iotype
       integer, intent(in) :: v_list(:)
       integer, intent(out) :: iostat
       character(*), intent(inout) :: iomsg
-    end subroutine write_formatted_grp
+    end subroutine write_formatted_file
 
   end interface
 

@@ -44,7 +44,7 @@ contains
       if (present(inq_vars)) then
         if (inq_vars) call inq_grp_vars(file)
       else
-        call inq_grp_atts(file)
+        call inq_grp_vars(file)
       end if
 
     case ("w", "write")

@@ -199,6 +199,33 @@ contains
     end if
   end subroutine write_formatted_dim
 
+  subroutine write_formatted_dict(dict, unit, iotype, v_list, iostat, iomsg)
+    type(dictionary_type), intent(in) :: dict
+    integer, intent(in) :: unit
+    character(*), intent(in) :: iotype
+    integer, intent(in) :: v_list(:)
+    integer, intent(out) :: iostat
+    character(*), intent(inout) :: iomsg
+    type(node_type), pointer :: current
+    integer :: i
+
+    do i = 1, dict%len
+      current => dict%buckets(i)%head
+      do while (associated(current))
+        select type (val_ => current%pair%val)
+        type is (dimension_type)
+          call write_formatted_dim( &
+            & val_, unit, iotype, v_list, iostat, iomsg)
+        type is (attribute_type)
+          call write_formatted_att( &
+            & val_, unit, iotype, v_list, iostat, iomsg)
+        end select
+        current => current%next
+      end do
+    end do
+    nullify (current)
+  end subroutine write_formatted_dict
+
   module subroutine write_formatted_var( &
     & var, unit, iotype, v_list, iostat, iomsg)
     class(variable_type), intent(in) :: var
@@ -241,27 +268,15 @@ contains
       write (unit, fmt) indent_level(var%name, level), &
         & type_name(var%type), dim_str
 
-      if (size(var%atts) /= 0) then
-        do i = 1, var%atts%len
-          current => var%atts%buckets(i)%head
-          do while (associated(current))
-            select type (att => current%pair%val)
-            type is (attribute_type)
-              call write_formatted_att( &
-                & att, unit, iotype, v_list_, iostat, iomsg)
-            end select
-            current => current%next
-          end do
-          nullify (current)
-        end do
-      end if
-
+      if (size(var%atts) /= 0) &
+        call write_formatted_dict( &
+        & var%atts, unit, iotype, v_list_, iostat, iomsg)
     end if
   end subroutine write_formatted_var
 
-  module subroutine write_formatted_grp( &
-    & grp, unit, iotype, v_list, iostat, iomsg)
-    class(group_type), intent(in) :: grp
+  module subroutine write_formatted_file( &
+    & file, unit, iotype, v_list, iostat, iomsg)
+    class(file_type), intent(in) :: file
     integer, intent(in) :: unit
     character(*), intent(in) :: iotype
     integer, intent(in) :: v_list(:)
@@ -269,7 +284,6 @@ contains
     character(*), intent(inout) :: iomsg
     integer :: i
     integer, allocatable :: v_list_(:)
-    type(node_type), pointer :: current
 
     if (size(v_list) == 0) then
       v_list_ = [0]
@@ -278,52 +292,26 @@ contains
     end if
 
     if (iotype == "DT" .or. iotype == "LISTDIRECTED") then
-      ! select type (g => grp)
-      ! type is (file_type)
-      !   write (unit, "(a,':',1x,a,/)") "file", '"'//g%filename//'"'
-      ! end select
-      write (unit, "(a,1x,'(',a,')',':',/)") "group", grp%name
+      write (unit, "(a,':',1x,a,/)") "file", '"'//file%filename//'"'
+      write (unit, "(a,1x,'(',a,')',':',/)") "group", file%name
       write (unit, "(a,/)") "dimensions:"
-      do i = 1, grp%dims%len
-        current => grp%dims%buckets(i)%head
-        do while (associated(current))
-          select type (dim => current%pair%val)
-          type is (dimension_type)
-            call write_formatted_dim( &
-              & dim, unit, iotype, v_list_, iostat, iomsg)
-          end select
-          current => current%next
-        end do
-      end do
-      nullify (current)
+      call write_formatted_dict( &
+        & file%dims, unit, iotype, v_list_, iostat, iomsg)
 
-      if (allocated(grp%vars)) then
+      if (allocated(file%vars)) then
         write (unit, "(a,/)") "variables:"
-        do i = 1, size(grp%vars)
-          associate (var => grp%vars(i))
-            call write_formatted_var( &
-              & var, unit, iotype, v_list_, iostat, iomsg)
-          end associate
+        do i = 1, size(file%vars)
+          call write_formatted_var( &
+            & file%vars(i), unit, iotype, v_list_, iostat, iomsg)
         end do
       end if
 
-      if (size(grp%atts) /= 0) then
+      if (size(file%atts) /= 0) then
         write (unit, "(a,/)") "attributes:"
-        do i = 1, grp%atts%len
-          current => grp%atts%buckets(i)%head
-          do while (associated(current))
-            select type (att => current%pair%val)
-            type is (attribute_type)
-              call write_formatted_att( &
-                & att, unit, iotype, v_list_, iostat, iomsg)
-            end select
-            current => current%next
-          end do
-          nullify (current)
-        end do
+        call write_formatted_dict( &
+          & file%atts, unit, iotype, v_list_, iostat, iomsg)
       end if
-
     end if
-  end subroutine write_formatted_grp
+  end subroutine write_formatted_file
 
 end submodule submodule_io

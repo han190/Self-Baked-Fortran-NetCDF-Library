@@ -37,15 +37,18 @@ contains
       & [character(len=4) :: "lat", "lon", "time", "lvl"], &
       & [nlat, nlon, ntime, nlvl])
 
-    var = def_var(nc, "lat", nc_float, ["lat"])
+    !> Define latitude
+    var = def_var(nc, "latitude", nc_float, ["lat"])
     call put_att(var, "units", "deg")
     call put_att(var, "long_name", "latitude")
 
-    var = def_var(nc, "lon", nc_float, ["lon"])
+    !> Define longitude
+    var = def_var(nc, "longitude", nc_float, ["lon"])
     call put_att(var, "units", "deg")
     call put_att(var, "long_name", "longitude")
 
-    var = def_var(nc, "time", nc_float, ["time"])
+    !> Define time
+    var = def_var(nc, "time", nc_int, ["time"])
     call put_att(var, "units", "hour")
     call put_att(var, "long_name", "hour in a day")
 
@@ -54,7 +57,7 @@ contains
     call put_att(var, "long_name", "pressure level")
 
     !> Define temperature at 2 metre
-    var = def_var(nc, "t2m", nc_int, ["lat", "lon"])
+    var = def_var(nc, "T2M", nc_int, ["lat", "lon"])
     call put_var(var, t2m)
     call put_att(var, "units", "Kelvin")
     call put_att(var, "long_name", "temperature at 2 metre")
@@ -62,13 +65,13 @@ contains
     call put_att(var, "scale_factor", 2.0_real64)
 
     !> Define sea level pressure
-    var = def_var(nc, "slp", nc_double, ["lat", "lon"])
+    var = def_var(nc, "SLP", nc_double, ["lat", "lon"])
     call put_var(var, slp)
     call put_att(var, "units", "hPa")
     call put_att(var, "long_name", "sea level pressure")
 
     !> Define geopotential height
-    var = def_var(nc, "ght", nc_float, &
+    var = def_var(nc, "GHT", nc_float, &
       & [character(len=4) :: "lat", "lon", "lvl", "time"])
     call put_var(var, ght)
     call put_att(var, "units", "m2 s-2")
@@ -89,8 +92,8 @@ contains
     type(variable_type) :: var
 
     nc = dataset(path//"dummy.nc", "r")
-    var = inq_var(nc, "t2m")
-    print "(dt)", var
+    var = inq_var(nc, "T2M")
+    print "(dt)", nc
     succeed = .true.
   end function test_read
 
