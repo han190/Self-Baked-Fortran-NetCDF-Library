@@ -153,20 +153,4 @@ contains
     nullify (current)
   end function shape_dict
 
-  !> size of dimensions
-  ! module function size_dims(dims) result(ret)
-  !   type(dictionary_type), intent(in) :: dims
-  !   integer(int64) :: ret
-
-  !   ret = product(shape(dims))
-  ! end function size_dims
-
-  ! !> rank of dimensions
-  ! module function rank_dims(dims) result(ret)
-  !   type(dictionary_type), intent(in) :: dims
-  !   integer(int64) :: ret
-
-  !   ret = dims%length
-  ! end function rank_dims
-
 end submodule submodule_dimension

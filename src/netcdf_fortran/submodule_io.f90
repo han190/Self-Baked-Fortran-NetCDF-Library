@@ -111,9 +111,6 @@ contains
       select type (val_ => att%values)
       type is (character(*))
 
-        !!TODO Find a way to remove all blackslash
-        !! and split long lines into shorter lines with
-        !! correct indentation.
         tmp = att_name//" "//att_type//' "'//strip(val_(1))//'"'
         if (len(tmp) > line_width) then
           write (unit, "(a,/)") tmp(1:line_width - 4)//'..."'
@@ -218,9 +215,6 @@ contains
 
     if (iotype == "DT" .or. iotype == "LISTDIRECTED") then
 
-      !> Construct a character for dimensions
-      !> Yes, C starts from zero. Also, keep in mind Fortran
-      !> is column major so loop backwards.
       dim_str = ""
       do i = 1, var%dims%len
         current => var%dims%buckets(i)%head
@@ -248,22 +242,18 @@ contains
         & type_name(var%type), dim_str
 
       if (size(var%atts) /= 0) then
-        block
-          type(node_type), pointer :: current_node
-
-          do i = 1, var%atts%len
-            current_node => var%atts%buckets(i)%head
-            do while (associated(current_node))
-              select type (att => current_node%pair%val)
-              type is (attribute_type)
-                call write_formatted_att( &
-                  & att, unit, iotype, v_list_, iostat, iomsg)
-              end select
-              current_node => current_node%next
-            end do
-            nullify (current_node)
+        do i = 1, var%atts%len
+          current => var%atts%buckets(i)%head
+          do while (associated(current))
+            select type (att => current%pair%val)
+            type is (attribute_type)
+              call write_formatted_att( &
+                & att, unit, iotype, v_list_, iostat, iomsg)
+            end select
+            current => current%next
           end do
-        end block
+          nullify (current)
+        end do
       end if
 
     end if
@@ -288,8 +278,9 @@ contains
     end if
 
     if (iotype == "DT" .or. iotype == "LISTDIRECTED") then
-      write (unit, "(a,1x,'(',a,')',':',/)") "GROUP", grp%name
-      write (unit, "(a,/)") "DIMENSIONS:"
+      write (unit, "(a,':',1x,a,/)") "file", '"'//grp%filename//'"'
+      write (unit, "(a,1x,'(',a,')',':',/)") "group", grp%name
+      write (unit, "(a,/)") "dimensions:"
       do i = 1, grp%dims%len
         current => grp%dims%buckets(i)%head
         do while (associated(current))
@@ -304,7 +295,7 @@ contains
       nullify (current)
 
       if (allocated(grp%vars)) then
-        write (unit, "(a,/)") "VARIABLES:"
+        write (unit, "(a,/)") "variables:"
         do i = 1, size(grp%vars)
           associate (var => grp%vars(i))
             call write_formatted_var( &
@@ -314,23 +305,19 @@ contains
       end if
 
       if (size(grp%atts) /= 0) then
-        write (unit, "(a,/)") "ATTRIBUTES:"
-        block
-          type(node_type), pointer :: current_node
-
-          do i = 1, grp%atts%len
-            current_node => grp%atts%buckets(i)%head
-            do while (associated(current_node))
-              select type (att => current_node%pair%val)
-              type is (attribute_type)
-                call write_formatted_att( &
-                  & att, unit, iotype, v_list_, iostat, iomsg)
-              end select
-              current_node => current_node%next
-            end do
-            nullify (current_node)
+        write (unit, "(a,/)") "attributes:"
+        do i = 1, grp%atts%len
+          current => grp%atts%buckets(i)%head
+          do while (associated(current))
+            select type (att => current%pair%val)
+            type is (attribute_type)
+              call write_formatted_att( &
+                & att, unit, iotype, v_list_, iostat, iomsg)
+            end select
+            current => current%next
           end do
-        end block
+          nullify (current)
+        end do
       end if
 
     end if
