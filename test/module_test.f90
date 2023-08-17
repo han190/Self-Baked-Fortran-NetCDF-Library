@@ -14,12 +14,12 @@ contains
     integer, parameter :: nlat = 361
     integer, parameter :: nlon = 1440
     integer, parameter :: nitme = 24
-    integer, parameter :: nlvl = 5
+    integer, parameter :: nlvl = 40
 
     integer :: i, j, k, l, stat
-    integer, target :: t2m(nlat, nlon)
-    real(real64), target :: slp(nlat, nlon)
-    real, target :: ght(nlat, nlon, nlvl, nitme)
+    integer :: t2m(nlat, nlon)
+    real(real64) :: slp(nlat, nlon)
+    real :: ght(nlat, nlon, nlvl, nitme)
 
     type(group_type) :: nc
     type(variable_type) :: var
@@ -35,6 +35,24 @@ contains
 
     !> Define dimension
     call def_dim(nc, ["lat", "lon"], [nlat, nlon])
+    !> Add more dimensions
+    call def_dim(nc, [character(len=4) :: "time", "lvl"], [nitme, nlvl])
+
+    var = def_var(nc, "lat", nc_float, ["lat"])
+    call put_att(var, "units", "deg")
+    call put_att(var, "long_name", "latitude")
+
+    var = def_var(nc, "lon", nc_float, ["lon"])
+    call put_att(var, "units", "deg")
+    call put_att(var, "long_name", "longitude")
+
+    var = def_var(nc, "time", nc_float, ["time"])
+    call put_att(var, "units", "hour")
+    call put_att(var, "long_name", "hour in a day")
+
+    var = def_var(nc, "level", nc_float, ["lvl"])
+    call put_att(var, "units", "hPa")
+    call put_att(var, "long_name", "pressure level")
 
     !> Define temperature at 2 metre
     var = def_var(nc, "t2m", nc_int, ["lat", "lon"])
@@ -49,9 +67,6 @@ contains
     call put_var(var, slp)
     call put_att(var, "units", "hPa")
     call put_att(var, "long_name", "sea level pressure")
-
-    !> Add more dimensions
-    call def_dim(nc, [character(len=4) :: "time", "lvl"], [nitme, nlvl])
 
     !> Define geopotential height
     var = def_var(nc, "ght", nc_float, &
@@ -77,7 +92,6 @@ contains
       & inq_vars=.true., inq_atts=.true.)
     print "(dt)", nc
     var = inq_var(nc, "t2m")
-    print "(dt)", var
     succeed = .true.
   end function test_simple_xy_rd
 

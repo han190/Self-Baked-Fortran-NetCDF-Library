@@ -1,7 +1,7 @@
 # Self-baked NetCDF Fortran Library
 
 ## Get started
-The Self-baked NetCDF Fortran library is a light weighted NetCDF C Library wrapper and an intermediate interface written in modern Fortran. This project is designed as a solution of the current fpm/NetCDF incoherence (see [fpm discussion](https://github.com/fortran-lang/fpm/discussions/458), [fpm issue](https://github.com/fortran-lang/fpm/issues/17), [discussion on discourse](https://fortran-lang.discourse.group/t/using-netcdf-with-fpm/4225)). The major difference between this library and most of the other implementations (for example [nc4fortran](https://github.com/geospace-code/nc4fortran)) is that this library is built on top of NetCDF C library directly, thus you won't need the official NetCDF Fortran library as a dependence. If you are intereseted in using this project with [fpm](https://github.com/fortran-lang/fpm), add the following lines in your `fpm.toml`
+The Self-baked NetCDF Fortran library is a light weighted NetCDF C Library wrapper and an intermediate interface written in modern Fortran. This project is designed as a workaround of the current fpm/NetCDF incoherence (see [fpm discussion](https://github.com/fortran-lang/fpm/discussions/458), [fpm issue](https://github.com/fortran-lang/fpm/issues/17), [discussion on discourse](https://fortran-lang.discourse.group/t/using-netcdf-with-fpm/4225)). The major difference between this library and most of the other implementations (for example [nc4fortran](https://github.com/geospace-code/nc4fortran)) is that this library is built on top of NetCDF C library directly, thus you won't need the official NetCDF Fortran library as a dependence. If you are intereseted in using this project with [fpm](https://github.com/fortran-lang/fpm), add the following lines in your `fpm.toml`
 ```
 [dependencies]
 self-baked-nf = {git="https://github.com/han190/Self-Baked-Fortran-NetCDF"}
@@ -11,47 +11,79 @@ link = "netcdf"
 ```
 and make sure you have NetCDF C library properly installed.
 
-## Quick tutorial
-Here is an example of reading a 3 dimensional value from a NetCDF file. The data `sample02.nc` can be found in folder `data`. You could also download it from [the fifth generation ECMWF reanalysis (ERA5) website](https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-single-levels?tab=overview).
-
+## Examples
+### Write to NetCDF
 ```
 program main
 
-  use module_netcdf
-  use iso_fortran_env, only: int16, real64, int64
-  implicit none
+  integer, parameter :: nlat = 361
+  integer, parameter :: nlon = 1440
+  integer, parameter :: nitme = 24
+  integer, parameter :: nlvl = 40
+
+  integer :: t2m(nlat, nlon)
+  real(real64) :: slp(nlat, nlon)
+  real :: ght(nlat, nlon, nlvl, nitme)
 
   type(group_type) :: nc
   type(variable_type) :: var
 
-  integer(int16), allocatable :: raw(:)
-  integer(int64) :: s(3)
-  real(real64) :: scale_factor, add_offset
-  real, allocatable, target :: vals(:)
-  real, pointer :: ptr(:,:,:) => null()
+  !> Fill arrays with some values
+  t2m = 1
+  slp = 2.0_real64
+  ght = 3.0
 
-  !> Only dimension will loaded unless optional
-  !> arguments are specified
-  nc = dataset("./data/sample02.nc", "r")
+  !> Open file, prepare to write
+  filename = "dummy_era5.nc"
+  nc = dataset(filename, "w")
 
-  !> Inquire variable metadata 
-  !> (name, id, dimension, attribute, etc.)
-  var = inq_var(nc, "t2m")
+  !> Define dimension
+  call def_dim(nc, ["lat", "lon"], [nlat, nlon])
+  !> Add more dimensions
+  call def_dim(nc, [character(len=4) :: "time", "lvl"], [nitme, nlvl])
 
-  !> User-defined Derived Type I/O
-  print *, var
+  var = def_var(nc, "lat", nc_float, ["lat"])
+  call put_att(var, "units", "deg")
+  call put_att(var, "long_name", "latitude")
 
-  !> Extract raw data and by convention
-  !> scale factor and add offset.
-  call get_var(var, raw)
-  call get_att(var, "scale_factor", scale_factor)
-  call get_att(var, "add_offset", add_offset)
+  var = def_var(nc, "lon", nc_float, ["lon"])
+  call put_att(var, "units", "deg")
+  call put_att(var, "long_name", "longitude")
 
-  !> Map the data to a 3-dimensional pointer.
-  vals = raw*scale_factor + add_offset
-  s = shape(var)
-  ptr(1:s(1), 1:s(2), 1:s(3)) => vals
-  print *, "Data successfully read."
+  var = def_var(nc, "time", nc_float, ["time"])
+  call put_att(var, "units", "hour")
+  call put_att(var, "long_name", "hour in a day")
+
+  var = def_var(nc, "level", nc_float, ["lvl"])
+  call put_att(var, "units", "hPa")
+  call put_att(var, "long_name", "pressure level")
+
+  !> Define temperature at 2 metre
+  var = def_var(nc, "t2m", nc_int, ["lat", "lon"])
+  call put_var(var, t2m)
+  call put_att(var, "units", "Kelvin")
+  call put_att(var, "long_name", "temperature at 2 metre")
+  call put_att(var, "add_offset", 1.0)
+  call put_att(var, "scale_factor", 2.0_real64)
+
+  !> Define sea level pressure
+  var = def_var(nc, "slp", nc_double, ["lat", "lon"])
+  call put_var(var, slp)
+  call put_att(var, "units", "hPa")
+  call put_att(var, "long_name", "sea level pressure")
+
+  !> Define geopotential height
+  var = def_var(nc, "ght", nc_float, &
+    & [character(len=4) :: "lat", "lon", "lvl", "time"])
+  call put_var(var, ght)
+  call put_att(var, "units", "m2 s-2")
+  call put_att(var, "long_name", "geopotential height")
+  call put_att(var, "FillValue", 99999)
+
+  !> Add global attribute
+  call put_att(nc, "global attribute", "Dummy ERA5 Dataset")
+  stat = nc_close(nc%id)
+  call close_dataset(nc)
 
 end program main
 ```
