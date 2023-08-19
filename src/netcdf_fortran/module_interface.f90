@@ -115,11 +115,7 @@ module module_interface
   end interface put_att
 
   interface get_att
-    module procedure :: get_att_name_scalar_int16
-    module procedure :: get_att_name_scalar_int32
-    module procedure :: get_att_name_scalar_int64
-    module procedure :: get_att_name_scalar_real32
-    module procedure :: get_att_name_scalar_real64
+    module procedure :: get_att_scalar
   end interface get_att
 
   interface get_var
@@ -220,35 +216,12 @@ module module_interface
       type(variable_type), intent(inout) :: var
     end subroutine inq_var_atts
 
-    module subroutine get_att_name_scalar_int16(var, name, val)
+    !> Get attribute scalar
+    module subroutine get_att_scalar(var, name, val)
       type(variable_type), intent(in) :: var
       character(len=*), intent(in) :: name
-      integer(int16), intent(out) :: val
-    end subroutine get_att_name_scalar_int16
-
-    module subroutine get_att_name_scalar_int32(var, name, val)
-      type(variable_type), intent(in) :: var
-      character(len=*), intent(in) :: name
-      integer(int32), intent(out) :: val
-    end subroutine get_att_name_scalar_int32
-
-    module subroutine get_att_name_scalar_int64(var, name, val)
-      type(variable_type), intent(in) :: var
-      character(len=*), intent(in) :: name
-      integer(int64), intent(out) :: val
-    end subroutine get_att_name_scalar_int64
-
-    module subroutine get_att_name_scalar_real32(var, name, val)
-      type(variable_type), intent(in) :: var
-      character(len=*), intent(in) :: name
-      real(real32), intent(out) :: val
-    end subroutine get_att_name_scalar_real32
-
-    module subroutine get_att_name_scalar_real64(var, name, val)
-      type(variable_type), intent(in) :: var
-      character(len=*), intent(in) :: name
-      real(real64), intent(out) :: val
-    end subroutine get_att_name_scalar_real64
+      class(*), intent(out) :: val
+    end subroutine get_att_scalar
 
     !> submodule variable
     !> ------------------

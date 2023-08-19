@@ -183,95 +183,95 @@ contains
     call inq_atts_(grp, var%atts, var%id, natts)
   end subroutine inq_var_atts
 
-  !> Get attributes
-  module subroutine get_att_name_scalar_int16(var, name, val)
+  !> Get attribute scalar
+  module subroutine get_att_scalar(var, name, val)
     type(variable_type), intent(in) :: var
     character(len=*), intent(in) :: name
-    integer(int16), intent(out) :: val
+    class(*), intent(out) :: val
     integer(c_int) :: stat
     integer(c_size_t) :: attlen
-    integer(int16), allocatable :: tmp(:)
 
-    stat = nc_inq_attlen(var%grp_id, var%id, name//c_null_char, attlen)
+    stat = nc_inq_attlen(var%grp_id, var%id, to_cstr(name), attlen)
     call handle_error(stat, "nc_inq_attlen")
-    if (attlen /= 1_c_size_t) error stop "Attribute is not a scalar."
-    allocate (tmp(attlen))
 
-    stat = nc_get_att_short(var%grp_id, var%id, name//c_null_char, tmp(1))
-    call handle_error(stat, "nc_get_att_short")
-    val = tmp(1)
-  end subroutine get_att_name_scalar_int16
+    select type (val_ => val)
+    type is (integer(int16))
 
-  module subroutine get_att_name_scalar_int32(var, name, val)
-    type(variable_type), intent(in) :: var
-    character(len=*), intent(in) :: name
-    integer(int32), intent(out) :: val
-    integer(c_int) :: stat
-    integer(c_size_t) :: attlen
-    integer(int32), allocatable :: tmp(:)
+      if (attlen /= 1_c_size_t) &
+        & error stop "Attribute is not a scalar."
+      block
+        integer(int16) :: vals(1)
 
-    stat = nc_inq_attlen(var%grp_id, var%id, name//c_null_char, attlen)
-    call handle_error(stat, "nc_inq_attlen")
-    if (attlen /= 1_c_size_t) error stop "Attribute is not a scalar."
-    allocate (tmp(attlen))
+        stat = nc_get_att_short( &
+          & var%grp_id, var%id, to_cstr(name), vals)
+        call handle_error(stat, "nc_get_att_short")
+        val_ = vals(1)
+      end block
 
-    stat = nc_get_att_int(var%grp_id, var%id, name//c_null_char, tmp(1))
-    call handle_error(stat, "nc_get_att_int")
-    val = tmp(1)
-  end subroutine get_att_name_scalar_int32
+    type is (integer(int32))
 
-  module subroutine get_att_name_scalar_int64(var, name, val)
-    type(variable_type), intent(in) :: var
-    character(len=*), intent(in) :: name
-    integer(int64), intent(out) :: val
-    integer(c_int) :: stat
-    integer(c_size_t) :: attlen
-    integer(int64), allocatable :: tmp(:)
+      if (attlen /= 1_c_size_t) &
+        & error stop "Attribute is not a scalar."
+      block
+        integer(int32) :: vals(1)
 
-    stat = nc_inq_attlen(var%grp_id, var%id, name//c_null_char, attlen)
-    call handle_error(stat, "nc_inq_attlen")
-    if (attlen /= 1_c_size_t) error stop "Attribute is not a scalar."
-    allocate (tmp(attlen))
+        stat = nc_get_att_int( &
+          & var%grp_id, var%id, to_cstr(name), vals)
+        call handle_error(stat, "nc_get_att_int")
+        val_ = vals(1)
+      end block
 
-    stat = nc_get_att_longlong(var%grp_id, var%id, name//c_null_char, tmp(1))
-    call handle_error(stat, "nc_get_att_longlong")
-    val = tmp(1)
-  end subroutine get_att_name_scalar_int64
+    type is (integer(int64))
 
-  module subroutine get_att_name_scalar_real32(var, name, val)
-    type(variable_type), intent(in) :: var
-    character(len=*), intent(in) :: name
-    real(real32), intent(out) :: val
-    integer(c_int) :: stat
-    integer(c_size_t) :: attlen
-    real(real32), allocatable :: tmp(:)
+      if (attlen /= 1_c_size_t) &
+        & error stop "Attribute is not a scalar."
+      block
+        integer(int64) :: vals(1)
 
-    stat = nc_inq_attlen(var%grp_id, var%id, name//c_null_char, attlen)
-    call handle_error(stat, "nc_inq_attlen")
-    if (attlen /= 1_c_size_t) error stop "Attribute is not a scalar."
-    allocate (tmp(attlen))
+        stat = nc_get_att_longlong( &
+          & var%grp_id, var%id, to_cstr(name), vals)
+        call handle_error(stat, "nc_get_att_longlong")
+        val_ = vals(1)
+      end block
 
-    stat = nc_get_att_float(var%grp_id, var%id, name//c_null_char, tmp(1))
-    call handle_error(stat, "nc_get_att_float")
-    val = tmp(1)
-  end subroutine get_att_name_scalar_real32
+    type is (real(real32))
 
-  module subroutine get_att_name_scalar_real64(var, name, val)
-    type(variable_type), intent(in) :: var
-    character(len=*), intent(in) :: name
-    real(real64), intent(out) :: val
-    integer(c_int) :: stat
-    integer(c_size_t) :: attlen
-    real(real64), allocatable :: tmp(:)
+      if (attlen /= 1_c_size_t) &
+        & error stop "Attribute is not a scalar."
+      block
+        real(real32) :: vals(1)
 
-    stat = nc_inq_attlen(var%grp_id, var%id, name//c_null_char, attlen)
-    call handle_error(stat, "nc_inq_attlen")
-    if (attlen /= 1_c_size_t) error stop "Attribute is not a scalar."
-    allocate (tmp(attlen))
+        stat = nc_get_att_float( &
+          & var%grp_id, var%id, to_cstr(name), vals)
+        call handle_error(stat, "nc_get_att_float")
+        val_ = vals(1)
+      end block
 
-    stat = nc_get_att_double(var%grp_id, var%id, name//c_null_char, tmp(1))
-    call handle_error(stat, "nc_get_att_double")
-    val = tmp(1)
-  end subroutine get_att_name_scalar_real64
+    type is (real(real64))
+
+      if (attlen /= 1_c_size_t) &
+        & error stop "Attribute is not a scalar."
+      block
+        real(real64) :: vals(1)
+
+        stat = nc_get_att_double( &
+          & var%grp_id, var%id, to_cstr(name), vals)
+        call handle_error(stat, "nc_get_att_double")
+        val_ = vals(1)
+      end block
+
+    type is (character(*))
+
+      block
+        character(len=attlen, kind=c_char) :: vals(1)
+
+        stat = nc_get_att_text( &
+          & var%grp_id, var%id, to_cstr(name), vals)
+        call handle_error(stat, "nc_get_att_text")
+        val_ = vals(1)
+      end block
+
+    end select
+  end subroutine get_att_scalar
 
 end submodule submodule_attribute

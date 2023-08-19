@@ -61,7 +61,7 @@ contains
     call put_var(var, t2m)
     call put_att(var, "units", "Kelvin")
     call put_att(var, "long_name", "temperature at 2 metre")
-    call put_att(var, "add_offset", 1.0)
+    call put_att(var, "add_offset", 1.0_real64)
     call put_att(var, "scale_factor", 2.0_real64)
 
     !> Define sea level pressure
@@ -90,11 +90,30 @@ contains
     logical :: succeed
     type(file_type) :: nc
     type(variable_type) :: var
+    real, allocatable :: raw(:)
+    real(real64), allocatable, target :: val(:)
+    real(real64) :: add_offset, scale_factor
+    real(real64), pointer :: ptr(:,:) => null()
+    character(len=10) :: unit
 
-    nc = dataset(path//"dummy.nc", "r")
+    nc = dataset(path//"dummy.nc", "r", &
+      & inq_atts=.false., inq_vars=.false.)
     var = inq_var(nc, "T2M")
-    print "(dt)", nc
-    succeed = .true.
+    call get_var(var, raw)
+    call get_att(var, "add_offset", add_offset)
+    call get_att(var, "scale_factor", scale_factor)
+    val = raw*scale_factor + add_offset
+    associate (s => shape(var))
+      ptr(1:s(1),1:s(2)) => val
+    end associate
+
+    if (all(shape(var) == [361, 1440]) .and. &
+      & abs(scale_factor - 2.0) < tiny(1.0_real64) .and. &
+      & abs(add_offset - 1.0) < tiny(1.0_real64)) then
+      succeed = .true.
+    else
+      succeed = .false.
+    end if
   end function test_read
 
 end module module_test
