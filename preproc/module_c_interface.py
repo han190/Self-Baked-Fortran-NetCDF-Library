@@ -256,7 +256,7 @@ def cdef2fpar(str_list):
                     _kind = declare["kind"]
                     declares[name] = {"type": _type, "kind": _kind, "value": _value}
                 else:
-                    declares[name] = "!" + " ".join(str_clean)
+                    declares[name] = "!(not converted) " + " ".join(str_clean)
             elif contains_name in declares:
                 declare = declares[contains_name]
                 if type(declare) is dict:
@@ -265,7 +265,7 @@ def cdef2fpar(str_list):
                     _kind = declare["kind"]
                     declares[name] = {"type": _type, "kind": _kind, "value": _value}
                 else:
-                    declares[name] = "!" + " ".join(str_clean)
+                    declares[name] = "!(not converted) " + " ".join(str_clean)
             elif str_clean[1].isdigit() or (
                 str_clean[1][1:].isdigit() and str_clean[1][0] == "-"
             ):
@@ -324,7 +324,7 @@ def cdef2fpar(str_list):
                 _kind = "c_int"
                 declares[name] = {"type": _type, "kind": _kind, "value": _value}
             else:
-                declares[name] = "!" + " ".join(str_clean)
+                declares[name] = "!(not converted) " + " ".join(str_clean)
 
     ret = []
     unsolved = 0

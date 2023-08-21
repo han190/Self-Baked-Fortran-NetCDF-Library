@@ -39,16 +39,16 @@ integer(c_int), parameter :: nc_enum = 15
 integer(c_int), parameter :: nc_compound = 16
 integer(c_int), parameter :: nc_firstusertypeid = 32
 integer(c_signed_char), parameter :: nc_fill_byte = -127
-!NC_FILL_CHAR (char)0
+!(not converted) NC_FILL_CHAR (char)0
 integer(c_short), parameter :: nc_fill_short = -32767
 integer(c_int), parameter :: nc_fill_int = -2147483647
 real(c_float), parameter :: nc_fill_float = 9.9692099683868690e+36
 real(c_double), parameter :: nc_fill_double = 9.9692099683868690e+36_c_double
 integer(c_int), parameter :: nc_fill_ubyte = 255
 integer(c_int), parameter :: nc_fill_ushort = 65535
-!NC_FILL_UINT 4294967295U
+!(not converted) NC_FILL_UINT 4294967295U
 integer(c_long_long), parameter :: nc_fill_int64 = -9223372036854775806_c_long_long
-!NC_FILL_UINT64 (unsignedlonglong)18446744073709551614ULL
+!(not converted) NC_FILL_UINT64 (unsignedlonglong)18446744073709551614ULL
 character(kind=c_char, len=*), parameter :: nc_fill_string = ""
 integer(c_int), parameter :: nc_max_byte = 127
 integer(c_int), parameter :: nc_min_byte = -nc_max_byte - 1
@@ -62,12 +62,12 @@ real(c_float), parameter :: nc_min_float = -nc_max_float
 real(c_double), parameter :: nc_max_double = 1.7976931348623157e+308_c_double
 real(c_double), parameter :: nc_min_double = -nc_max_double
 integer(c_int), parameter :: nc_max_ubyte = nc_max_char
-!NC_MAX_USHORT 65535U
-!NC_MAX_UINT 4294967295U
+!(not converted) NC_MAX_USHORT 65535U
+!(not converted) NC_MAX_UINT 4294967295U
 integer(c_int64_t), parameter :: nc_max_int64 = 9223372036854775807_c_int64_t
 integer(c_int64_t), parameter :: nc_min_int64 = -9223372036854775807_c_int64_t
-!NC_MAX_UINT64 18446744073709551615ULL
-!_FillValue "_FillValue"
+!(not converted) NC_MAX_UINT64 18446744073709551615ULL
+!(not converted) _FillValue "_FillValue"
 integer(c_int), parameter :: nc_fill = 0
 integer(c_int), parameter :: nc_nofill = int(z'100')
 integer(c_int), parameter :: nc_nowrite = int(z'0000')
@@ -152,14 +152,14 @@ integer(c_int), parameter :: nc_noquantize = 0
 integer(c_int), parameter :: nc_quantize_bitgroom = 1
 integer(c_int), parameter :: nc_quantize_granularbr = 2
 integer(c_int), parameter :: nc_quantize_bitround = 3
-!NC_QUANTIZE_BITGROOM_ATT_NAME "_QuantizeBitGroomNumberOfSignificantDigits"
-!NC_QUANTIZE_GRANULARBR_ATT_NAME "_QuantizeGranularBitRoundNumberOfSignificantDigits"
-!NC_QUANTIZE_BITROUND_ATT_NAME "_QuantizeBitRoundNumberOfSignificantBits"
+!(not converted) NC_QUANTIZE_BITGROOM_ATT_NAME "_QuantizeBitGroomNumberOfSignificantDigits"
+!(not converted) NC_QUANTIZE_GRANULARBR_ATT_NAME "_QuantizeGranularBitRoundNumberOfSignificantDigits"
+!(not converted) NC_QUANTIZE_BITROUND_ATT_NAME "_QuantizeBitRoundNumberOfSignificantBits"
 integer(c_int), parameter :: nc_quantize_max_float_nsd = 7
 integer(c_int), parameter :: nc_quantize_max_float_nsb = 23
 integer(c_int), parameter :: nc_quantize_max_double_nsd = 15
 integer(c_int), parameter :: nc_quantize_max_double_nsb = 52
-!NC_ISSYSERR(err) (err)>0
+!(not converted) NC_ISSYSERR(err) (err)>0
 integer(c_int), parameter :: nc_noerr = 0
 integer(c_int), parameter :: nc2_err = -1
 integer(c_int), parameter :: nc_ebadid = -33
@@ -260,12 +260,12 @@ integer(c_int), parameter :: nc_eplugin = -142
 integer(c_int), parameter :: nc4_last_error = -142
 integer(c_int), parameter :: nc_eurl = nc_edapurl
 integer(c_int), parameter :: nc_econstraint = nc_edapconstraint
-!DIM_WITHOUT_VARIABLE "ThisisanetCDFdimensionbutnotanetCDFvariable."
+!(not converted) DIM_WITHOUT_VARIABLE "ThisisanetCDFdimensionbutnotanetCDFvariable."
 integer(c_int), parameter :: nc_have_new_chunking_api = 1
-!EXTERNL MSC_EXTRAextern
-!NC_COMPOUND_OFFSET(S,M) offsetof(S,M)
-!NC_UNDEFINED_ENUM_IDENT "_UNDEFINED"
-!ncvarcpy(ncid_in, varid,ncid_out)ncvarcopy((ncid_in),(varid),(ncid_out))
+!(not converted) EXTERNL MSC_EXTRAextern
+!(not converted) NC_COMPOUND_OFFSET(S,M) offsetof(S,M)
+!(not converted) NC_UNDEFINED_ENUM_IDENT "_UNDEFINED"
+!(not converted) ncvarcpy(ncid_in, varid,ncid_out)ncvarcopy((ncid_in),(varid),(ncid_out))
 integer(c_int), parameter :: nc_turn_off_logging = -1
 
 interface
