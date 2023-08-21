@@ -18,23 +18,22 @@ program main
   use module_netcdf
   implicit none
 
-  integer, parameter :: nx = 4, ny = 7
-  real, allocatable, target :: raw(:)
-  real, pointer :: ptr(:,:)
-  type(file_type) :: nc
-  type(variable_type) :: var
+  integer, parameter :: nlat = 4, nlon = 7
+  real, allocatable :: raw(:, :)
+  class(variable_type), allocatable :: var
 
-  allocate (raw(nx*ny))
+  !> Fill data with random numbers.
+  allocate (raw(nlat, nlon))
   call random_number(raw)
-  ptr(1:nx, 1:ny) => raw
+
+  !> Construct variable
+  var = data_array(raw=raw, name="data", &
+    & dims=["lat".dim.nlat, "lon".dim.nlon], &
+    & atts=["units".att."degC", "add_offset".att.-273.16])
+
+  !> Write to netcdf
   call execute_command_line("mkdir -p ./data/")
-  
-  nc = dataset("./data/simple_example.nc", "w")
-  call def_dim(nc, ["x", "y"], [nx, ny])
-  var = def_var(nc, "data", nc_float, ["x", "y"])
-  call put_var(var, ptr)
-  call close_dataset(nc)
-  nullify (ptr)
+  call to_netcdf(var, "./data/simple_example.nc")
 end program main
 ```
 ### Read from NetCDF
@@ -43,17 +42,17 @@ program main
   use module_netcdf
   implicit none
 
-  real, allocatable, target :: raw(:)
-  real, pointer :: ptr(:,:)
+  real, allocatable :: raw(:, :)
+  real :: add_offset
   type(file_type) :: nc
-  type(variable_type) :: var
+  class(variable_type), allocatable :: var
+  class(attribute_type), allocatable :: add_offset
 
+  !> Read from file
   nc = dataset("./data/simple_example.nc", "r")
-  var = inq_var(nc, "data")
-  call get_var(var, raw)
-  associate (s => shape(var))
-    ptr(1:s(1), 1:s(2)) => raw
-  end associate
-  nullify (ptr)
+
+  !> Inquire variable, and extract raw data
+  var = get_var(nc, "data")
+  add_offset = get_att(var, "add_offset")
 end program main
 ```
