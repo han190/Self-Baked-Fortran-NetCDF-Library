@@ -3,16 +3,23 @@ repodir=$(pwd)
 src="${repodir}/src"
 preproc="${repodir}/preproc"
 interface="${repodir}/interface"
-fypp_files=("submodule_attribute" "submodule_variable")
+fypp_files=("module_interface")
+fprettify_flags="-i 2 --strict-indent --disable-indent-mod -r"
 
+echo "Preprocessing using fypp..."
 cd $preproc
 for fypp_file in ${fypp_files[@]}; do
-  echo "fypp ${fypp_file}.fypp ${src}/${fypp_file}.f90"
+  # echo "fypp ${fypp_file}.fypp ${src}/${fypp_file}.f90"
   fypp ${fypp_file}.fypp ${src}/${fypp_file}.f90
 done
-echo "python module_interface.py"
-python module_interface.py
-mv module_interface.f90 ${src}
+
+echo "Generating C interface..."
+# echo "python module_c_interface.py"
+python module_c_interface.py
+mv ${preproc}/module_c_interface.f90 ${src}
 cd ..
 
-fprettify -i 2 -r ./src
+echo "Reindent source code using fprettify..."
+fprettify ${fprettify_flags} ${src} 
+
+echo "Source file generated successfully."
