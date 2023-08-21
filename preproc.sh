@@ -19,7 +19,12 @@ python module_c_interface.py
 mv ${preproc}/module_c_interface.f90 ${src}
 cd ..
 
+echo "Copy remaining source code..."
+cp ${preproc}/*.f90 ${src}
+
 echo "Reindent source code using fprettify..."
-fprettify ${fprettify_flags} ${src} 
+fprettify ${fprettify_flags} ${src}
 
 echo "Source file generated successfully."
+echo "Compiler Fortran source code..."
+fpm build
