@@ -8,18 +8,14 @@ contains
 module pure function new_att_vec_${kind}$(name, vals) result(att)
   character(*), intent(in) :: name
   ${type}$(${kind}$), intent(in) :: vals(:)
+  type(attribute_${kind}$_type) :: tmp
   type(attribute_type) :: att
 
-  allocate (attribute_${kind}$_type :: att%att)
-  select type (att_ => att%att)
-  type is (attribute_${kind}$_type)
-    att_%len = size(vals)
-    att_%name = name
-    att_%type = ${nc_type}$
-    att_%vals = vals
-  class default
-    error stop "Invalid attribute."
-  end select
+  tmp%len = size(vals)
+  tmp%name = name
+  tmp%type = ${nc_type}$
+  tmp%vals = vals
+  att%att = tmp
 end function new_att_vec_${kind}$ ${"\n"}$
 #: endfor
 
@@ -28,35 +24,27 @@ end function new_att_vec_${kind}$ ${"\n"}$
 module pure function new_att_scal_${kind}$(name, val) result(att)
   character(*), intent(in) :: name
   ${type}$(${kind}$), intent(in) :: val
+  type(attribute_${kind}$_type) :: tmp
   type(attribute_type) :: att
 
-  allocate (attribute_${kind}$_type :: att%att)
-  select type (att_ => att%att)
-  type is (attribute_${kind}$_type)
-    att_%len = 1
-    att_%name = name
-    att_%type = ${nc_type}$
-    att_%vals = [val]
-  class default
-    error stop "Invalid attribute."
-  end select
+  tmp%len = 1
+  tmp%name = name
+  tmp%type = ${nc_type}$
+  tmp%vals = [val]
+  att%att = tmp
 end function new_att_scal_${kind}$ ${"\n"}$
 #: endfor
 
 module pure function new_att_scal_char(name, val) result(att)
   character(len=*), intent(in) :: name, val
+  type(attribute_char_type) :: tmp
   type(attribute_type) :: att
 
-  allocate (attribute_char_type :: att%att)
-  select type (att_ => att%att)
-  type is (attribute_char_type)
-    att_%len = len(val)
-    att_%name = name
-    att_%type = nc_char
-    att_%vals = [val]
-  class default
-    error stop "Invalid attribute."
-  end select
+  tmp%len = len(val)
+  tmp%name = name
+  tmp%type = nc_char
+  tmp%vals = [val]
+  att%att = tmp
 end function new_att_scal_char
 
 module function new_atts(atts) result(ret)
