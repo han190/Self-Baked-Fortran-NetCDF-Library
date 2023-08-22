@@ -38,4 +38,13 @@ module function new_dims_unlim(dims, unlim_dim) result(ret)
   end do
 end function new_dims_unlim
 
+!> Shape of dimensions
+module pure function shape_dims(dims) result(ret)
+  type(dimension_type), intent(in) :: dims(:)
+  integer, allocatable :: ret(:)
+  integer :: i
+
+  ret = [(dims(i)%len, i=1, size(dims))]
+end function shape_dims
+
 end submodule submodule_dimension

@@ -9,6 +9,7 @@ implicit none
 public :: attribute_type, dimension_type
 public :: operator(.dim.), operator(.att.)
 public :: dims, atts
+public :: write(formatted)
 private
 
 !> NetCDF Data Model
@@ -132,6 +133,12 @@ interface atts
   module procedure :: new_atts
 end interface atts
 
+!> IO
+interface write(formatted)
+  module procedure :: write_formatted_dim
+  module procedure :: write_formatted_att
+end interface write(formatted)
+
 !> Interfaces to submodules
 interface
   !> submodule utility
@@ -172,6 +179,11 @@ interface
     type(dimension_type), allocatable :: ret(:)
   end function new_dims_unlim
 
+  module pure function shape_dims(dims) result(ret)
+    type(dimension_type), intent(in) :: dims(:)
+    integer, allocatable :: ret(:)
+  end function shape_dims
+
   !> submodule attribute
   !> -------------------
 
@@ -200,6 +212,29 @@ interface
     type(attribute_type), intent(in) :: atts(:)
     type(attribute_type), allocatable :: ret(:)
   end function new_atts
+
+  !> submodule I/O
+  !> -------------
+
+  module subroutine write_formatted_dim( &
+    & dim, unit, iotype, v_list, iostat, iomsg)
+    class(dimension_type), intent(in) :: dim
+    integer, intent(in) :: unit
+    character(*), intent(in) :: iotype
+    integer, intent(in) :: v_list(:)
+    integer, intent(out) :: iostat
+    character(*), intent(inout) :: iomsg
+  end subroutine write_formatted_dim
+
+  module subroutine write_formatted_att( &
+    & att, unit, iotype, v_list, iostat, iomsg)
+    class(attribute_type), intent(in) :: att
+    integer, intent(in) :: unit
+    character(*), intent(in) :: iotype
+    integer, intent(in) :: v_list(:)
+    integer, intent(out) :: iostat
+    character(*), intent(inout) :: iomsg
+  end subroutine write_formatted_att
 end interface
 
 end module module_interface

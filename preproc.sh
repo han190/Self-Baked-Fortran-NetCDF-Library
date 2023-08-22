@@ -3,7 +3,7 @@ repodir=$(pwd)
 src="${repodir}/src"
 preproc="${repodir}/preproc"
 interface="${repodir}/interface"
-fypp_files=("module_interface" "submodule_attribute")
+fypp_files=("module_interface" "submodule_attribute" "submodule_io")
 fprettify_flags="-i 2 --strict-indent --disable-indent-mod -r"
 
 echo "Preprocessing using fypp..."
