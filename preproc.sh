@@ -3,7 +3,7 @@ repodir=$(pwd)
 src="${repodir}/src"
 preproc="${repodir}/preproc"
 interface="${repodir}/interface"
-fypp_files=("module_interface")
+fypp_files=("module_interface" "submodule_attribute")
 fprettify_flags="-i 2 --strict-indent --disable-indent-mod -r"
 
 echo "Preprocessing using fypp..."
@@ -27,4 +27,4 @@ fprettify ${fprettify_flags} ${src}
 
 echo "Source file generated successfully."
 echo "Compiler Fortran source code..."
-fpm build
+fpm test

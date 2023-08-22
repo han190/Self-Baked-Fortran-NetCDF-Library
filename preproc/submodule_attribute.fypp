@@ -1,0 +1,73 @@
+#: include "module_common.fypp"
+submodule(module_interface) submodule_attribute
+implicit none
+contains
+
+#: for nc_type, type, kind in zip(nc_types, types, kinds)
+!> ${type}$(${kind}$) attribute constructor
+module pure function new_att_vec_${kind}$(name, vals) result(att)
+  character(*), intent(in) :: name
+  ${type}$(${kind}$), intent(in) :: vals(:)
+  type(attribute_type) :: att
+
+  allocate (attribute_${kind}$_type :: att%att)
+  select type (att_ => att%att)
+  type is (attribute_${kind}$_type)
+    att_%len = size(vals)
+    att_%name = name
+    att_%type = ${nc_type}$
+    att_%vals = vals
+  class default
+    error stop "Invalid attribute."
+  end select
+end function new_att_vec_${kind}$ ${"\n"}$
+#: endfor
+
+#: for nc_type, type, kind in zip(nc_types, types, kinds)
+!> ${type}$(${kind}$) attribute constructor
+module pure function new_att_scal_${kind}$(name, val) result(att)
+  character(*), intent(in) :: name
+  ${type}$(${kind}$), intent(in) :: val
+  type(attribute_type) :: att
+
+  allocate (attribute_${kind}$_type :: att%att)
+  select type (att_ => att%att)
+  type is (attribute_${kind}$_type)
+    att_%len = 1
+    att_%name = name
+    att_%type = ${nc_type}$
+    att_%vals = [val]
+  class default
+    error stop "Invalid attribute."
+  end select
+end function new_att_scal_${kind}$ ${"\n"}$
+#: endfor
+
+module pure function new_att_scal_char(name, val) result(att)
+  character(len=*), intent(in) :: name, val
+  type(attribute_type) :: att
+
+  allocate (attribute_char_type :: att%att)
+  select type (att_ => att%att)
+  type is (attribute_char_type)
+    att_%len = len(val)
+    att_%name = name
+    att_%type = nc_char
+    att_%vals = [val]
+  class default
+    error stop "Invalid attribute."
+  end select
+end function new_att_scal_char
+
+module function new_atts(atts) result(ret)
+  type(attribute_type), intent(in) :: atts(:)
+  type(attribute_type), allocatable :: ret(:)
+  integer :: i
+
+  ret = atts
+  do i = 1, size(ret)
+    ret(i)%att%ID = i - 1
+  end do
+end function new_atts
+
+end submodule submodule_attribute

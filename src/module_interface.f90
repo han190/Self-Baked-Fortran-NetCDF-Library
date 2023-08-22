@@ -5,6 +5,9 @@ use :: iso_c_binding
 use :: module_c_interface
 implicit none
 
+public :: attribute_type, dimension_type
+public :: operator(.dim.), operator(.att.)
+public :: dims, atts
 private
 
 !> NetCDF Data Model
@@ -148,19 +151,41 @@ type, extends(group_type) :: file_type
   character(len=:), allocatable :: filename
 end type file_type
 
-! !> Dimension constructor
-! interface operator(.dim.)
-!   module procedure :: new_dimension
-! end interface operator(.dim.)
+!> Dimension constructor
+interface operator(.dim.)
+  module procedure :: new_dim
+end interface operator(.dim.)
 
-! !> Attribute constructor
-! interface operator(.att.)
-!   module procedure :: new_attribute
-! end interface operator(.att.)
+!> Dimensions constructor
+interface dims
+  module procedure :: new_dims
+  module procedure :: new_dims_unlim
+end interface dims
+
+!> Attribute constructor
+interface operator(.att.)
+  module procedure :: new_att_scal_int8
+  module procedure :: new_att_scal_int16
+  module procedure :: new_att_scal_int32
+  module procedure :: new_att_scal_int64
+  module procedure :: new_att_scal_real32
+  module procedure :: new_att_scal_real64
+  module procedure :: new_att_scal_char
+  module procedure :: new_att_vec_int8
+  module procedure :: new_att_vec_int16
+  module procedure :: new_att_vec_int32
+  module procedure :: new_att_vec_int64
+  module procedure :: new_att_vec_real32
+  module procedure :: new_att_vec_real64
+end interface operator(.att.)
+
+!> Attributes constructor
+interface atts
+  module procedure :: new_atts
+end interface atts
 
 !> Interfaces to submodules
 interface
-
   !> submodule utility
   !> -----------------
 
@@ -179,6 +204,110 @@ interface
     character(*), intent(in), optional :: err_msg
   end subroutine handle_error
 
+  !> submodule dimension
+  !> -------------------
+
+  module pure function new_dim(name, len) result(dim)
+    character(len=*), intent(in) :: name
+    integer, intent(in) :: len
+    type(dimension_type) :: dim
+  end function new_dim
+
+  module function new_dims(dims) result(ret)
+    type(dimension_type), intent(in) :: dims(:)
+    type(dimension_type), allocatable :: ret(:)
+  end function new_dims
+
+  module function new_dims_unlim(dims, unlim_dim) result(ret)
+    type(dimension_type), intent(in) :: dims(:)
+    integer, intent(in) :: unlim_dim
+    type(dimension_type), allocatable :: ret(:)
+  end function new_dims_unlim
+
+  !> submodule attribute
+  !> -------------------
+
+  module pure function new_att_vec_int8(name, vals) result(att)
+    character(*), intent(in) :: name
+    integer(int8), intent(in) :: vals(:)
+    type(attribute_type) :: att
+  end function new_att_vec_int8
+
+  module pure function new_att_vec_int16(name, vals) result(att)
+    character(*), intent(in) :: name
+    integer(int16), intent(in) :: vals(:)
+    type(attribute_type) :: att
+  end function new_att_vec_int16
+
+  module pure function new_att_vec_int32(name, vals) result(att)
+    character(*), intent(in) :: name
+    integer(int32), intent(in) :: vals(:)
+    type(attribute_type) :: att
+  end function new_att_vec_int32
+
+  module pure function new_att_vec_int64(name, vals) result(att)
+    character(*), intent(in) :: name
+    integer(int64), intent(in) :: vals(:)
+    type(attribute_type) :: att
+  end function new_att_vec_int64
+
+  module pure function new_att_vec_real32(name, vals) result(att)
+    character(*), intent(in) :: name
+    real(real32), intent(in) :: vals(:)
+    type(attribute_type) :: att
+  end function new_att_vec_real32
+
+  module pure function new_att_vec_real64(name, vals) result(att)
+    character(*), intent(in) :: name
+    real(real64), intent(in) :: vals(:)
+    type(attribute_type) :: att
+  end function new_att_vec_real64
+
+  module pure function new_att_scal_int8(name, val) result(att)
+    character(*), intent(in) :: name
+    integer(int8), intent(in) :: val
+    type(attribute_type) :: att
+  end function new_att_scal_int8
+
+  module pure function new_att_scal_int16(name, val) result(att)
+    character(*), intent(in) :: name
+    integer(int16), intent(in) :: val
+    type(attribute_type) :: att
+  end function new_att_scal_int16
+
+  module pure function new_att_scal_int32(name, val) result(att)
+    character(*), intent(in) :: name
+    integer(int32), intent(in) :: val
+    type(attribute_type) :: att
+  end function new_att_scal_int32
+
+  module pure function new_att_scal_int64(name, val) result(att)
+    character(*), intent(in) :: name
+    integer(int64), intent(in) :: val
+    type(attribute_type) :: att
+  end function new_att_scal_int64
+
+  module pure function new_att_scal_real32(name, val) result(att)
+    character(*), intent(in) :: name
+    real(real32), intent(in) :: val
+    type(attribute_type) :: att
+  end function new_att_scal_real32
+
+  module pure function new_att_scal_real64(name, val) result(att)
+    character(*), intent(in) :: name
+    real(real64), intent(in) :: val
+    type(attribute_type) :: att
+  end function new_att_scal_real64
+
+  module pure function new_att_scal_char(name, val) result(att)
+    character(len=*), intent(in) :: name, val
+    type(attribute_type) :: att
+  end function new_att_scal_char
+
+  module function new_atts(atts) result(ret)
+    type(attribute_type), intent(in) :: atts(:)
+    type(attribute_type), allocatable :: ret(:)
+  end function new_atts
 end interface
 
 end module module_interface

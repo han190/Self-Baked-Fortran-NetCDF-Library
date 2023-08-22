@@ -6,6 +6,9 @@ use :: iso_c_binding
 use :: module_c_interface
 implicit none
 
+public :: attribute_type, dimension_type
+public :: operator(.dim.), operator(.att.)
+public :: dims, atts
 private
 
 !> NetCDF Data Model
@@ -103,19 +106,34 @@ type, extends(group_type) :: file_type
   character(len=:), allocatable :: filename
 end type file_type
 
-! !> Dimension constructor
-! interface operator(.dim.)
-!   module procedure :: new_dimension
-! end interface operator(.dim.)
+!> Dimension constructor
+interface operator(.dim.)
+  module procedure :: new_dim
+end interface operator(.dim.)
 
-! !> Attribute constructor
-! interface operator(.att.)
-!   module procedure :: new_attribute
-! end interface operator(.att.)
+!> Dimensions constructor
+interface dims
+  module procedure :: new_dims
+  module procedure :: new_dims_unlim
+end interface dims
+
+!> Attribute constructor
+interface operator(.att.)
+  #: for kind in kinds + ["char"]
+  module procedure :: new_att_scal_${kind}$
+  #: endfor
+  #: for kind in kinds
+  module procedure :: new_att_vec_${kind}$
+  #: endfor
+end interface operator(.att.)
+
+!> Attributes constructor
+interface atts
+  module procedure :: new_atts
+end interface atts
 
 !> Interfaces to submodules
 interface
-
   !> submodule utility
   !> -----------------
 
@@ -134,6 +152,54 @@ interface
     character(*), intent(in), optional :: err_msg
   end subroutine handle_error
 
+  !> submodule dimension
+  !> -------------------
+
+  module pure function new_dim(name, len) result(dim)
+    character(len=*), intent(in) :: name
+    integer, intent(in) :: len
+    type(dimension_type) :: dim
+  end function new_dim
+
+  module function new_dims(dims) result(ret)
+    type(dimension_type), intent(in) :: dims(:)
+    type(dimension_type), allocatable :: ret(:)
+  end function new_dims
+
+  module function new_dims_unlim(dims, unlim_dim) result(ret)
+    type(dimension_type), intent(in) :: dims(:)
+    integer, intent(in) :: unlim_dim
+    type(dimension_type), allocatable :: ret(:)
+  end function new_dims_unlim
+
+  !> submodule attribute
+  !> -------------------
+
+  #: for nc_type, type, kind in zip(nc_types, types, kinds)
+  module pure function new_att_vec_${kind}$(name, vals) result(att)
+    character(*), intent(in) :: name
+    ${type}$(${kind}$), intent(in) :: vals(:)
+    type(attribute_type) :: att
+  end function new_att_vec_${kind}$ ${"\n"}$
+  #: endfor
+
+  #: for nc_type, type, kind in zip(nc_types, types, kinds)
+  module pure function new_att_scal_${kind}$(name, val) result(att)
+    character(*), intent(in) :: name
+    ${type}$(${kind}$), intent(in) :: val
+    type(attribute_type) :: att
+  end function new_att_scal_${kind}$ ${"\n"}$
+  #: endfor
+  
+  module pure function new_att_scal_char(name, val) result(att)
+    character(len=*), intent(in) :: name, val
+    type(attribute_type) :: att
+  end function new_att_scal_char
+
+  module function new_atts(atts) result(ret)
+    type(attribute_type), intent(in) :: atts(:)
+    type(attribute_type), allocatable :: ret(:)
+  end function new_atts
 end interface
 
 end module module_interface

@@ -1,23 +1,12 @@
-program test
+program main
 
-  use :: module_test
-  implicit none
+use module_netcdf
+implicit none
 
-  character(*), parameter :: path = "./data/"
+type(dimension_type), allocatable :: dimn(:)
+type(attribute_type), allocatable :: attr(:)
 
-  call execute_command_line("mkdir -p "//path)
-  if (test_write(path)) then
-    print "(a)", "Test write to NetCDF... passed."
-  else
-    print "(a)", "Test write to NetCDF... failed."
-    stop
-  end if
+dimn = dims(["lat".dim.361, "lon".dim.1440])
+attr = atts(["units".att."degC", "long_name".att."temperature at 2 metre"])
 
-  if (test_read(path)) then
-    print "(a)", "Test read from NetCDF... passed."
-  else
-    print "(a)", "Test read from NetCDF... failed."
-    stop
-  end if
-
-end program test
+end program main
