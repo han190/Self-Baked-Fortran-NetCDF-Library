@@ -18,6 +18,7 @@ module function new_variable_int8_1d( &
   tmp%name = name
   tmp%dims = dims
   tmp%atts = atts
+  tmp%type = nc_byte
   var%var = tmp
   nullify (ptr)
 end function new_variable_int8_1d
@@ -36,6 +37,7 @@ module function new_variable_noatt_int8_1d( &
   allocate (tmp%vals, source=ptr)
   tmp%name = name
   tmp%dims = dims
+  tmp%type = nc_byte
   var%var = tmp
   nullify (ptr)
 end function new_variable_noatt_int8_1d
@@ -56,6 +58,7 @@ module function new_variable_int16_1d( &
   tmp%name = name
   tmp%dims = dims
   tmp%atts = atts
+  tmp%type = nc_short
   var%var = tmp
   nullify (ptr)
 end function new_variable_int16_1d
@@ -74,6 +77,7 @@ module function new_variable_noatt_int16_1d( &
   allocate (tmp%vals, source=ptr)
   tmp%name = name
   tmp%dims = dims
+  tmp%type = nc_short
   var%var = tmp
   nullify (ptr)
 end function new_variable_noatt_int16_1d
@@ -94,6 +98,7 @@ module function new_variable_int32_1d( &
   tmp%name = name
   tmp%dims = dims
   tmp%atts = atts
+  tmp%type = nc_int
   var%var = tmp
   nullify (ptr)
 end function new_variable_int32_1d
@@ -112,6 +117,7 @@ module function new_variable_noatt_int32_1d( &
   allocate (tmp%vals, source=ptr)
   tmp%name = name
   tmp%dims = dims
+  tmp%type = nc_int
   var%var = tmp
   nullify (ptr)
 end function new_variable_noatt_int32_1d
@@ -132,6 +138,7 @@ module function new_variable_int64_1d( &
   tmp%name = name
   tmp%dims = dims
   tmp%atts = atts
+  tmp%type = nc_int64
   var%var = tmp
   nullify (ptr)
 end function new_variable_int64_1d
@@ -150,6 +157,7 @@ module function new_variable_noatt_int64_1d( &
   allocate (tmp%vals, source=ptr)
   tmp%name = name
   tmp%dims = dims
+  tmp%type = nc_int64
   var%var = tmp
   nullify (ptr)
 end function new_variable_noatt_int64_1d
@@ -170,6 +178,7 @@ module function new_variable_real32_1d( &
   tmp%name = name
   tmp%dims = dims
   tmp%atts = atts
+  tmp%type = nc_float
   var%var = tmp
   nullify (ptr)
 end function new_variable_real32_1d
@@ -188,6 +197,7 @@ module function new_variable_noatt_real32_1d( &
   allocate (tmp%vals, source=ptr)
   tmp%name = name
   tmp%dims = dims
+  tmp%type = nc_float
   var%var = tmp
   nullify (ptr)
 end function new_variable_noatt_real32_1d
@@ -208,6 +218,7 @@ module function new_variable_real64_1d( &
   tmp%name = name
   tmp%dims = dims
   tmp%atts = atts
+  tmp%type = nc_double
   var%var = tmp
   nullify (ptr)
 end function new_variable_real64_1d
@@ -226,6 +237,7 @@ module function new_variable_noatt_real64_1d( &
   allocate (tmp%vals, source=ptr)
   tmp%name = name
   tmp%dims = dims
+  tmp%type = nc_double
   var%var = tmp
   nullify (ptr)
 end function new_variable_noatt_real64_1d
@@ -246,6 +258,7 @@ module function new_variable_int8_2d( &
   tmp%name = name
   tmp%dims = dims
   tmp%atts = atts
+  tmp%type = nc_byte
   var%var = tmp
   nullify (ptr)
 end function new_variable_int8_2d
@@ -264,6 +277,7 @@ module function new_variable_noatt_int8_2d( &
   allocate (tmp%vals, source=ptr)
   tmp%name = name
   tmp%dims = dims
+  tmp%type = nc_byte
   var%var = tmp
   nullify (ptr)
 end function new_variable_noatt_int8_2d
@@ -284,6 +298,7 @@ module function new_variable_int16_2d( &
   tmp%name = name
   tmp%dims = dims
   tmp%atts = atts
+  tmp%type = nc_short
   var%var = tmp
   nullify (ptr)
 end function new_variable_int16_2d
@@ -302,6 +317,7 @@ module function new_variable_noatt_int16_2d( &
   allocate (tmp%vals, source=ptr)
   tmp%name = name
   tmp%dims = dims
+  tmp%type = nc_short
   var%var = tmp
   nullify (ptr)
 end function new_variable_noatt_int16_2d
@@ -322,6 +338,7 @@ module function new_variable_int32_2d( &
   tmp%name = name
   tmp%dims = dims
   tmp%atts = atts
+  tmp%type = nc_int
   var%var = tmp
   nullify (ptr)
 end function new_variable_int32_2d
@@ -340,6 +357,7 @@ module function new_variable_noatt_int32_2d( &
   allocate (tmp%vals, source=ptr)
   tmp%name = name
   tmp%dims = dims
+  tmp%type = nc_int
   var%var = tmp
   nullify (ptr)
 end function new_variable_noatt_int32_2d
@@ -360,6 +378,7 @@ module function new_variable_int64_2d( &
   tmp%name = name
   tmp%dims = dims
   tmp%atts = atts
+  tmp%type = nc_int64
   var%var = tmp
   nullify (ptr)
 end function new_variable_int64_2d
@@ -378,6 +397,7 @@ module function new_variable_noatt_int64_2d( &
   allocate (tmp%vals, source=ptr)
   tmp%name = name
   tmp%dims = dims
+  tmp%type = nc_int64
   var%var = tmp
   nullify (ptr)
 end function new_variable_noatt_int64_2d
@@ -398,6 +418,7 @@ module function new_variable_real32_2d( &
   tmp%name = name
   tmp%dims = dims
   tmp%atts = atts
+  tmp%type = nc_float
   var%var = tmp
   nullify (ptr)
 end function new_variable_real32_2d
@@ -416,6 +437,7 @@ module function new_variable_noatt_real32_2d( &
   allocate (tmp%vals, source=ptr)
   tmp%name = name
   tmp%dims = dims
+  tmp%type = nc_float
   var%var = tmp
   nullify (ptr)
 end function new_variable_noatt_real32_2d
@@ -436,6 +458,7 @@ module function new_variable_real64_2d( &
   tmp%name = name
   tmp%dims = dims
   tmp%atts = atts
+  tmp%type = nc_double
   var%var = tmp
   nullify (ptr)
 end function new_variable_real64_2d
@@ -454,6 +477,7 @@ module function new_variable_noatt_real64_2d( &
   allocate (tmp%vals, source=ptr)
   tmp%name = name
   tmp%dims = dims
+  tmp%type = nc_double
   var%var = tmp
   nullify (ptr)
 end function new_variable_noatt_real64_2d
@@ -474,6 +498,7 @@ module function new_variable_int8_3d( &
   tmp%name = name
   tmp%dims = dims
   tmp%atts = atts
+  tmp%type = nc_byte
   var%var = tmp
   nullify (ptr)
 end function new_variable_int8_3d
@@ -492,6 +517,7 @@ module function new_variable_noatt_int8_3d( &
   allocate (tmp%vals, source=ptr)
   tmp%name = name
   tmp%dims = dims
+  tmp%type = nc_byte
   var%var = tmp
   nullify (ptr)
 end function new_variable_noatt_int8_3d
@@ -512,6 +538,7 @@ module function new_variable_int16_3d( &
   tmp%name = name
   tmp%dims = dims
   tmp%atts = atts
+  tmp%type = nc_short
   var%var = tmp
   nullify (ptr)
 end function new_variable_int16_3d
@@ -530,6 +557,7 @@ module function new_variable_noatt_int16_3d( &
   allocate (tmp%vals, source=ptr)
   tmp%name = name
   tmp%dims = dims
+  tmp%type = nc_short
   var%var = tmp
   nullify (ptr)
 end function new_variable_noatt_int16_3d
@@ -550,6 +578,7 @@ module function new_variable_int32_3d( &
   tmp%name = name
   tmp%dims = dims
   tmp%atts = atts
+  tmp%type = nc_int
   var%var = tmp
   nullify (ptr)
 end function new_variable_int32_3d
@@ -568,6 +597,7 @@ module function new_variable_noatt_int32_3d( &
   allocate (tmp%vals, source=ptr)
   tmp%name = name
   tmp%dims = dims
+  tmp%type = nc_int
   var%var = tmp
   nullify (ptr)
 end function new_variable_noatt_int32_3d
@@ -588,6 +618,7 @@ module function new_variable_int64_3d( &
   tmp%name = name
   tmp%dims = dims
   tmp%atts = atts
+  tmp%type = nc_int64
   var%var = tmp
   nullify (ptr)
 end function new_variable_int64_3d
@@ -606,6 +637,7 @@ module function new_variable_noatt_int64_3d( &
   allocate (tmp%vals, source=ptr)
   tmp%name = name
   tmp%dims = dims
+  tmp%type = nc_int64
   var%var = tmp
   nullify (ptr)
 end function new_variable_noatt_int64_3d
@@ -626,6 +658,7 @@ module function new_variable_real32_3d( &
   tmp%name = name
   tmp%dims = dims
   tmp%atts = atts
+  tmp%type = nc_float
   var%var = tmp
   nullify (ptr)
 end function new_variable_real32_3d
@@ -644,6 +677,7 @@ module function new_variable_noatt_real32_3d( &
   allocate (tmp%vals, source=ptr)
   tmp%name = name
   tmp%dims = dims
+  tmp%type = nc_float
   var%var = tmp
   nullify (ptr)
 end function new_variable_noatt_real32_3d
@@ -664,6 +698,7 @@ module function new_variable_real64_3d( &
   tmp%name = name
   tmp%dims = dims
   tmp%atts = atts
+  tmp%type = nc_double
   var%var = tmp
   nullify (ptr)
 end function new_variable_real64_3d
@@ -682,6 +717,7 @@ module function new_variable_noatt_real64_3d( &
   allocate (tmp%vals, source=ptr)
   tmp%name = name
   tmp%dims = dims
+  tmp%type = nc_double
   var%var = tmp
   nullify (ptr)
 end function new_variable_noatt_real64_3d
@@ -702,6 +738,7 @@ module function new_variable_int8_4d( &
   tmp%name = name
   tmp%dims = dims
   tmp%atts = atts
+  tmp%type = nc_byte
   var%var = tmp
   nullify (ptr)
 end function new_variable_int8_4d
@@ -720,6 +757,7 @@ module function new_variable_noatt_int8_4d( &
   allocate (tmp%vals, source=ptr)
   tmp%name = name
   tmp%dims = dims
+  tmp%type = nc_byte
   var%var = tmp
   nullify (ptr)
 end function new_variable_noatt_int8_4d
@@ -740,6 +778,7 @@ module function new_variable_int16_4d( &
   tmp%name = name
   tmp%dims = dims
   tmp%atts = atts
+  tmp%type = nc_short
   var%var = tmp
   nullify (ptr)
 end function new_variable_int16_4d
@@ -758,6 +797,7 @@ module function new_variable_noatt_int16_4d( &
   allocate (tmp%vals, source=ptr)
   tmp%name = name
   tmp%dims = dims
+  tmp%type = nc_short
   var%var = tmp
   nullify (ptr)
 end function new_variable_noatt_int16_4d
@@ -778,6 +818,7 @@ module function new_variable_int32_4d( &
   tmp%name = name
   tmp%dims = dims
   tmp%atts = atts
+  tmp%type = nc_int
   var%var = tmp
   nullify (ptr)
 end function new_variable_int32_4d
@@ -796,6 +837,7 @@ module function new_variable_noatt_int32_4d( &
   allocate (tmp%vals, source=ptr)
   tmp%name = name
   tmp%dims = dims
+  tmp%type = nc_int
   var%var = tmp
   nullify (ptr)
 end function new_variable_noatt_int32_4d
@@ -816,6 +858,7 @@ module function new_variable_int64_4d( &
   tmp%name = name
   tmp%dims = dims
   tmp%atts = atts
+  tmp%type = nc_int64
   var%var = tmp
   nullify (ptr)
 end function new_variable_int64_4d
@@ -834,6 +877,7 @@ module function new_variable_noatt_int64_4d( &
   allocate (tmp%vals, source=ptr)
   tmp%name = name
   tmp%dims = dims
+  tmp%type = nc_int64
   var%var = tmp
   nullify (ptr)
 end function new_variable_noatt_int64_4d
@@ -854,6 +898,7 @@ module function new_variable_real32_4d( &
   tmp%name = name
   tmp%dims = dims
   tmp%atts = atts
+  tmp%type = nc_float
   var%var = tmp
   nullify (ptr)
 end function new_variable_real32_4d
@@ -872,6 +917,7 @@ module function new_variable_noatt_real32_4d( &
   allocate (tmp%vals, source=ptr)
   tmp%name = name
   tmp%dims = dims
+  tmp%type = nc_float
   var%var = tmp
   nullify (ptr)
 end function new_variable_noatt_real32_4d
@@ -892,6 +938,7 @@ module function new_variable_real64_4d( &
   tmp%name = name
   tmp%dims = dims
   tmp%atts = atts
+  tmp%type = nc_double
   var%var = tmp
   nullify (ptr)
 end function new_variable_real64_4d
@@ -910,6 +957,7 @@ module function new_variable_noatt_real64_4d( &
   allocate (tmp%vals, source=ptr)
   tmp%name = name
   tmp%dims = dims
+  tmp%type = nc_double
   var%var = tmp
   nullify (ptr)
 end function new_variable_noatt_real64_4d
@@ -930,6 +978,7 @@ module function new_variable_int8_5d( &
   tmp%name = name
   tmp%dims = dims
   tmp%atts = atts
+  tmp%type = nc_byte
   var%var = tmp
   nullify (ptr)
 end function new_variable_int8_5d
@@ -948,6 +997,7 @@ module function new_variable_noatt_int8_5d( &
   allocate (tmp%vals, source=ptr)
   tmp%name = name
   tmp%dims = dims
+  tmp%type = nc_byte
   var%var = tmp
   nullify (ptr)
 end function new_variable_noatt_int8_5d
@@ -968,6 +1018,7 @@ module function new_variable_int16_5d( &
   tmp%name = name
   tmp%dims = dims
   tmp%atts = atts
+  tmp%type = nc_short
   var%var = tmp
   nullify (ptr)
 end function new_variable_int16_5d
@@ -986,6 +1037,7 @@ module function new_variable_noatt_int16_5d( &
   allocate (tmp%vals, source=ptr)
   tmp%name = name
   tmp%dims = dims
+  tmp%type = nc_short
   var%var = tmp
   nullify (ptr)
 end function new_variable_noatt_int16_5d
@@ -1006,6 +1058,7 @@ module function new_variable_int32_5d( &
   tmp%name = name
   tmp%dims = dims
   tmp%atts = atts
+  tmp%type = nc_int
   var%var = tmp
   nullify (ptr)
 end function new_variable_int32_5d
@@ -1024,6 +1077,7 @@ module function new_variable_noatt_int32_5d( &
   allocate (tmp%vals, source=ptr)
   tmp%name = name
   tmp%dims = dims
+  tmp%type = nc_int
   var%var = tmp
   nullify (ptr)
 end function new_variable_noatt_int32_5d
@@ -1044,6 +1098,7 @@ module function new_variable_int64_5d( &
   tmp%name = name
   tmp%dims = dims
   tmp%atts = atts
+  tmp%type = nc_int64
   var%var = tmp
   nullify (ptr)
 end function new_variable_int64_5d
@@ -1062,6 +1117,7 @@ module function new_variable_noatt_int64_5d( &
   allocate (tmp%vals, source=ptr)
   tmp%name = name
   tmp%dims = dims
+  tmp%type = nc_int64
   var%var = tmp
   nullify (ptr)
 end function new_variable_noatt_int64_5d
@@ -1082,6 +1138,7 @@ module function new_variable_real32_5d( &
   tmp%name = name
   tmp%dims = dims
   tmp%atts = atts
+  tmp%type = nc_float
   var%var = tmp
   nullify (ptr)
 end function new_variable_real32_5d
@@ -1100,6 +1157,7 @@ module function new_variable_noatt_real32_5d( &
   allocate (tmp%vals, source=ptr)
   tmp%name = name
   tmp%dims = dims
+  tmp%type = nc_float
   var%var = tmp
   nullify (ptr)
 end function new_variable_noatt_real32_5d
@@ -1120,6 +1178,7 @@ module function new_variable_real64_5d( &
   tmp%name = name
   tmp%dims = dims
   tmp%atts = atts
+  tmp%type = nc_double
   var%var = tmp
   nullify (ptr)
 end function new_variable_real64_5d
@@ -1138,6 +1197,7 @@ module function new_variable_noatt_real64_5d( &
   allocate (tmp%vals, source=ptr)
   tmp%name = name
   tmp%dims = dims
+  tmp%type = nc_double
   var%var = tmp
   nullify (ptr)
 end function new_variable_noatt_real64_5d
@@ -1158,6 +1218,7 @@ module function new_variable_int8_6d( &
   tmp%name = name
   tmp%dims = dims
   tmp%atts = atts
+  tmp%type = nc_byte
   var%var = tmp
   nullify (ptr)
 end function new_variable_int8_6d
@@ -1176,6 +1237,7 @@ module function new_variable_noatt_int8_6d( &
   allocate (tmp%vals, source=ptr)
   tmp%name = name
   tmp%dims = dims
+  tmp%type = nc_byte
   var%var = tmp
   nullify (ptr)
 end function new_variable_noatt_int8_6d
@@ -1196,6 +1258,7 @@ module function new_variable_int16_6d( &
   tmp%name = name
   tmp%dims = dims
   tmp%atts = atts
+  tmp%type = nc_short
   var%var = tmp
   nullify (ptr)
 end function new_variable_int16_6d
@@ -1214,6 +1277,7 @@ module function new_variable_noatt_int16_6d( &
   allocate (tmp%vals, source=ptr)
   tmp%name = name
   tmp%dims = dims
+  tmp%type = nc_short
   var%var = tmp
   nullify (ptr)
 end function new_variable_noatt_int16_6d
@@ -1234,6 +1298,7 @@ module function new_variable_int32_6d( &
   tmp%name = name
   tmp%dims = dims
   tmp%atts = atts
+  tmp%type = nc_int
   var%var = tmp
   nullify (ptr)
 end function new_variable_int32_6d
@@ -1252,6 +1317,7 @@ module function new_variable_noatt_int32_6d( &
   allocate (tmp%vals, source=ptr)
   tmp%name = name
   tmp%dims = dims
+  tmp%type = nc_int
   var%var = tmp
   nullify (ptr)
 end function new_variable_noatt_int32_6d
@@ -1272,6 +1338,7 @@ module function new_variable_int64_6d( &
   tmp%name = name
   tmp%dims = dims
   tmp%atts = atts
+  tmp%type = nc_int64
   var%var = tmp
   nullify (ptr)
 end function new_variable_int64_6d
@@ -1290,6 +1357,7 @@ module function new_variable_noatt_int64_6d( &
   allocate (tmp%vals, source=ptr)
   tmp%name = name
   tmp%dims = dims
+  tmp%type = nc_int64
   var%var = tmp
   nullify (ptr)
 end function new_variable_noatt_int64_6d
@@ -1310,6 +1378,7 @@ module function new_variable_real32_6d( &
   tmp%name = name
   tmp%dims = dims
   tmp%atts = atts
+  tmp%type = nc_float
   var%var = tmp
   nullify (ptr)
 end function new_variable_real32_6d
@@ -1328,6 +1397,7 @@ module function new_variable_noatt_real32_6d( &
   allocate (tmp%vals, source=ptr)
   tmp%name = name
   tmp%dims = dims
+  tmp%type = nc_float
   var%var = tmp
   nullify (ptr)
 end function new_variable_noatt_real32_6d
@@ -1348,6 +1418,7 @@ module function new_variable_real64_6d( &
   tmp%name = name
   tmp%dims = dims
   tmp%atts = atts
+  tmp%type = nc_double
   var%var = tmp
   nullify (ptr)
 end function new_variable_real64_6d
@@ -1366,6 +1437,7 @@ module function new_variable_noatt_real64_6d( &
   allocate (tmp%vals, source=ptr)
   tmp%name = name
   tmp%dims = dims
+  tmp%type = nc_double
   var%var = tmp
   nullify (ptr)
 end function new_variable_noatt_real64_6d

@@ -6,6 +6,25 @@ integer, parameter :: num_indents = 4
 character(len=*), parameter :: space = " "
 contains
 
+!> Number of digits of an integer
+elemental function num_digits(val) result(ret)
+  integer, intent(in) :: val
+  integer :: ret
+
+  ret = merge(1, floor(log10(real(val))) + 1, &
+    & abs(val - 0.) < tiny(0.))
+end function num_digits
+
+!> Integer to allocatable character
+pure function int2char(val) result(ret)
+  integer, intent(in) :: val
+  character(:), allocatable :: ret
+
+  if (allocated(ret)) deallocate (ret)
+  allocate (character(len=num_digits(val)) :: ret)
+  write (ret, "(i0)") val
+end function int2char
+
 !> Indent level
 pure function indent_level(string, level) result(ret)
   character(len=*), intent(in) :: string
@@ -136,5 +155,42 @@ module subroutine write_formatted_att( &
     end select
   end if
 end subroutine write_formatted_att
+
+module subroutine write_formatted_var( &
+  & var, unit, iotype, v_list, iostat, iomsg)
+  class(variable_type), intent(in) :: var
+  integer, intent(in) :: unit
+  character(*), intent(in) :: iotype
+  integer, intent(in) :: v_list(:)
+  integer, intent(out) :: iostat
+  character(*), intent(inout) :: iomsg
+  character(:), allocatable :: fmt
+  integer, allocatable :: v_list_(:)
+
+  if (size(v_list) == 0) then
+    v_list_ = [0]
+  else
+    v_list_ = v_list + 1
+  end if
+
+  if (iotype == "DT" .or. iotype == "LISTDIRECTED") then
+    block
+      character(:), allocatable :: msg
+      character(len=nc_max_char) :: tmp
+
+      msg = "inline"
+      write (tmp, "(*(dt))", iomsg=msg) var%var%dims
+
+      fmt = "(a,1x,a,1x,a,/)"
+      write (unit, fmt) indent_level(var%var%name, v_list_(1)), &
+        & type_name(var%var%type), "("//trim(tmp)//")"
+    end block
+
+    if (allocated(var%var%atts)) then
+      fmt = "(*(dt("//int2char(v_list_(1) + 1)//")))"
+      write (unit, fmt) var%var%atts
+    end if
+  end if
+end subroutine write_formatted_var
 
 end submodule submodule_io

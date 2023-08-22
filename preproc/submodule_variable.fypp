@@ -5,7 +5,7 @@ contains
 
 #: for rank in range(num_ranks)
 #: set cols = (":," + "".join([":," for _ in range(rank)]))[:-1]
-#: for type, kind in zip(types, kinds)
+#: for nc_type, type, kind in zip(nc_types, types, kinds)
 !> variable constructor for ${type}$(${kind}$), rank(${rank}$)
 module function new_variable_${kind}$_${rank + 1}$d( &
   & data, name, dims, atts) result(var)
@@ -22,6 +22,7 @@ module function new_variable_${kind}$_${rank + 1}$d( &
   tmp%name = name
   tmp%dims = dims
   tmp%atts = atts
+  tmp%type = ${nc_type}$
   var%var = tmp
   nullify (ptr)
 end function new_variable_${kind}$_${rank + 1}$d ${"\n"}$
@@ -40,6 +41,7 @@ module function new_variable_noatt_${kind}$_${rank + 1}$d( &
   allocate(tmp%vals, source=ptr)
   tmp%name = name
   tmp%dims = dims
+  tmp%type = ${nc_type}$
   var%var = tmp
   nullify (ptr)
 end function new_variable_noatt_${kind}$_${rank + 1}$d ${"\n"}$

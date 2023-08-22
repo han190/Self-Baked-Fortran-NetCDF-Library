@@ -265,6 +265,7 @@ end interface data_array
 interface write (formatted)
 module procedure :: write_formatted_dim
 module procedure :: write_formatted_att
+module procedure :: write_formatted_var
 end interface write (formatted)
 
 !> Interfaces to submodules
@@ -1106,6 +1107,16 @@ interface
     integer, intent(out) :: iostat
     character(*), intent(inout) :: iomsg
   end subroutine write_formatted_att
+
+  module subroutine write_formatted_var( &
+    & var, unit, iotype, v_list, iostat, iomsg)
+    class(variable_type), intent(in) :: var
+    integer, intent(in) :: unit
+    character(*), intent(in) :: iotype
+    integer, intent(in) :: v_list(:)
+    integer, intent(out) :: iostat
+    character(*), intent(inout) :: iomsg
+  end subroutine write_formatted_var
 end interface
 
 end module module_interface
