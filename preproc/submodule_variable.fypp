@@ -1,0 +1,50 @@
+#: include "module_common.fypp"
+submodule(module_interface) submodule_variable
+implicit none
+contains
+
+#: for rank in range(num_ranks)
+#: set cols = (":," + "".join([":," for _ in range(rank)]))[:-1]
+#: for type, kind in zip(types, kinds)
+!> variable constructor for ${type}$(${kind}$), rank(${rank}$)
+module function new_variable_${kind}$_${rank + 1}$d( &
+  & data, name, dims, atts) result(var)
+  ${type}$(${kind}$), target, contiguous, intent(in) :: data(${cols}$)
+  character(len=*), intent(in) :: name
+  type(dimension_type), intent(in) :: dims(:)
+  type(attribute_type), intent(in) :: atts(:)
+  type(variable_type) :: var
+  type(variable_${kind}$_type) :: tmp
+  ${type}$(${kind}$), pointer :: ptr(:) => null()
+
+  ptr(1:size(data)) => data
+  allocate(tmp%vals, source=ptr)
+  tmp%name = name
+  tmp%dims = dims
+  tmp%atts = atts
+  var%var = tmp
+  nullify (ptr)
+end function new_variable_${kind}$_${rank + 1}$d ${"\n"}$
+
+!> variable constructor for ${type}$(${kind}$), rank(${rank}$)
+module function new_variable_noatt_${kind}$_${rank + 1}$d( &
+  & data, name, dims) result(var)
+  ${type}$(${kind}$), target, contiguous, intent(in) :: data(${cols}$)
+  character(len=*), intent(in) :: name
+  type(dimension_type), intent(in) :: dims(:)
+  type(variable_type) :: var
+  type(variable_${kind}$_type) :: tmp
+  ${type}$(${kind}$), pointer :: ptr(:) => null()
+
+  ptr(1:size(data)) => data
+  allocate(tmp%vals, source=ptr)
+  tmp%name = name
+  tmp%dims = dims
+  var%var = tmp
+  nullify (ptr)
+end function new_variable_noatt_${kind}$_${rank + 1}$d ${"\n"}$
+#: endfor
+#: endfor
+#: del cols
+
+end submodule submodule_variable

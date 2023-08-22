@@ -1,16 +1,19 @@
 #!/usr/bin/env bash
+num_ranks=6
 repodir=$(pwd)
 src="${repodir}/src"
 preproc="${repodir}/preproc"
 interface="${repodir}/interface"
-fypp_files=("module_interface" "submodule_attribute" "submodule_io")
+fypp_files=("module_interface" "submodule_attribute" \
+  "submodule_io" "submodule_variable")
 fprettify_flags="-i 2 --strict-indent --disable-indent-mod -r"
+fypp_var="-Dnum_ranks=${num_ranks}"
 
 echo "Preprocessing using fypp..."
 cd $preproc
 for fypp_file in ${fypp_files[@]}; do
   # echo "fypp ${fypp_file}.fypp ${src}/${fypp_file}.f90"
-  fypp ${fypp_file}.fypp ${src}/${fypp_file}.f90
+  fypp ${fypp_var} ${fypp_file}.fypp ${src}/${fypp_file}.f90
 done
 
 echo "Generating C interface..."

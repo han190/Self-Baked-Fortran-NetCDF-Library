@@ -5,9 +5,9 @@ use :: iso_c_binding
 use :: module_c_interface
 implicit none
 
-public :: attribute_type, dimension_type
+public :: attribute_type, dimension_type, variable_type
 public :: operator(.dim.), operator(.att.)
-public :: dims, atts
+public :: dims, atts, data_array
 public :: write (formatted)
 private
 
@@ -90,7 +90,7 @@ type :: attribute_type
 end type attribute_type
 
 !> Abstract variable type
-type, abstract :: abstract_variable_type
+type, abstract, extends(netcdf_type) :: abstract_variable_type
   type(dimension_type), allocatable :: dims(:)
   type(attribute_type), allocatable :: atts(:)
   integer(c_int), pointer  :: grpID => null()
@@ -184,6 +184,82 @@ end interface operator(.att.)
 interface atts
   module procedure :: new_atts
 end interface atts
+
+!> Variable constructor
+interface data_array
+  module procedure :: new_variable_int8_1d
+  module procedure :: new_variable_noatt_int8_1d
+  module procedure :: new_variable_int16_1d
+  module procedure :: new_variable_noatt_int16_1d
+  module procedure :: new_variable_int32_1d
+  module procedure :: new_variable_noatt_int32_1d
+  module procedure :: new_variable_int64_1d
+  module procedure :: new_variable_noatt_int64_1d
+  module procedure :: new_variable_real32_1d
+  module procedure :: new_variable_noatt_real32_1d
+  module procedure :: new_variable_real64_1d
+  module procedure :: new_variable_noatt_real64_1d
+  module procedure :: new_variable_int8_2d
+  module procedure :: new_variable_noatt_int8_2d
+  module procedure :: new_variable_int16_2d
+  module procedure :: new_variable_noatt_int16_2d
+  module procedure :: new_variable_int32_2d
+  module procedure :: new_variable_noatt_int32_2d
+  module procedure :: new_variable_int64_2d
+  module procedure :: new_variable_noatt_int64_2d
+  module procedure :: new_variable_real32_2d
+  module procedure :: new_variable_noatt_real32_2d
+  module procedure :: new_variable_real64_2d
+  module procedure :: new_variable_noatt_real64_2d
+  module procedure :: new_variable_int8_3d
+  module procedure :: new_variable_noatt_int8_3d
+  module procedure :: new_variable_int16_3d
+  module procedure :: new_variable_noatt_int16_3d
+  module procedure :: new_variable_int32_3d
+  module procedure :: new_variable_noatt_int32_3d
+  module procedure :: new_variable_int64_3d
+  module procedure :: new_variable_noatt_int64_3d
+  module procedure :: new_variable_real32_3d
+  module procedure :: new_variable_noatt_real32_3d
+  module procedure :: new_variable_real64_3d
+  module procedure :: new_variable_noatt_real64_3d
+  module procedure :: new_variable_int8_4d
+  module procedure :: new_variable_noatt_int8_4d
+  module procedure :: new_variable_int16_4d
+  module procedure :: new_variable_noatt_int16_4d
+  module procedure :: new_variable_int32_4d
+  module procedure :: new_variable_noatt_int32_4d
+  module procedure :: new_variable_int64_4d
+  module procedure :: new_variable_noatt_int64_4d
+  module procedure :: new_variable_real32_4d
+  module procedure :: new_variable_noatt_real32_4d
+  module procedure :: new_variable_real64_4d
+  module procedure :: new_variable_noatt_real64_4d
+  module procedure :: new_variable_int8_5d
+  module procedure :: new_variable_noatt_int8_5d
+  module procedure :: new_variable_int16_5d
+  module procedure :: new_variable_noatt_int16_5d
+  module procedure :: new_variable_int32_5d
+  module procedure :: new_variable_noatt_int32_5d
+  module procedure :: new_variable_int64_5d
+  module procedure :: new_variable_noatt_int64_5d
+  module procedure :: new_variable_real32_5d
+  module procedure :: new_variable_noatt_real32_5d
+  module procedure :: new_variable_real64_5d
+  module procedure :: new_variable_noatt_real64_5d
+  module procedure :: new_variable_int8_6d
+  module procedure :: new_variable_noatt_int8_6d
+  module procedure :: new_variable_int16_6d
+  module procedure :: new_variable_noatt_int16_6d
+  module procedure :: new_variable_int32_6d
+  module procedure :: new_variable_noatt_int32_6d
+  module procedure :: new_variable_int64_6d
+  module procedure :: new_variable_noatt_int64_6d
+  module procedure :: new_variable_real32_6d
+  module procedure :: new_variable_noatt_real32_6d
+  module procedure :: new_variable_real64_6d
+  module procedure :: new_variable_noatt_real64_6d
+end interface data_array
 
 !> IO
 interface write (formatted)
@@ -320,6 +396,693 @@ interface
     type(attribute_type), intent(in) :: atts(:)
     type(attribute_type), allocatable :: ret(:)
   end function new_atts
+
+  !> submodule variable
+  !> ------------------
+
+  !> variable constructor for integer(int8), rank(0)
+  module function new_variable_int8_1d( &
+    & data, name, dims, atts) result(var)
+    integer(int8), target, contiguous, intent(in) :: data(:)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(attribute_type), intent(in) :: atts(:)
+    type(variable_type) :: var
+  end function new_variable_int8_1d
+
+  !> variable constructor for integer(int8), rank(0)
+  module function new_variable_noatt_int8_1d( &
+    & data, name, dims) result(var)
+    integer(int8), target, contiguous, intent(in) :: data(:)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(variable_type) :: var
+  end function new_variable_noatt_int8_1d
+
+  !> variable constructor for integer(int16), rank(0)
+  module function new_variable_int16_1d( &
+    & data, name, dims, atts) result(var)
+    integer(int16), target, contiguous, intent(in) :: data(:)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(attribute_type), intent(in) :: atts(:)
+    type(variable_type) :: var
+  end function new_variable_int16_1d
+
+  !> variable constructor for integer(int16), rank(0)
+  module function new_variable_noatt_int16_1d( &
+    & data, name, dims) result(var)
+    integer(int16), target, contiguous, intent(in) :: data(:)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(variable_type) :: var
+  end function new_variable_noatt_int16_1d
+
+  !> variable constructor for integer(int32), rank(0)
+  module function new_variable_int32_1d( &
+    & data, name, dims, atts) result(var)
+    integer(int32), target, contiguous, intent(in) :: data(:)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(attribute_type), intent(in) :: atts(:)
+    type(variable_type) :: var
+  end function new_variable_int32_1d
+
+  !> variable constructor for integer(int32), rank(0)
+  module function new_variable_noatt_int32_1d( &
+    & data, name, dims) result(var)
+    integer(int32), target, contiguous, intent(in) :: data(:)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(variable_type) :: var
+  end function new_variable_noatt_int32_1d
+
+  !> variable constructor for integer(int64), rank(0)
+  module function new_variable_int64_1d( &
+    & data, name, dims, atts) result(var)
+    integer(int64), target, contiguous, intent(in) :: data(:)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(attribute_type), intent(in) :: atts(:)
+    type(variable_type) :: var
+  end function new_variable_int64_1d
+
+  !> variable constructor for integer(int64), rank(0)
+  module function new_variable_noatt_int64_1d( &
+    & data, name, dims) result(var)
+    integer(int64), target, contiguous, intent(in) :: data(:)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(variable_type) :: var
+  end function new_variable_noatt_int64_1d
+
+  !> variable constructor for real(real32), rank(0)
+  module function new_variable_real32_1d( &
+    & data, name, dims, atts) result(var)
+    real(real32), target, contiguous, intent(in) :: data(:)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(attribute_type), intent(in) :: atts(:)
+    type(variable_type) :: var
+  end function new_variable_real32_1d
+
+  !> variable constructor for real(real32), rank(0)
+  module function new_variable_noatt_real32_1d( &
+    & data, name, dims) result(var)
+    real(real32), target, contiguous, intent(in) :: data(:)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(variable_type) :: var
+  end function new_variable_noatt_real32_1d
+
+  !> variable constructor for real(real64), rank(0)
+  module function new_variable_real64_1d( &
+    & data, name, dims, atts) result(var)
+    real(real64), target, contiguous, intent(in) :: data(:)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(attribute_type), intent(in) :: atts(:)
+    type(variable_type) :: var
+  end function new_variable_real64_1d
+
+  !> variable constructor for real(real64), rank(0)
+  module function new_variable_noatt_real64_1d( &
+    & data, name, dims) result(var)
+    real(real64), target, contiguous, intent(in) :: data(:)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(variable_type) :: var
+  end function new_variable_noatt_real64_1d
+
+  !> variable constructor for integer(int8), rank(1)
+  module function new_variable_int8_2d( &
+    & data, name, dims, atts) result(var)
+    integer(int8), target, contiguous, intent(in) :: data(:, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(attribute_type), intent(in) :: atts(:)
+    type(variable_type) :: var
+  end function new_variable_int8_2d
+
+  !> variable constructor for integer(int8), rank(1)
+  module function new_variable_noatt_int8_2d( &
+    & data, name, dims) result(var)
+    integer(int8), target, contiguous, intent(in) :: data(:, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(variable_type) :: var
+  end function new_variable_noatt_int8_2d
+
+  !> variable constructor for integer(int16), rank(1)
+  module function new_variable_int16_2d( &
+    & data, name, dims, atts) result(var)
+    integer(int16), target, contiguous, intent(in) :: data(:, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(attribute_type), intent(in) :: atts(:)
+    type(variable_type) :: var
+  end function new_variable_int16_2d
+
+  !> variable constructor for integer(int16), rank(1)
+  module function new_variable_noatt_int16_2d( &
+    & data, name, dims) result(var)
+    integer(int16), target, contiguous, intent(in) :: data(:, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(variable_type) :: var
+  end function new_variable_noatt_int16_2d
+
+  !> variable constructor for integer(int32), rank(1)
+  module function new_variable_int32_2d( &
+    & data, name, dims, atts) result(var)
+    integer(int32), target, contiguous, intent(in) :: data(:, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(attribute_type), intent(in) :: atts(:)
+    type(variable_type) :: var
+  end function new_variable_int32_2d
+
+  !> variable constructor for integer(int32), rank(1)
+  module function new_variable_noatt_int32_2d( &
+    & data, name, dims) result(var)
+    integer(int32), target, contiguous, intent(in) :: data(:, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(variable_type) :: var
+  end function new_variable_noatt_int32_2d
+
+  !> variable constructor for integer(int64), rank(1)
+  module function new_variable_int64_2d( &
+    & data, name, dims, atts) result(var)
+    integer(int64), target, contiguous, intent(in) :: data(:, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(attribute_type), intent(in) :: atts(:)
+    type(variable_type) :: var
+  end function new_variable_int64_2d
+
+  !> variable constructor for integer(int64), rank(1)
+  module function new_variable_noatt_int64_2d( &
+    & data, name, dims) result(var)
+    integer(int64), target, contiguous, intent(in) :: data(:, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(variable_type) :: var
+  end function new_variable_noatt_int64_2d
+
+  !> variable constructor for real(real32), rank(1)
+  module function new_variable_real32_2d( &
+    & data, name, dims, atts) result(var)
+    real(real32), target, contiguous, intent(in) :: data(:, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(attribute_type), intent(in) :: atts(:)
+    type(variable_type) :: var
+  end function new_variable_real32_2d
+
+  !> variable constructor for real(real32), rank(1)
+  module function new_variable_noatt_real32_2d( &
+    & data, name, dims) result(var)
+    real(real32), target, contiguous, intent(in) :: data(:, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(variable_type) :: var
+  end function new_variable_noatt_real32_2d
+
+  !> variable constructor for real(real64), rank(1)
+  module function new_variable_real64_2d( &
+    & data, name, dims, atts) result(var)
+    real(real64), target, contiguous, intent(in) :: data(:, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(attribute_type), intent(in) :: atts(:)
+    type(variable_type) :: var
+  end function new_variable_real64_2d
+
+  !> variable constructor for real(real64), rank(1)
+  module function new_variable_noatt_real64_2d( &
+    & data, name, dims) result(var)
+    real(real64), target, contiguous, intent(in) :: data(:, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(variable_type) :: var
+  end function new_variable_noatt_real64_2d
+
+  !> variable constructor for integer(int8), rank(2)
+  module function new_variable_int8_3d( &
+    & data, name, dims, atts) result(var)
+    integer(int8), target, contiguous, intent(in) :: data(:, :, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(attribute_type), intent(in) :: atts(:)
+    type(variable_type) :: var
+  end function new_variable_int8_3d
+
+  !> variable constructor for integer(int8), rank(2)
+  module function new_variable_noatt_int8_3d( &
+    & data, name, dims) result(var)
+    integer(int8), target, contiguous, intent(in) :: data(:, :, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(variable_type) :: var
+  end function new_variable_noatt_int8_3d
+
+  !> variable constructor for integer(int16), rank(2)
+  module function new_variable_int16_3d( &
+    & data, name, dims, atts) result(var)
+    integer(int16), target, contiguous, intent(in) :: data(:, :, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(attribute_type), intent(in) :: atts(:)
+    type(variable_type) :: var
+  end function new_variable_int16_3d
+
+  !> variable constructor for integer(int16), rank(2)
+  module function new_variable_noatt_int16_3d( &
+    & data, name, dims) result(var)
+    integer(int16), target, contiguous, intent(in) :: data(:, :, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(variable_type) :: var
+  end function new_variable_noatt_int16_3d
+
+  !> variable constructor for integer(int32), rank(2)
+  module function new_variable_int32_3d( &
+    & data, name, dims, atts) result(var)
+    integer(int32), target, contiguous, intent(in) :: data(:, :, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(attribute_type), intent(in) :: atts(:)
+    type(variable_type) :: var
+  end function new_variable_int32_3d
+
+  !> variable constructor for integer(int32), rank(2)
+  module function new_variable_noatt_int32_3d( &
+    & data, name, dims) result(var)
+    integer(int32), target, contiguous, intent(in) :: data(:, :, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(variable_type) :: var
+  end function new_variable_noatt_int32_3d
+
+  !> variable constructor for integer(int64), rank(2)
+  module function new_variable_int64_3d( &
+    & data, name, dims, atts) result(var)
+    integer(int64), target, contiguous, intent(in) :: data(:, :, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(attribute_type), intent(in) :: atts(:)
+    type(variable_type) :: var
+  end function new_variable_int64_3d
+
+  !> variable constructor for integer(int64), rank(2)
+  module function new_variable_noatt_int64_3d( &
+    & data, name, dims) result(var)
+    integer(int64), target, contiguous, intent(in) :: data(:, :, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(variable_type) :: var
+  end function new_variable_noatt_int64_3d
+
+  !> variable constructor for real(real32), rank(2)
+  module function new_variable_real32_3d( &
+    & data, name, dims, atts) result(var)
+    real(real32), target, contiguous, intent(in) :: data(:, :, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(attribute_type), intent(in) :: atts(:)
+    type(variable_type) :: var
+  end function new_variable_real32_3d
+
+  !> variable constructor for real(real32), rank(2)
+  module function new_variable_noatt_real32_3d( &
+    & data, name, dims) result(var)
+    real(real32), target, contiguous, intent(in) :: data(:, :, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(variable_type) :: var
+  end function new_variable_noatt_real32_3d
+
+  !> variable constructor for real(real64), rank(2)
+  module function new_variable_real64_3d( &
+    & data, name, dims, atts) result(var)
+    real(real64), target, contiguous, intent(in) :: data(:, :, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(attribute_type), intent(in) :: atts(:)
+    type(variable_type) :: var
+  end function new_variable_real64_3d
+
+  !> variable constructor for real(real64), rank(2)
+  module function new_variable_noatt_real64_3d( &
+    & data, name, dims) result(var)
+    real(real64), target, contiguous, intent(in) :: data(:, :, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(variable_type) :: var
+  end function new_variable_noatt_real64_3d
+
+  !> variable constructor for integer(int8), rank(3)
+  module function new_variable_int8_4d( &
+    & data, name, dims, atts) result(var)
+    integer(int8), target, contiguous, intent(in) :: data(:, :, :, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(attribute_type), intent(in) :: atts(:)
+    type(variable_type) :: var
+  end function new_variable_int8_4d
+
+  !> variable constructor for integer(int8), rank(3)
+  module function new_variable_noatt_int8_4d( &
+    & data, name, dims) result(var)
+    integer(int8), target, contiguous, intent(in) :: data(:, :, :, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(variable_type) :: var
+  end function new_variable_noatt_int8_4d
+
+  !> variable constructor for integer(int16), rank(3)
+  module function new_variable_int16_4d( &
+    & data, name, dims, atts) result(var)
+    integer(int16), target, contiguous, intent(in) :: data(:, :, :, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(attribute_type), intent(in) :: atts(:)
+    type(variable_type) :: var
+  end function new_variable_int16_4d
+
+  !> variable constructor for integer(int16), rank(3)
+  module function new_variable_noatt_int16_4d( &
+    & data, name, dims) result(var)
+    integer(int16), target, contiguous, intent(in) :: data(:, :, :, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(variable_type) :: var
+  end function new_variable_noatt_int16_4d
+
+  !> variable constructor for integer(int32), rank(3)
+  module function new_variable_int32_4d( &
+    & data, name, dims, atts) result(var)
+    integer(int32), target, contiguous, intent(in) :: data(:, :, :, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(attribute_type), intent(in) :: atts(:)
+    type(variable_type) :: var
+  end function new_variable_int32_4d
+
+  !> variable constructor for integer(int32), rank(3)
+  module function new_variable_noatt_int32_4d( &
+    & data, name, dims) result(var)
+    integer(int32), target, contiguous, intent(in) :: data(:, :, :, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(variable_type) :: var
+  end function new_variable_noatt_int32_4d
+
+  !> variable constructor for integer(int64), rank(3)
+  module function new_variable_int64_4d( &
+    & data, name, dims, atts) result(var)
+    integer(int64), target, contiguous, intent(in) :: data(:, :, :, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(attribute_type), intent(in) :: atts(:)
+    type(variable_type) :: var
+  end function new_variable_int64_4d
+
+  !> variable constructor for integer(int64), rank(3)
+  module function new_variable_noatt_int64_4d( &
+    & data, name, dims) result(var)
+    integer(int64), target, contiguous, intent(in) :: data(:, :, :, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(variable_type) :: var
+  end function new_variable_noatt_int64_4d
+
+  !> variable constructor for real(real32), rank(3)
+  module function new_variable_real32_4d( &
+    & data, name, dims, atts) result(var)
+    real(real32), target, contiguous, intent(in) :: data(:, :, :, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(attribute_type), intent(in) :: atts(:)
+    type(variable_type) :: var
+  end function new_variable_real32_4d
+
+  !> variable constructor for real(real32), rank(3)
+  module function new_variable_noatt_real32_4d( &
+    & data, name, dims) result(var)
+    real(real32), target, contiguous, intent(in) :: data(:, :, :, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(variable_type) :: var
+  end function new_variable_noatt_real32_4d
+
+  !> variable constructor for real(real64), rank(3)
+  module function new_variable_real64_4d( &
+    & data, name, dims, atts) result(var)
+    real(real64), target, contiguous, intent(in) :: data(:, :, :, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(attribute_type), intent(in) :: atts(:)
+    type(variable_type) :: var
+  end function new_variable_real64_4d
+
+  !> variable constructor for real(real64), rank(3)
+  module function new_variable_noatt_real64_4d( &
+    & data, name, dims) result(var)
+    real(real64), target, contiguous, intent(in) :: data(:, :, :, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(variable_type) :: var
+  end function new_variable_noatt_real64_4d
+
+  !> variable constructor for integer(int8), rank(4)
+  module function new_variable_int8_5d( &
+    & data, name, dims, atts) result(var)
+    integer(int8), target, contiguous, intent(in) :: data(:, :, :, :, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(attribute_type), intent(in) :: atts(:)
+    type(variable_type) :: var
+  end function new_variable_int8_5d
+
+  !> variable constructor for integer(int8), rank(4)
+  module function new_variable_noatt_int8_5d( &
+    & data, name, dims) result(var)
+    integer(int8), target, contiguous, intent(in) :: data(:, :, :, :, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(variable_type) :: var
+  end function new_variable_noatt_int8_5d
+
+  !> variable constructor for integer(int16), rank(4)
+  module function new_variable_int16_5d( &
+    & data, name, dims, atts) result(var)
+    integer(int16), target, contiguous, intent(in) :: data(:, :, :, :, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(attribute_type), intent(in) :: atts(:)
+    type(variable_type) :: var
+  end function new_variable_int16_5d
+
+  !> variable constructor for integer(int16), rank(4)
+  module function new_variable_noatt_int16_5d( &
+    & data, name, dims) result(var)
+    integer(int16), target, contiguous, intent(in) :: data(:, :, :, :, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(variable_type) :: var
+  end function new_variable_noatt_int16_5d
+
+  !> variable constructor for integer(int32), rank(4)
+  module function new_variable_int32_5d( &
+    & data, name, dims, atts) result(var)
+    integer(int32), target, contiguous, intent(in) :: data(:, :, :, :, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(attribute_type), intent(in) :: atts(:)
+    type(variable_type) :: var
+  end function new_variable_int32_5d
+
+  !> variable constructor for integer(int32), rank(4)
+  module function new_variable_noatt_int32_5d( &
+    & data, name, dims) result(var)
+    integer(int32), target, contiguous, intent(in) :: data(:, :, :, :, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(variable_type) :: var
+  end function new_variable_noatt_int32_5d
+
+  !> variable constructor for integer(int64), rank(4)
+  module function new_variable_int64_5d( &
+    & data, name, dims, atts) result(var)
+    integer(int64), target, contiguous, intent(in) :: data(:, :, :, :, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(attribute_type), intent(in) :: atts(:)
+    type(variable_type) :: var
+  end function new_variable_int64_5d
+
+  !> variable constructor for integer(int64), rank(4)
+  module function new_variable_noatt_int64_5d( &
+    & data, name, dims) result(var)
+    integer(int64), target, contiguous, intent(in) :: data(:, :, :, :, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(variable_type) :: var
+  end function new_variable_noatt_int64_5d
+
+  !> variable constructor for real(real32), rank(4)
+  module function new_variable_real32_5d( &
+    & data, name, dims, atts) result(var)
+    real(real32), target, contiguous, intent(in) :: data(:, :, :, :, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(attribute_type), intent(in) :: atts(:)
+    type(variable_type) :: var
+  end function new_variable_real32_5d
+
+  !> variable constructor for real(real32), rank(4)
+  module function new_variable_noatt_real32_5d( &
+    & data, name, dims) result(var)
+    real(real32), target, contiguous, intent(in) :: data(:, :, :, :, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(variable_type) :: var
+  end function new_variable_noatt_real32_5d
+
+  !> variable constructor for real(real64), rank(4)
+  module function new_variable_real64_5d( &
+    & data, name, dims, atts) result(var)
+    real(real64), target, contiguous, intent(in) :: data(:, :, :, :, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(attribute_type), intent(in) :: atts(:)
+    type(variable_type) :: var
+  end function new_variable_real64_5d
+
+  !> variable constructor for real(real64), rank(4)
+  module function new_variable_noatt_real64_5d( &
+    & data, name, dims) result(var)
+    real(real64), target, contiguous, intent(in) :: data(:, :, :, :, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(variable_type) :: var
+  end function new_variable_noatt_real64_5d
+
+  !> variable constructor for integer(int8), rank(5)
+  module function new_variable_int8_6d( &
+    & data, name, dims, atts) result(var)
+    integer(int8), target, contiguous, intent(in) :: data(:, :, :, :, :, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(attribute_type), intent(in) :: atts(:)
+    type(variable_type) :: var
+  end function new_variable_int8_6d
+
+  !> variable constructor for integer(int8), rank(5)
+  module function new_variable_noatt_int8_6d( &
+    & data, name, dims) result(var)
+    integer(int8), target, contiguous, intent(in) :: data(:, :, :, :, :, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(variable_type) :: var
+  end function new_variable_noatt_int8_6d
+
+  !> variable constructor for integer(int16), rank(5)
+  module function new_variable_int16_6d( &
+    & data, name, dims, atts) result(var)
+    integer(int16), target, contiguous, intent(in) :: data(:, :, :, :, :, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(attribute_type), intent(in) :: atts(:)
+    type(variable_type) :: var
+  end function new_variable_int16_6d
+
+  !> variable constructor for integer(int16), rank(5)
+  module function new_variable_noatt_int16_6d( &
+    & data, name, dims) result(var)
+    integer(int16), target, contiguous, intent(in) :: data(:, :, :, :, :, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(variable_type) :: var
+  end function new_variable_noatt_int16_6d
+
+  !> variable constructor for integer(int32), rank(5)
+  module function new_variable_int32_6d( &
+    & data, name, dims, atts) result(var)
+    integer(int32), target, contiguous, intent(in) :: data(:, :, :, :, :, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(attribute_type), intent(in) :: atts(:)
+    type(variable_type) :: var
+  end function new_variable_int32_6d
+
+  !> variable constructor for integer(int32), rank(5)
+  module function new_variable_noatt_int32_6d( &
+    & data, name, dims) result(var)
+    integer(int32), target, contiguous, intent(in) :: data(:, :, :, :, :, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(variable_type) :: var
+  end function new_variable_noatt_int32_6d
+
+  !> variable constructor for integer(int64), rank(5)
+  module function new_variable_int64_6d( &
+    & data, name, dims, atts) result(var)
+    integer(int64), target, contiguous, intent(in) :: data(:, :, :, :, :, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(attribute_type), intent(in) :: atts(:)
+    type(variable_type) :: var
+  end function new_variable_int64_6d
+
+  !> variable constructor for integer(int64), rank(5)
+  module function new_variable_noatt_int64_6d( &
+    & data, name, dims) result(var)
+    integer(int64), target, contiguous, intent(in) :: data(:, :, :, :, :, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(variable_type) :: var
+  end function new_variable_noatt_int64_6d
+
+  !> variable constructor for real(real32), rank(5)
+  module function new_variable_real32_6d( &
+    & data, name, dims, atts) result(var)
+    real(real32), target, contiguous, intent(in) :: data(:, :, :, :, :, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(attribute_type), intent(in) :: atts(:)
+    type(variable_type) :: var
+  end function new_variable_real32_6d
+
+  !> variable constructor for real(real32), rank(5)
+  module function new_variable_noatt_real32_6d( &
+    & data, name, dims) result(var)
+    real(real32), target, contiguous, intent(in) :: data(:, :, :, :, :, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(variable_type) :: var
+  end function new_variable_noatt_real32_6d
+
+  !> variable constructor for real(real64), rank(5)
+  module function new_variable_real64_6d( &
+    & data, name, dims, atts) result(var)
+    real(real64), target, contiguous, intent(in) :: data(:, :, :, :, :, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(attribute_type), intent(in) :: atts(:)
+    type(variable_type) :: var
+  end function new_variable_real64_6d
+
+  !> variable constructor for real(real64), rank(5)
+  module function new_variable_noatt_real64_6d( &
+    & data, name, dims) result(var)
+    real(real64), target, contiguous, intent(in) :: data(:, :, :, :, :, :)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(variable_type) :: var
+  end function new_variable_noatt_real64_6d
 
   !> submodule I/O
   !> -------------

@@ -6,9 +6,9 @@ use :: iso_c_binding
 use :: module_c_interface
 implicit none
 
-public :: attribute_type, dimension_type
+public :: attribute_type, dimension_type, variable_type
 public :: operator(.dim.), operator(.att.)
-public :: dims, atts
+public :: dims, atts, data_array
 public :: write(formatted)
 private
 
@@ -68,7 +68,7 @@ type :: attribute_type
 end type attribute_type
 
 !> Abstract variable type
-type, abstract :: abstract_variable_type
+type, abstract, extends(netcdf_type) :: abstract_variable_type
   type(dimension_type), allocatable :: dims(:)
   type(attribute_type), allocatable :: atts(:)
   integer(c_int), pointer  :: grpID => null()
@@ -132,6 +132,18 @@ end interface operator(.att.)
 interface atts
   module procedure :: new_atts
 end interface atts
+
+!> Variable constructor
+interface data_array
+  #: for rank in range(num_ranks)
+  #: set cols = (":," + "".join([":," for _ in range(rank)]))[:-1]
+  #: for type, kind in zip(types, kinds)
+  module procedure :: new_variable_${kind}$_${rank + 1}$d
+  module procedure :: new_variable_noatt_${kind}$_${rank + 1}$d
+  #: endfor
+  #: endfor
+  #: del cols
+end interface data_array
 
 !> IO
 interface write(formatted)
@@ -212,6 +224,34 @@ interface
     type(attribute_type), intent(in) :: atts(:)
     type(attribute_type), allocatable :: ret(:)
   end function new_atts
+
+  !> submodule variable
+  !> ------------------
+
+  #: for rank in range(num_ranks)
+  #: set cols = (":," + "".join([":," for _ in range(rank)]))[:-1]
+  #: for type, kind in zip(types, kinds)
+  !> variable constructor for ${type}$(${kind}$), rank(${rank}$)
+  module function new_variable_${kind}$_${rank + 1}$d( &
+    & data, name, dims, atts) result(var)
+    ${type}$(${kind}$), target, contiguous, intent(in) :: data(${cols}$)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(attribute_type), intent(in) :: atts(:)
+    type(variable_type) :: var
+  end function new_variable_${kind}$_${rank + 1}$d ${"\n"}$
+
+  !> variable constructor for ${type}$(${kind}$), rank(${rank}$)
+  module function new_variable_noatt_${kind}$_${rank + 1}$d( &
+    & data, name, dims) result(var)
+    ${type}$(${kind}$), target, contiguous, intent(in) :: data(${cols}$)
+    character(len=*), intent(in) :: name
+    type(dimension_type), intent(in) :: dims(:)
+    type(variable_type) :: var
+  end function new_variable_noatt_${kind}$_${rank + 1}$d ${"\n"}$
+  #: endfor
+  #: endfor
+  #: del cols
 
   !> submodule I/O
   !> -------------
