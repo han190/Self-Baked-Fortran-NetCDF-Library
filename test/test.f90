@@ -11,13 +11,9 @@ real, allocatable :: data(:, :)
 allocate (data(nx, ny))
 call random_number(data)
 
-! Construct a data array.
+! Construct a data array and write to a netcdf file.
 var = data_array(data, name="data", &
-  & dims=dims(["x".dim.nx, "y".dim.ny]), &
-  & atts=atts(["comment".att."dummy variable"]))
-print "(dt)", var
-
-! Write to netcdf
+  & dims=dims(["x".dim.nx, "y".dim.ny]))
 ! call to_netcdf(var, "dummy.nc")
 
 end program main

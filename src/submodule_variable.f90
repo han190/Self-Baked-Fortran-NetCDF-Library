@@ -1442,4 +1442,12 @@ module function new_variable_noatt_real64_6d( &
   nullify (ptr)
 end function new_variable_noatt_real64_6d
 
+!> Shape of variable
+module pure function shape_var(var) result(ret)
+  type(variable_type), intent(in) :: var
+  integer, allocatable :: ret(:)
+
+  ret = shape_dims(var%var%dims)
+end function shape_var
+
 end submodule submodule_variable

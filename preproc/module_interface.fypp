@@ -9,7 +9,7 @@ implicit none
 public :: attribute_type, dimension_type, variable_type
 public :: operator(.dim.), operator(.att.)
 public :: dims, atts, data_array
-public :: write(formatted)
+public :: write(formatted), shape
 private
 
 !> NetCDF Data Model
@@ -152,6 +152,12 @@ interface write(formatted)
   module procedure :: write_formatted_var
 end interface write(formatted)
 
+!> Shape
+interface shape
+  module procedure :: shape_dims
+  module procedure :: shape_var
+end interface shape
+
 !> Interfaces to submodules
 interface
   !> submodule utility
@@ -232,7 +238,6 @@ interface
   #: for rank in range(num_ranks)
   #: set cols = (":," + "".join([":," for _ in range(rank)]))[:-1]
   #: for type, kind in zip(types, kinds)
-  !> variable constructor for ${type}$(${kind}$), rank(${rank}$)
   module function new_variable_${kind}$_${rank + 1}$d( &
     & data, name, dims, atts) result(var)
     ${type}$(${kind}$), target, contiguous, intent(in) :: data(${cols}$)
@@ -242,7 +247,6 @@ interface
     type(variable_type) :: var
   end function new_variable_${kind}$_${rank + 1}$d ${"\n"}$
 
-  !> variable constructor for ${type}$(${kind}$), rank(${rank}$)
   module function new_variable_noatt_${kind}$_${rank + 1}$d( &
     & data, name, dims) result(var)
     ${type}$(${kind}$), target, contiguous, intent(in) :: data(${cols}$)
@@ -253,6 +257,11 @@ interface
   #: endfor
   #: endfor
   #: del cols
+
+  module pure function shape_var(var) result(ret)
+    type(variable_type), intent(in) :: var
+    integer, allocatable :: ret(:)
+  end function shape_var
 
   !> submodule I/O
   !> -------------

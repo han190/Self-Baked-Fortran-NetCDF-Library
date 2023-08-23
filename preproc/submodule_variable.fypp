@@ -49,4 +49,12 @@ end function new_variable_noatt_${kind}$_${rank + 1}$d ${"\n"}$
 #: endfor
 #: del cols
 
+!> Shape of variable
+module pure function shape_var(var) result(ret)
+  type(variable_type), intent(in) :: var
+  integer, allocatable :: ret(:)
+
+  ret = shape_dims(var%var%dims)
+end function shape_var
+
 end submodule submodule_variable
