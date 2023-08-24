@@ -47,6 +47,7 @@ module pure function shape_dims(dims) result(ret)
   ret = [(dims(i)%len, i=1, size(dims))]
 end function shape_dims
 
+!> Define group dimensions
 module subroutine def_grp_dim(grp)
   class(group_type), intent(in) :: grp
   integer(c_int) :: stat, i
@@ -58,6 +59,7 @@ module subroutine def_grp_dim(grp)
   end do
 end subroutine def_grp_dim
 
+!> Def variable dimensions
 module subroutine def_var_dim(var)
   type(variable_type), intent(in) :: var
   integer(c_int) :: stat, i
