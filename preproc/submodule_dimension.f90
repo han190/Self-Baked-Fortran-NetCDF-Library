@@ -47,4 +47,30 @@ module pure function shape_dims(dims) result(ret)
   ret = [(dims(i)%len, i=1, size(dims))]
 end function shape_dims
 
+module subroutine def_grp_dim(grp)
+  class(group_type), intent(in) :: grp
+  integer(c_int) :: stat, i
+
+  do i = 1, size(grp%dims)
+    stat = nc_def_dim(grp%ID, cstr(grp%dims(i)%name), &
+      & int(grp%dims(i)%len, c_size_t), grp%dims(i)%ID)
+    call handle_error(stat, "nc_def_dim")
+  end do
+end subroutine def_grp_dim
+
+module subroutine def_var_dim(var)
+  type(variable_type), intent(in) :: var
+  integer(c_int) :: stat, i
+
+  associate (var_ => var%var)
+    do i = 1, size(var_%dims)
+      associate (dim_ => var_%dims(i))
+        stat = nc_def_dim(var_%grpID, &
+          & cstr(dim_%name), dim_%len, dim_%ID)
+        call handle_error(stat, "nc_def_dim")
+      end associate
+    end do
+  end associate
+end subroutine def_var_dim
+
 end submodule submodule_dimension

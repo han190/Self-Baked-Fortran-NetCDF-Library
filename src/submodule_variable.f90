@@ -1450,4 +1450,132 @@ module pure function shape_var(var) result(ret)
   ret = shape_dims(var%var%dims)
 end function shape_var
 
+!> Define variable
+subroutine def_var(var)
+  type(variable_type), intent(inout) :: var
+  integer(c_int) :: stat, ndims, i
+  integer(c_int), allocatable :: dimids(:)
+
+  select type (var_ => var%var)
+  type is (variable_int16_type)
+
+    ndims = size(var_%dims, kind=c_int)
+    dimids = [(var_%dims(i)%ID, i=1, ndims)]
+    stat = nc_def_var(var_%grpID, cstr(var_%name), &
+      & var_%type, ndims, dimids, var_%ID)
+    call handle_error(stat, "nc_def_var")
+
+  type is (variable_int32_type)
+
+    ndims = size(var_%dims, kind=c_int)
+    dimids = [(var_%dims(i)%ID, i=1, ndims)]
+    stat = nc_def_var(var_%grpID, cstr(var_%name), &
+      & var_%type, ndims, dimids, var_%ID)
+    call handle_error(stat, "nc_def_var")
+
+  type is (variable_int64_type)
+
+    ndims = size(var_%dims, kind=c_int)
+    dimids = [(var_%dims(i)%ID, i=1, ndims)]
+    stat = nc_def_var(var_%grpID, cstr(var_%name), &
+      & var_%type, ndims, dimids, var_%ID)
+    call handle_error(stat, "nc_def_var")
+
+  type is (variable_real32_type)
+
+    ndims = size(var_%dims, kind=c_int)
+    dimids = [(var_%dims(i)%ID, i=1, ndims)]
+    stat = nc_def_var(var_%grpID, cstr(var_%name), &
+      & var_%type, ndims, dimids, var_%ID)
+    call handle_error(stat, "nc_def_var")
+
+  type is (variable_real64_type)
+
+    ndims = size(var_%dims, kind=c_int)
+    dimids = [(var_%dims(i)%ID, i=1, ndims)]
+    stat = nc_def_var(var_%grpID, cstr(var_%name), &
+      & var_%type, ndims, dimids, var_%ID)
+    call handle_error(stat, "nc_def_var")
+
+  end select
+end subroutine def_var
+
+!> Put variable
+subroutine put_var(var)
+  type(variable_type), intent(in) :: var
+  integer(c_int) :: stat
+
+  select type (var_ => var%var)
+  type is (variable_int16_type)
+
+    stat = nc_put_var_short( &
+      & var_%grpID, var_%ID, var_%vals)
+    call handle_error(stat, "nc_put_var_short")
+
+  type is (variable_int32_type)
+
+    stat = nc_put_var_int( &
+      & var_%grpID, var_%ID, var_%vals)
+    call handle_error(stat, "nc_put_var_int")
+
+  type is (variable_int64_type)
+
+    stat = nc_put_var_longlong( &
+      & var_%grpID, var_%ID, var_%vals)
+    call handle_error(stat, "nc_put_var_longlong")
+
+  type is (variable_real32_type)
+
+    stat = nc_put_var_float( &
+      & var_%grpID, var_%ID, var_%vals)
+    call handle_error(stat, "nc_put_var_float")
+
+  type is (variable_real64_type)
+
+    stat = nc_put_var_double( &
+      & var_%grpID, var_%ID, var_%vals)
+    call handle_error(stat, "nc_put_var_double")
+
+  end select
+end subroutine put_var
+
+!> Write variable to a netcdf file
+module subroutine to_netcdf_var(var, filename)
+  type(variable_type), intent(inout) :: var
+  character(len=*), intent(in) :: filename
+  type(file_type), target :: file
+  integer(c_int) :: stat
+
+  !> copy metadata
+  file%filename = filename
+  file%mode = ior(nc_netcdf4, nc_clobber)
+
+  !> create
+  stat = nc_create(cstr(filename), file%mode, file%ID)
+  call handle_error(stat, "nc_create")
+  var%var%grpID => file%ID
+
+  !> rootgroup name
+  file%name = cstr("/")
+
+  !> Define dimension
+  call def_var_dim(var)
+
+  !> Put group attributes
+  if (allocated(file%atts)) then
+    call put_grp_atts(file)
+  end if
+
+  !> Put variable attributes
+  call def_var(var)
+  if (allocated(var%var%atts)) then
+    call put_var_atts(var)
+  end if
+  call put_var(var)
+  nullify (var%var%grpID)
+
+  stat = nc_close(file%ID)
+  call handle_error(stat, "nc_close")
+end subroutine to_netcdf_var
+
 end submodule submodule_variable

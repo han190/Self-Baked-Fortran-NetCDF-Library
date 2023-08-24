@@ -1,13 +1,16 @@
 #:mute
 
   #:set kinds = [ &
-    & 'int8', 'int16', 'int32', 'int64', 'real32', 'real64']
+    & 'int8', 'int16', 'int32', 'int64', &
+    & 'real32', 'real64']
   #:set types = [ &
-    & 'integer', 'integer', 'integer', 'integer', 'real', 'real']
+    & 'integer', 'integer', 'integer', 'integer', &
+    & 'real', 'real']
   #:set nc_types = [ &
     & 'nc_byte', 'nc_short', 'nc_int', &
     & 'nc_int64', 'nc_float', 'nc_double']
   #:set c_names = [ &
-    & 'byte' 'short', 'int', 'longlong', 'float', 'double']
+    & 'byte', 'short', 'int', 'longlong', &
+    & 'float', 'double']
 
 #:endmute

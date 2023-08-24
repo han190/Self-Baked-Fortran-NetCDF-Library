@@ -7,7 +7,7 @@ implicit none
 
 public :: attribute_type, dimension_type, variable_type
 public :: operator(.dim.), operator(.att.)
-public :: dims, atts, data_array
+public :: dims, atts, data_array, to_netcdf
 public :: write (formatted), shape
 private
 
@@ -81,7 +81,7 @@ end type attribute_real64_type
 
 !> character attribute type
 type, extends(abstract_attribute_type) :: attribute_char_type
-  character(len=:), allocatable :: vals(:)
+  character(:), allocatable :: vals(:)
 end type attribute_char_type
 
 !> Attributes_type
@@ -127,9 +127,8 @@ type, extends(abstract_variable_type) :: variable_real64_type
   real(real64), allocatable :: vals(:)
 end type variable_real64_type
 
-!> character variable type
 type, extends(abstract_variable_type) :: variable_char_type
-  character(len=:), allocatable :: vals(:)
+  character(:), allocatable :: vals(:)
 end type variable_char_type
 
 !> Variable type
@@ -261,6 +260,11 @@ interface data_array
   module procedure :: new_variable_noatt_real64_6d
 end interface data_array
 
+!> to NetCDF
+interface to_netcdf
+  module procedure :: to_netcdf_var
+end interface to_netcdf
+
 !> IO
 interface write (formatted)
 module procedure :: write_formatted_dim
@@ -318,6 +322,14 @@ interface
     type(dimension_type), intent(in) :: dims(:)
     integer, allocatable :: ret(:)
   end function shape_dims
+
+  module subroutine def_grp_dim(grp)
+    class(group_type), intent(in) :: grp
+  end subroutine def_grp_dim
+
+  module subroutine def_var_dim(var)
+    type(variable_type), intent(in) :: var
+  end subroutine def_var_dim
 
   !> submodule attribute
   !> -------------------
@@ -403,6 +415,14 @@ interface
     type(attribute_type), intent(in) :: atts(:)
     type(attribute_type), allocatable :: ret(:)
   end function new_atts
+
+  module subroutine put_grp_atts(grp)
+    class(group_type), intent(in) :: grp
+  end subroutine put_grp_atts
+
+  module subroutine put_var_atts(var)
+    type(variable_type), intent(in) :: var
+  end subroutine put_var_atts
 
   !> submodule variable
   !> ------------------
@@ -1023,6 +1043,11 @@ interface
     type(variable_type), intent(in) :: var
     integer, allocatable :: ret(:)
   end function shape_var
+
+  module subroutine to_netcdf_var(var, filename)
+    type(variable_type), intent(inout) :: var
+    character(len=*), intent(in) :: filename
+  end subroutine to_netcdf_var
 
   !> submodule I/O
   !> -------------
