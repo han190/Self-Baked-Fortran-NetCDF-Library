@@ -79,7 +79,7 @@ type, extends(abstract_attribute_type) :: attribute_real64_type
   real(real64), allocatable :: vals(:)
 end type attribute_real64_type
 
-!> character attribute type
+!> Character attribute type
 type, extends(abstract_attribute_type) :: attribute_char_type
   character(:), allocatable :: vals(:)
 end type attribute_char_type
@@ -127,6 +127,7 @@ type, extends(abstract_variable_type) :: variable_real64_type
   real(real64), allocatable :: vals(:)
 end type variable_real64_type
 
+!> Character variable type
 type, extends(abstract_variable_type) :: variable_char_type
   character(:), allocatable :: vals(:)
 end type variable_char_type

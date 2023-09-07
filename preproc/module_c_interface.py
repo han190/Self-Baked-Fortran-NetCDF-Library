@@ -134,16 +134,19 @@ class c_function:
         self.src = source_code
 
         def replace_star(src):
-            return re.sub(" +", " ", src.replace("*", "")).strip().rsplit(" ", 1)
+            tmp = src.replace("*", "")
+            return re.sub(" +", " ", tmp).strip().rsplit(" ", 1)
 
-        _func_type, _func_name = replace_star(re.findall(".*?(?=\()", source_code)[0])
+        _func_type, _func_name = replace_star(
+            re.findall(".*?(?=\()", source_code)[0])
 
         # if the function returns a const char*
         # we wrap it with a c_ptr
         if _func_type == "char":
             _func_type = "void"
 
-        self.function_name = c_variable(_func_type, _func_name, {"value": False})
+        self.function_name = c_variable(
+            _func_type, _func_name, {"value": False})
 
         arg_str = re.findall("\((.*?)\)", source_code)[0].strip().split(",")
         self.arguments = []

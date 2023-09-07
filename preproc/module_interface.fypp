@@ -57,7 +57,7 @@ type, extends(abstract_attribute_type) :: attribute_${kind}$_type
 end type attribute_${kind}$_type ${"\n"}$
 #: endfor
 
-!> character attribute type
+!> Character attribute type
 type, extends(abstract_attribute_type) :: attribute_char_type
   character(:), allocatable :: vals(:)
 end type attribute_char_type
@@ -82,6 +82,7 @@ type, extends(abstract_variable_type) :: variable_${kind}$_type
 end type variable_${kind}$_type ${"\n"}$
 #: endfor
 
+!> Character variable type
 type, extends(abstract_variable_type) :: variable_char_type
   character(:), allocatable :: vals(:)
 end type variable_char_type
