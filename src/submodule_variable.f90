@@ -15,7 +15,7 @@ module function data_array(data, name, dims, atts) result(var)
   if (allocated(var%vals)) deallocate (var%vals)
   allocate (var%vals, source=data)
 
-  select type (data_ => data)
+  select type (data)
   type is (integer(int8))
     var%type = nc_byte
   type is (integer(int16))
@@ -62,28 +62,22 @@ subroutine put_var(var)
 
   select type (vals_ => var%vals)
   type is (integer(int8))
-    stat = nc_put_var_ubyte( &
-      & var%grpID, var%ID, vals_)
+    stat = nc_put_var_ubyte(var%grpID, var%ID, vals_)
     call handle_error(stat, "nc_put_var_ubyte")
   type is (integer(int16))
-    stat = nc_put_var_short( &
-      & var%grpID, var%ID, vals_)
+    stat = nc_put_var_short(var%grpID, var%ID, vals_)
     call handle_error(stat, "nc_put_var_short")
   type is (integer(int32))
-    stat = nc_put_var_int( &
-      & var%grpID, var%ID, vals_)
+    stat = nc_put_var_int(var%grpID, var%ID, vals_)
     call handle_error(stat, "nc_put_var_int")
   type is (integer(int64))
-    stat = nc_put_var_longlong( &
-      & var%grpID, var%ID, vals_)
+    stat = nc_put_var_longlong(var%grpID, var%ID, vals_)
     call handle_error(stat, "nc_put_var_longlong")
   type is (real(real32))
-    stat = nc_put_var_float( &
-      & var%grpID, var%ID, vals_)
+    stat = nc_put_var_float(var%grpID, var%ID, vals_)
     call handle_error(stat, "nc_put_var_float")
   type is (real(real64))
-    stat = nc_put_var_double( &
-      & var%grpID, var%ID, vals_)
+    stat = nc_put_var_double(var%grpID, var%ID, vals_)
     call handle_error(stat, "nc_put_var_double")
   end select
 end subroutine put_var

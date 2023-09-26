@@ -190,9 +190,8 @@ module subroutine write_formatted_var( &
   integer, intent(in) :: v_list(:)
   integer, intent(out) :: iostat
   character(*), intent(inout) :: iomsg
-  character(:), allocatable :: fmt
+  character(:), allocatable :: fmt, msg
   integer, allocatable :: v_list_(:)
-  character(:), allocatable :: msg
   character(len=nc_max_char) :: tmp
 
   if (size(v_list) == 0) then

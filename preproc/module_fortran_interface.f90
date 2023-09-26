@@ -10,7 +10,7 @@ implicit none
 
 public :: nc_dim, nc_att, nc_var, nc_grp
 public :: operator(.dim.), operator(.att.)
-public :: write (formatted)
+public :: write(formatted)
 public :: shape, atts, dims
 public :: to_netcdf, data_array
 private
@@ -80,9 +80,9 @@ interface shape
 end interface shape
 
 interface write (formatted)
-module procedure :: write_formatted_att
-module procedure :: write_formatted_dim
-module procedure :: write_formatted_var
+  module procedure :: write_formatted_att
+  module procedure :: write_formatted_dim
+  module procedure :: write_formatted_var
 end interface write (formatted)
 
 interface

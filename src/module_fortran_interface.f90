@@ -13,7 +13,7 @@ public :: operator(.dim.), operator(.att.)
 public :: write(formatted)
 public :: shape, atts, dims
 public :: to_netcdf, data_array
-private 
+private
 
 type, abstract :: netcdf_type
   integer(c_int) :: ID
@@ -79,11 +79,11 @@ interface shape
   module procedure :: shape_var
 end interface shape
 
-interface write(formatted)
+interface write (formatted)
   module procedure :: write_formatted_att
   module procedure :: write_formatted_dim
   module procedure :: write_formatted_var
-end interface write(formatted)
+end interface write (formatted)
 
 interface
   module pure function cstr(string) result(cstring)

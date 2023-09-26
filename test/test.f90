@@ -15,7 +15,7 @@ call random_number(data)
 ! Construct a data array and write to a netcdf file.
 dummy_var = data_array(data, name="data", &
   & dims=dims(["x".dim.nx, "y".dim.ny]), &
-  & atts=atts(["unit".att."dummy variable"]))
+  & atts=atts(["description".att."dummy variable"]))
 print *, dummy_var
 call to_netcdf(dummy_var, path//filename)
 

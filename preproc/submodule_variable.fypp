@@ -56,8 +56,7 @@ subroutine put_var(var)
   select type (vals_ => var%vals)
   #: for type, kind, c_name in zip(types, kinds, c_names)
   type is (${type}$(${kind}$))
-    stat = nc_put_var_${c_name}$( &
-      & var%grpID, var%ID, vals_)
+    stat = nc_put_var_${c_name}$(var%grpID, var%ID, vals_)
     call handle_error(stat, "nc_put_var_${c_name}$")
   #: endfor
   end select
