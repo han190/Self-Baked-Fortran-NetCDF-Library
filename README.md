@@ -42,3 +42,7 @@ To count the LOC for this project
 ```
 cloc --force-lang-def=./misc/language_definitions.txt --exclude-dir=backups,src .
 ```
+To generate and compile source code
+```
+./compile
+```
