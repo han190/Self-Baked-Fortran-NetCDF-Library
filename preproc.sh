@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 repodir=$(pwd)
-compiler=gfortran
+compiler="gfortran"
 src="${repodir}/src"
 preproc="${repodir}/preproc"
 interface="${repodir}/interface"
