@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 repodir=$(pwd)
+compiler=gfortran
 src="${repodir}/src"
 preproc="${repodir}/preproc"
 interface="${repodir}/interface"
@@ -26,6 +27,6 @@ echo "Compile Fortran source code..."
 if [ -d "./build" ]; then
   rm -rf ./build/
 fi
-fpm build
+fpm build --compiler ${compiler}
 echo "Running tests..."
-fpm test
+fpm test --compiler ${compiler}
