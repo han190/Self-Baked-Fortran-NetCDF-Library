@@ -169,9 +169,10 @@ interface
     integer, allocatable :: ret(:)
   end function shape_var
 
-  module subroutine to_netcdf_var(var, filename)
+  module subroutine to_netcdf_var(var, filename, mode)
     type(nc_var), intent(inout) :: var
     character(len=*), intent(in) :: filename
+    integer(c_int), intent(in), optional :: mode
   end subroutine to_netcdf_var
 
   module subroutine write_formatted_dim( &
