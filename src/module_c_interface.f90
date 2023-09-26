@@ -51,12 +51,12 @@ integer(c_long_long), parameter :: nc_fill_int64 = -9223372036854775806_c_long_l
 !(not converted) NC_FILL_UINT64 (unsignedlonglong)18446744073709551614ULL
 character(kind=c_char, len=*), parameter :: nc_fill_string = ""
 integer(c_int), parameter :: nc_max_byte = 127
-integer(c_int), parameter :: nc_min_byte = -nc_max_byte - 1
+integer(c_int), parameter :: nc_min_byte = -nc_max_byte-1
 integer(c_int), parameter :: nc_max_char = 255
 integer(c_int), parameter :: nc_max_short = 32767
-integer(c_int), parameter :: nc_min_short = -nc_max_short - 1
+integer(c_int), parameter :: nc_min_short = -nc_max_short-1
 integer(c_int), parameter :: nc_max_int = 2147483647
-integer(c_int), parameter :: nc_min_int = -nc_max_int - 1
+integer(c_int), parameter :: nc_min_int = -nc_max_int-1
 real(c_float), parameter :: nc_max_float = 3.402823466e+38
 real(c_float), parameter :: nc_min_float = -nc_max_float
 real(c_double), parameter :: nc_max_double = 1.7976931348623157e+308_c_double

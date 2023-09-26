@@ -1,8 +1,7 @@
-submodule(module_interface) submodule_utility
+submodule(module_fortran_interface) submodule_utility
 implicit none
 contains
 
-!> Convert string to cstring
 module pure function cstr(string) result(cstring)
   character(len=*), intent(in) :: string
   character(kind=c_char, len=:), allocatable :: cstring
@@ -10,7 +9,6 @@ module pure function cstr(string) result(cstring)
   cstring = adjustl(adjustr(string))//c_null_char
 end function cstr
 
-!> Convert c string to fortran string
 module pure function cstrip(cstring) result(string)
   character(len=*), intent(in) :: cstring
   character(:), allocatable :: string
@@ -59,3 +57,4 @@ module subroutine handle_error(stat, err_msg)
 end subroutine handle_error
 
 end submodule submodule_utility
+

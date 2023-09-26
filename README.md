@@ -9,50 +9,32 @@ self-baked-nf = {git="https://github.com/han190/Self-Baked-Fortran-NetCDF"}
 [build]
 link = "netcdf"
 ```
-and make sure you have NetCDF C library properly installed.
+Make sure you have NetCDF C library properly installed.
 
 ## Examples
 ### Write to NetCDF
 ```Fortran
 program main
-  use module_netcdf
-  implicit none
 
-  integer, parameter :: nlat = 4, nlon = 7
-  real, allocatable :: raw(:, :)
-  class(variable_type), allocatable :: var
+use module_netcdf
+implicit none
 
-  !> Fill data with random numbers.
-  allocate (raw(nlat, nlon))
-  call random_number(raw)
+integer, parameter :: nx = 6, ny = 12
+character(len=*), parameter :: path = "./data/", filename = "simple_xy_nc4.nc"
+type(nc_var) :: dummy_var
+real :: data(nx, ny)
 
-  !> Construct variable
-  var = data_array(raw=raw, name="data", &
-    & dims=["lat".dim.nlat, "lon".dim.nlon], &
-    & atts=["units".att."degC", "add_offset".att.-273.16])
+! Fill data with random numbers.
+call execute_command_line("mkdir -p "//path)
+call random_number(data)
 
-  !> Write to netcdf
-  call execute_command_line("mkdir -p ./data/")
-  call to_netcdf(var, "./data/simple_example.nc")
+! Construct a data array and write to a netcdf file.
+dummy_var = data_array(data, name="data", &
+  & dims=dims(["x".dim.nx, "y".dim.ny]), &
+  & atts=atts(["unit".att."dummy variable"]))
+print *, dummy_var
+call to_netcdf(dummy_var, path//filename)
+
 end program main
-```
-### Read from NetCDF
-```Fortran
-program main
-  use module_netcdf
-  implicit none
 
-  real, allocatable :: raw(:, :)
-  real :: add_offset
-  type(file_type) :: nc
-  class(variable_type), allocatable :: var
-  class(attribute_type), allocatable :: add_offset
-
-  !> Read from file
-  nc = dataset("./data/simple_example.nc", "r")
-
-  !> Inquire variable, and extract raw data
-  var = get_var(nc, "data")
-  add_offset = get_att(var, "add_offset")
-end program main
 ```

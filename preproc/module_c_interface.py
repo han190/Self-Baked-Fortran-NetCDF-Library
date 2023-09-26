@@ -371,8 +371,8 @@ if __name__ == "__main__":
         # file.write("use module_constant, only: nc_type\n")
         file.write("implicit none\n")
         file.write("public\n\n")
-        file.write(nc_vlen_t(2, 1))
-        file.write(nc_dispatch(2, 1))
+        file.write(nc_vlen_t(2, 0))
+        file.write(nc_dispatch(2, 0))
         file.write("integer(c_int), parameter :: nc_type = c_int\n")
         file.write("!> Unsolved parameters {}/{}\n".format(
             unsolved, len(const)))
