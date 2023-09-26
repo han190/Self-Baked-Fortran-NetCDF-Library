@@ -6,6 +6,7 @@ preproc="${repodir}/preproc"
 interface="${repodir}/interface"
 fypp_files=("submodule_attribute" "submodule_io" "submodule_variable")
 fprettify_flags="-i 2 --strict-indent --disable-indent-mod -r"
+fpm_flags="--compiler ${compiler}"
 
 echo "Preprocessing using fypp..."
 cd $preproc
@@ -27,6 +28,6 @@ echo "Compile Fortran source code..."
 if [ -d "./build" ]; then
   rm -rf ./build/
 fi
-fpm build --compiler ${compiler}
+fpm build ${fpm_flags}
 echo "Running tests..."
-fpm test --compiler ${compiler}
+fpm test ${fpm_flags}
