@@ -36,3 +36,9 @@ call to_netcdf(dummy_var, path//filename)
 
 end program main
 ```
+
+## Miscellaneous
+To count the LOC for this project
+```
+cloc --force-lang-def=./misc/language_definitions.txt --exclude-dir=backups,src .
+```
