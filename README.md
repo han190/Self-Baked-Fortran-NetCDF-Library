@@ -18,21 +18,21 @@ program main
 use module_netcdf
 implicit none
 
-integer, parameter :: nx = 6, ny = 12
 character(len=*), parameter :: filename = "simple_xy.nc"
 type(nc_var) :: var
-real, target :: raw(nx, ny)
+real, target :: raw(3, 4)
 class(*), pointer :: ptr(:)
 
 ! Fill an array with random numbers, and
 ! map the array to a 1D pointer
 call random_number(raw)
-ptr(1:nx*ny) => raw 
+ptr(1:3*4) => raw 
 
 ! Construct a data array and write to a NetCDF file.
-dummy_var = data_array(ptr, name="data", &
-  & dims=dims(["x".dim.nx, "y".dim.ny]))
-call to_netcdf(dummy_var, filename)
+var = data_array(ptr, name="data", &
+  & dims=dims(["x".dim.3, "y".dim.4]))
+call to_netcdf(var, filename)
+nullify (ptr)
 
 end program main
 ```
@@ -55,6 +55,7 @@ type is (real)
     ptr(1:s(1), 1:s(2)) => vals
   end associate
 end select
+nullify (ptr)
 
 end program main
 ```
