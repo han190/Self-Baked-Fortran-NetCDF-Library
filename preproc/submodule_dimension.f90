@@ -73,4 +73,65 @@ module subroutine def_var_dim(var)
   end if
 end subroutine def_var_dim
 
+function inq_dims_(ncid, dimids) result(dims)
+  integer(c_int), intent(in) :: ncid
+  integer(c_int), intent(in) :: dimids(:)
+  type(nc_dim), allocatable :: dims(:)
+  integer(c_int) :: stat, ndims, i, unlim_dim
+  character(kind=c_char, len=nc_max_name) :: tmp
+
+  ndims = size(dimids)
+  if (allocated(dims)) deallocate (dims)
+  allocate (dims(ndims))
+
+  stat = nc_inq_unlimdim(ncid, unlim_dim)
+  call handle_error(stat, "nc_inq_unlimdim")
+
+  do i = 1, ndims
+    associate (dim => dims(i))
+      dim%ID = dimids(i)
+      stat = nc_inq_dimlen(ncid, dim%ID, dim%len)
+      call handle_error(stat, "nc_inq_dimlen")
+
+      stat = nc_inq_dimname(ncid, dim%ID, tmp)
+      call handle_error(stat, "nc_inq_dimname")
+      dim%name = cstrip(tmp)
+      dim%is_unlim = dim%ID == unlim_dim
+    end associate
+  end do
+end function inq_dims_
+
+module subroutine inq_grp_dims(grp)
+  class(nc_grp), intent(inout) :: grp
+  integer(c_int) :: stat, ndims, include_parents
+  integer(c_int), allocatable :: dimids(:)
+
+  stat = nc_inq_ndims(grp%ID, ndims)
+  call handle_error(stat, "nc_inq_ndims")
+
+  allocate (dimids(ndims))
+  stat = nc_inq_dimids(grp%ID, ndims, dimids, include_parents)
+  call handle_error(stat, "nc_inq_dimids")
+
+  grp%dims = inq_dims_(grp%ID, dimids)
+end subroutine inq_grp_dims
+
+module subroutine inq_var_dims(var)
+  type(nc_var), intent(inout) :: var
+  integer(c_int) :: stat, ndims
+  integer(c_int), allocatable :: dimids(:)
+
+  if (.not. associated(var%grpID)) &
+    & error stop "[inq_var_dims] Group ID not associated."
+
+  stat = nc_inq_varndims(var%grpID, var%ID, ndims)
+  call handle_error(stat, "nc_inq_varndims")
+
+  allocate (dimids(ndims))
+  stat = nc_inq_vardimid(var%grpID, var%ID, dimids)
+  call handle_error(stat, "nc_inq_vardimid")
+
+  var%dims = inq_dims_(var%grpID, dimids)
+end subroutine inq_var_dims
+
 end submodule submodule_dimension

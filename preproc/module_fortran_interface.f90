@@ -8,11 +8,12 @@ implicit none
 !> The data model follows the netCDF data model introduced
 !> https://docs.unidata.ucar.edu/netcdf-c/current/netcdf_data_model.html
 
-public :: nc_dim, nc_att, nc_var, nc_grp
+public :: nc_dim, nc_att, nc_var, nc_grp, nc_file
 public :: operator(.dim.), operator(.att.)
 public :: write(formatted)
 public :: shape, atts, dims
-public :: to_netcdf, data_array
+public :: to_netcdf, from_netcdf
+public :: data_array, data_set
 private
 
 type, abstract :: netcdf_type
@@ -74,6 +75,10 @@ interface to_netcdf
   module procedure :: to_netcdf_var
 end interface to_netcdf
 
+interface from_netcdf
+  module procedure :: from_netcdf_grp
+end interface from_netcdf
+
 interface shape
   module procedure :: shape_dims
   module procedure :: shape_var
@@ -131,6 +136,14 @@ interface
     type(nc_var), intent(in) :: var
   end subroutine def_var_dim
 
+  module subroutine inq_grp_dims(grp)
+    class(nc_grp), intent(inout) :: grp
+  end subroutine inq_grp_dims
+
+  module subroutine inq_var_dims(var)
+    type(nc_var), intent(inout) :: var
+  end subroutine inq_var_dims
+
   module pure function new_att_vec(name, vals) result(ret)
     character(len=*), intent(in) :: name
     class(*), intent(in) :: vals(:)
@@ -156,6 +169,14 @@ interface
     type(nc_var), intent(in) :: var
   end subroutine put_var_atts
 
+  module subroutine inq_grp_atts(grp)
+    class(nc_grp), intent(inout) :: grp
+  end subroutine inq_grp_atts
+
+  module subroutine inq_var_atts(var)
+    type(nc_var), intent(inout) :: var
+  end subroutine inq_var_atts
+
   module function data_array(data, name, dims, atts) result(var)
     class(*), intent(in) :: data(*)
     character(len=*), intent(in) :: name
@@ -174,6 +195,18 @@ interface
     character(len=*), intent(in) :: filename
     integer(c_int), intent(in), optional :: mode
   end subroutine to_netcdf_var
+
+  module function data_set(vars, name, atts) result(grp)
+    type(nc_var), intent(in) :: vars(:)
+    character(len=*), intent(in) :: name
+    type(nc_att), intent(in), optional :: atts(:)
+    type(nc_grp) :: grp
+  end function data_set
+
+  module function from_netcdf_grp(path) result(file)
+    character(len=*), intent(in) :: path
+    type(nc_file) :: file
+  end function from_netcdf_grp
 
   module subroutine write_formatted_dim( &
     & dim, unit, iotype, v_list, iostat, iomsg)

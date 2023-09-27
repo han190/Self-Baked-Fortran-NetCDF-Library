@@ -82,6 +82,24 @@ subroutine put_var(var)
   end select
 end subroutine put_var
 
+module function inq_var(grp, name) result(var)
+  class(nc_grp), target, intent(inout) :: grp
+  character(len=*), intent(in) :: name
+  type(nc_var) :: var
+  integer(c_int) :: stat
+
+  var%grpID => grp%ID
+  var%name = name
+  stat = nc_inq_varid(var%grpID, cstr(name), var%ID)
+  call handle_error(stat, "nc_inq_varid")
+
+  stat = nc_inq_vartype(var%grpID, var%ID, var%type)
+  call handle_error(stat, "nc_inq_vartype")
+
+  call inq_var_dims(var)
+  call inq_var_atts(var)
+end function inq_var
+
 module subroutine to_netcdf_var(var, filename, mode)
   type(nc_var), intent(inout) :: var
   character(len=*), intent(in) :: filename
