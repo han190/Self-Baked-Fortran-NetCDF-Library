@@ -10,8 +10,8 @@ link = "netcdf"
 ```
 
 ## Examples
-### Write to NetCDF
-#### Write a single variable to NetCDF
+### Write to a NetCDF file
+#### Write a single variable to a NetCDF file
 ```Fortran
 program main
 
@@ -19,22 +19,42 @@ use module_netcdf
 implicit none
 
 integer, parameter :: nx = 6, ny = 12
-character(len=*), parameter :: path = "./data/", filename = "simple_xy_nc4.nc"
+character(len=*), parameter :: filename = "simple_xy.nc"
 type(nc_var) :: var
 real, target :: raw(nx, ny)
 class(*), pointer :: ptr(:)
 
-! Fill the array with random numbers.
-call execute_command_line("mkdir -p "//path)
+! Fill an array with random numbers, and
+! map the array to a 1D pointer
 call random_number(raw)
-
-! Map the array to a 1D pointer
 ptr(1:nx*ny) => raw 
 
 ! Construct a data array and write to a NetCDF file.
 dummy_var = data_array(ptr, name="data", &
   & dims=dims(["x".dim.nx, "y".dim.ny]))
-call to_netcdf(dummy_var, path//filename)
+call to_netcdf(dummy_var, filename)
+
+end program main
+```
+### Read from a NetCDF file
+#### Read a single variable from a NetCDF file
+```Fortran
+program main
+
+use module_netcdf
+implicit none
+
+character(len=*), parameter :: filename = "simple_xy.nc"
+type(nc_var), target :: var
+real, pointer :: ptr(:, :)
+
+var = from_netcdf(filename, "data")
+select type (vals => var%vals)
+type is (real)
+  associate (s => shape(var))
+    ptr(1:s(1), 1:s(2)) => vals
+  end associate
+end select
 
 end program main
 ```
