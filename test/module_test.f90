@@ -6,11 +6,11 @@ implicit none
 
 integer, parameter :: nx = 3, ny = 5
 character(len=*), parameter :: path = "./data/"
-character(len=*), parameter :: filename = "simple_xy.nc"
+character(len=*), parameter :: filename = "single_var.nc"
 
 contains
 
-subroutine simple_xy_wr()
+subroutine single_var_wr()
   type(nc_var) :: dummy_var
   type(nc_dim), allocatable :: dummy_dims(:)
   type(nc_att), allocatable :: dummy_atts(:)
@@ -44,14 +44,14 @@ subroutine simple_xy_wr()
     print "(3(f10.4, 1x))", raw(:, i)
   end do
 
-  associate (str => "Successfully write to 'simple_xy.nc'.")
+  associate (str => "Successfully write to 'single_var.nc'.")
     print "(a)", repeat("=", len(str))
     print "(a)", str
     print "(a)", repeat("=", len(str)), new_line("(a)")
   end associate
-end subroutine simple_xy_wr
+end subroutine single_var_wr
 
-subroutine simple_xy_rd()
+subroutine single_var_rd()
   type(nc_var), target :: dummy_var
   real, pointer :: dummy_data(:, :)
   integer :: i
@@ -70,11 +70,11 @@ subroutine simple_xy_rd()
     print "(3(f10.4, 1x))", dummy_data(:, i)
   end do
 
-  associate (str => "Successfully read from 'simple_xy.nc'.")
+  associate (str => "Successfully read from 'single_var.nc'.")
     print "(a)", repeat("=", len(str))
     print "(a)", str
     print "(a)", repeat("=", len(str)), new_line("(a)")
   end associate
-end subroutine simple_xy_rd
+end subroutine single_var_rd
 
 end module module_test

@@ -2,6 +2,6 @@ program main
 use module_test
 implicit none
 
-call simple_xy_wr()
-call simple_xy_rd()
+call single_var_wr()
+call single_var_rd()
 end program main
