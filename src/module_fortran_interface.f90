@@ -77,6 +77,7 @@ end interface to_netcdf
 
 interface from_netcdf
   module procedure :: from_netcdf_grp
+  module procedure :: from_netcdf_var
 end interface from_netcdf
 
 interface shape
@@ -177,8 +178,12 @@ interface
     type(nc_var), intent(inout) :: var
   end subroutine inq_var_atts
 
+  module subroutine get_var_atts(var)
+    type(nc_var), intent(inout) :: var
+  end subroutine get_var_atts
+
   module function data_array(data, name, dims, atts) result(var)
-    class(*), intent(in) :: data(*)
+    class(*), intent(in) :: data(:)
     character(len=*), intent(in) :: name
     type(nc_dim), intent(in) :: dims(:)
     type(nc_att), intent(in), optional :: atts(:)
@@ -195,6 +200,11 @@ interface
     character(len=*), intent(in) :: filename
     integer(c_int), intent(in), optional :: mode
   end subroutine to_netcdf_var
+
+  module function from_netcdf_var(filename, name) result(var)
+    character(len=*), intent(in) :: filename, name
+    type(nc_var) :: var
+  end function from_netcdf_var
 
   module function data_set(vars, name, atts) result(grp)
     type(nc_var), intent(in) :: vars(:)

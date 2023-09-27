@@ -182,8 +182,8 @@ function inq_atts_(ncid, varid, natts) result(atts)
 
   do i = 1, natts
     associate (att => atts(i))
-      att%id = i - 1
-      stat = nc_inq_attname(ncid, varid, att%id, tmp)
+      att%ID = i - 1
+      stat = nc_inq_attname(ncid, varid, att%ID, tmp)
       call handle_error(stat, "nc_inq_attname")
       att%name = cstrip(tmp)
 
@@ -213,5 +213,81 @@ module subroutine inq_var_atts(var)
   call handle_error(stat, "nc_inq_varnatts")
   var%atts = inq_atts_(var%grpID, var%ID, natts)
 end subroutine inq_var_atts
+
+subroutine get_atts_(ncid, varid, atts)
+  integer(c_int), intent(in) :: ncid, varid
+  type(nc_att), intent(inout) :: atts(:)
+  integer(c_int) :: stat, i
+
+  do i = 1, size(atts)
+    associate (att => atts(i))
+      if (allocated(att%vals)) deallocate (att%vals)
+      select case (att%type)
+      case (nc_byte)
+        allocate (integer(int8) :: att%vals(att%len))
+        select type (vals_ => att%vals)
+        type is (integer(int8))
+          stat = nc_get_att_ubyte(ncid, varid, cstr(att%name), vals_)
+          call handle_error(stat, "nc_get_att_ubyte")
+        end select
+      case (nc_short)
+        allocate (integer(int16) :: att%vals(att%len))
+        select type (vals_ => att%vals)
+        type is (integer(int16))
+          stat = nc_get_att_short(ncid, varid, cstr(att%name), vals_)
+          call handle_error(stat, "nc_get_att_short")
+        end select
+      case (nc_int)
+        allocate (integer(int32) :: att%vals(att%len))
+        select type (vals_ => att%vals)
+        type is (integer(int32))
+          stat = nc_get_att_int(ncid, varid, cstr(att%name), vals_)
+          call handle_error(stat, "nc_get_att_int")
+        end select
+      case (nc_int64)
+        allocate (integer(int64) :: att%vals(att%len))
+        select type (vals_ => att%vals)
+        type is (integer(int64))
+          stat = nc_get_att_longlong(ncid, varid, cstr(att%name), vals_)
+          call handle_error(stat, "nc_get_att_longlong")
+        end select
+      case (nc_float)
+        allocate (real(real32) :: att%vals(att%len))
+        select type (vals_ => att%vals)
+        type is (real(real32))
+          stat = nc_get_att_float(ncid, varid, cstr(att%name), vals_)
+          call handle_error(stat, "nc_get_att_float")
+        end select
+      case (nc_double)
+        allocate (real(real64) :: att%vals(att%len))
+        select type (vals_ => att%vals)
+        type is (real(real64))
+          stat = nc_get_att_double(ncid, varid, cstr(att%name), vals_)
+          call handle_error(stat, "nc_get_att_double")
+        end select
+      case (nc_char)
+        if (att%len > nc_max_char) then
+          allocate (character(kind=c_char, len=nc_max_char) :: &
+            & att%vals(att%len/nc_max_char + 1))
+        else
+          allocate (character(kind=c_char, len=att%len) :: att%vals(1))
+        end if
+        select type (vals_ => att%vals)
+        type is (character(kind=c_char, len=*))
+          stat = nc_get_att_text(ncid, varid, cstr(att%name), vals_)
+          call handle_error(stat, "nc_get_att_text")
+        end select
+      end select
+    end associate
+  end do
+end subroutine get_atts_
+
+module subroutine get_var_atts(var)
+  type(nc_var), intent(inout) :: var
+
+  if (.not. associated(var%grpID)) &
+    & error stop "[inq_var_atts] Group ID not associated."
+  call get_atts_(var%grpID, var%ID, var%atts)
+end subroutine get_var_atts
 
 end submodule submodule_attribute

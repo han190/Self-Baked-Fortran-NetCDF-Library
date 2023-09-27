@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 repodir=$(pwd)
 compiler="gfortran"
+profile="debug"
 src="${repodir}/src"
 preproc="${repodir}/preproc"
 interface="${repodir}/interface"
 fypp_files=("submodule_attribute" "submodule_io" "submodule_variable")
 fprettify_flags="-i 2 --strict-indent --disable-indent-mod -r"
-fpm_flags="--compiler ${compiler}"
+fpm_flags="--compiler ${compiler} --profile ${profile}"
 
 echo "Preprocessing using fypp..."
 cd $preproc

@@ -3,7 +3,7 @@ implicit none
 contains
 
 module function data_array(data, name, dims, atts) result(var)
-  class(*), intent(in) :: data(*)
+  class(*), intent(in) :: data(:)
   character(len=*), intent(in) :: name
   type(nc_dim), intent(in) :: dims(:)
   type(nc_att), intent(in), optional :: atts(:)
@@ -12,8 +12,9 @@ module function data_array(data, name, dims, atts) result(var)
   var%name = name
   var%dims = dims
   if (present(atts)) var%atts = atts
-  if (allocated(var%vals)) deallocate (var%vals)
-  allocate (var%vals, source=data)
+  ! if (allocated(var%vals)) deallocate (var%vals)
+  ! allocate (var%vals, source=data)
+  var%vals = data
 
   select type (data)
   type is (integer(int8))
@@ -60,6 +61,9 @@ subroutine put_var(var)
   type(nc_var), intent(in) :: var
   integer(c_int) :: stat
 
+  if (.not. allocated(var%vals)) &
+    & error stop "[put_var] Varible values not allocated."
+
   select type (vals_ => var%vals)
   type is (integer(int8))
     stat = nc_put_var_ubyte(var%grpID, var%ID, vals_)
@@ -98,7 +102,55 @@ module function inq_var(grp, name) result(var)
 
   call inq_var_dims(var)
   call inq_var_atts(var)
+  call get_var_atts(var)
 end function inq_var
+
+subroutine get_var(var)
+  type(nc_var), intent(inout) :: var
+  integer(c_int) :: stat, total_len
+
+  if (.not. associated(var%grpID)) &
+    & error stop "[get_var] Group ID not associated."
+
+  if (allocated(var%vals)) deallocate (var%vals)
+  total_len = product(shape(var))
+
+  select case (var%type)
+  case (nc_byte)
+    allocate (integer(int8) :: var%vals(total_len))
+  case (nc_short)
+    allocate (integer(int16) :: var%vals(total_len))
+  case (nc_int)
+    allocate (integer(int32) :: var%vals(total_len))
+  case (nc_int64)
+    allocate (integer(int64) :: var%vals(total_len))
+  case (nc_float)
+    allocate (real(real32) :: var%vals(total_len))
+  case (nc_double)
+    allocate (real(real64) :: var%vals(total_len))
+  end select
+
+  select type (vals_ => var%vals)
+  type is (integer(int8))
+    stat = nc_get_var_ubyte(var%grpID, var%ID, vals_)
+    call handle_error(stat, "nc_get_var_ubyte")
+  type is (integer(int16))
+    stat = nc_get_var_short(var%grpID, var%ID, vals_)
+    call handle_error(stat, "nc_get_var_short")
+  type is (integer(int32))
+    stat = nc_get_var_int(var%grpID, var%ID, vals_)
+    call handle_error(stat, "nc_get_var_int")
+  type is (integer(int64))
+    stat = nc_get_var_longlong(var%grpID, var%ID, vals_)
+    call handle_error(stat, "nc_get_var_longlong")
+  type is (real(real32))
+    stat = nc_get_var_float(var%grpID, var%ID, vals_)
+    call handle_error(stat, "nc_get_var_float")
+  type is (real(real64))
+    stat = nc_get_var_double(var%grpID, var%ID, vals_)
+    call handle_error(stat, "nc_get_var_double")
+  end select
+end subroutine get_var
 
 module subroutine to_netcdf_var(var, filename, mode)
   type(nc_var), intent(inout) :: var
@@ -124,9 +176,14 @@ module subroutine to_netcdf_var(var, filename, mode)
     var%grpID => file%ID
 
     call def_var_dim(var)
-    if (allocated(file%atts)) call put_grp_atts(file)
     call def_var(var)
+
+    if (allocated(file%atts)) call put_grp_atts(file)
     if (allocated(var%atts)) call put_var_atts(var)
+
+    stat = nc_enddef(file%ID)
+    call handle_error(stat, "nc_enddef")
+
     call put_var(var)
     nullify (var%grpID)
   case default
@@ -136,5 +193,21 @@ module subroutine to_netcdf_var(var, filename, mode)
   stat = nc_close(file%ID)
   call handle_error(stat, "nc_close")
 end subroutine to_netcdf_var
+
+module function from_netcdf_var(filename, name) result(var)
+  character(len=*), intent(in) :: filename, name
+  type(nc_var) :: var
+  type(nc_file) :: file
+  integer(c_int) :: stat
+  character(kind=c_char, len=nc_max_name) :: tmp
+
+  file%filename = filename
+  file%mode = nc_nowrite
+
+  stat = nc_open(cstr(file%filename), file%mode, file%ID)
+  call handle_error(stat, "nc_open")
+  var = inq_var(file, name)
+  call get_var(var)
+end function from_netcdf_var
 
 end submodule submodule_variable
