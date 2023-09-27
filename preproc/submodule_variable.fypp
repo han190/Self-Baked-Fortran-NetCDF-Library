@@ -140,8 +140,9 @@ module subroutine to_netcdf_var(var, filename, mode)
     if (allocated(file%atts)) call put_grp_atts(file)
     if (allocated(var%atts)) call put_var_atts(var)
 
-    stat = nc_enddef(file%ID)
-    call handle_error(stat, "nc_enddef")
+    ! enddef is not required for netcdf4
+    ! stat = nc_enddef(file%ID)
+    ! call handle_error(stat, "nc_enddef")
 
     call put_var(var)
     nullify (var%grpID)
