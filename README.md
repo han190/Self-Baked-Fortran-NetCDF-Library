@@ -48,7 +48,11 @@ character(len=*), parameter :: filename = "simple_xy.nc"
 type(nc_var), target :: var
 real, pointer :: ptr(:, :)
 
+! Read from NetCDF
 var = from_netcdf(filename, "data")
+
+! Select type and then map the 1d 
+! unlimited polymorphic to a 2d array.
 select type (vals => var%vals)
 type is (real)
   associate (s => shape(var))
