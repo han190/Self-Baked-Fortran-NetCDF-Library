@@ -1,6 +1,7 @@
 module module_test
 
 use :: module_netcdf
+use :: module_data_structure
 use :: ieee_arithmetic
 implicit none
 
@@ -9,6 +10,33 @@ character(len=*), parameter :: path = "./data/"
 character(len=*), parameter :: filename = "single_var.nc"
 
 contains
+
+subroutine data_structure()
+  type(dict_type) :: rank_physicists
+  character(len=:), allocatable :: physicists(:), physicist
+  integer :: i, n
+
+  physicists = [character(len=30) :: &
+    & "Albert Einstein", "Isaac Newton", "James Maxwell", "Galileo Galilei"]
+  rank_physicists = new_dict()
+
+  do i = 1, size(physicists)
+    call append(rank_physicists, trim(physicists(i)).pair.i)
+  end do
+
+  physicists = [physicists, [character(len=30) :: "Nicolaus Copernicus"]]
+  do i = 1, size(physicists)
+    physicist = trim(physicists(i))
+    n = scan(rank_physicists, physicist)
+    print "(a, t30, i0)", physicist, n
+  end do
+
+  associate (str => "Successfully test customized data structures.")
+    print "(a)", repeat("=", len(str))
+    print "(a)", str
+    print "(a)", repeat("=", len(str)), new_line("(a)")
+  end associate
+end subroutine data_structure
 
 subroutine single_var_wr()
   type(nc_var) :: dummy_var

@@ -2,12 +2,12 @@ submodule(module_fortran_interface) submodule_group
 implicit none
 contains
 
-module function data_set(vars, name, atts) result(grp)
+module function new_grp(vars, name, atts) result(grp)
   type(nc_var), intent(in) :: vars(:)
   character(len=*), intent(in) :: name
   type(nc_att), intent(in), optional :: atts(:)
   type(nc_grp) :: grp
-end function data_set
+end function new_grp
 
 module function from_netcdf_grp(path) result(file)
   character(len=*), intent(in) :: path

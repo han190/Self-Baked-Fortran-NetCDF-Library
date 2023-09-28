@@ -3,7 +3,7 @@ submodule(module_fortran_interface) submodule_variable
 implicit none
 contains
 
-module function data_array(data, name, dims, atts) result(var)
+module function new_var(data, name, dims, atts) result(var)
   class(*), intent(in) :: data(:)
   character(len=*), intent(in) :: name
   type(nc_dim), intent(in) :: dims(:)
@@ -25,7 +25,7 @@ module function data_array(data, name, dims, atts) result(var)
   type is (character(*))
     var%type = nc_char
   end select
-end function data_array
+end function new_var
 
 module pure function shape_var(var) result(ret)
   type(nc_var), intent(in) :: var

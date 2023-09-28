@@ -6,7 +6,7 @@ src="${repodir}/src"
 preproc="${repodir}/preproc"
 interface="${repodir}/interface"
 fypp_files=("submodule_attribute" "submodule_io" "submodule_variable")
-fprettify_flags="-i 2 --strict-indent --disable-indent-mod -r"
+fprettify_flags="-r -i 2 --strict-indent --disable-indent-mod"
 fpm_flags="--compiler ${compiler} --profile ${profile}"
 
 echo "Preprocessing using fypp..."
