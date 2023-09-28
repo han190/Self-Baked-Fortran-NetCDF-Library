@@ -54,7 +54,7 @@ module subroutine def_grp_dim(grp)
       call handle_error(stat, "nc_def_dim")
     end do
   else
-    error stop "Group dimensions not allocated."
+    error stop "[def_var_dim] Group dimensions not allocated."
   end if
 end subroutine def_grp_dim
 
@@ -69,7 +69,7 @@ module subroutine def_var_dim(var)
       call handle_error(stat, "nc_def_dim")
     end do
   else
-    error stop "Variable dimensions not allocated."
+    error stop "[def_var_dim] Variable dimensions not allocated."
   end if
 end subroutine def_var_dim
 

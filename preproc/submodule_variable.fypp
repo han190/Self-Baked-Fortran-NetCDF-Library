@@ -46,7 +46,7 @@ module subroutine def_var(var)
       & var%type, ndims, dimids, var%ID)
     call handle_error(stat, "nc_def_var")
   else
-    error stop "Group ID not associated."
+    error stop "[def_var] Group ID not associated."
   end if
 end subroutine def_var
 

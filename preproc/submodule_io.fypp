@@ -51,7 +51,7 @@ module subroutine write_formatted_dim( &
   end if
 
   if (.not. allocated(dim%name)) &
-    & error stop "Dimension name not allocated."
+    & error stop "[write_formatted_dim] Dimension name not allocated."
 
   if (iotype == "DT" .or. iotype == "LISTDIRECTED") then
     if (dim%is_unlim) then
@@ -92,7 +92,7 @@ pure function type_name(ID) result(ret)
   case (nc_int64)
     ret = "int64"
   case default
-    error stop "Not supported type id."
+    error stop "[type_name] Not supported type id."
   end select
 
   ret = "{"//ret//"}"
@@ -117,7 +117,7 @@ module subroutine write_formatted_att( &
   end if
 
   if (.not. allocated(att%name)) &
-    & error stop "Attribute name not allocated."
+    & error stop "[write_formatted_att] Attribute name not allocated."
 
   if (iotype == "DT" .or. iotype == "LISTDIRECTED") then
     att_type = type_name(att%type)
