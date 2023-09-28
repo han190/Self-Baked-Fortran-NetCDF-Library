@@ -1,10 +1,10 @@
 module module_data_structure
 implicit none
 
-public :: list_type, dict_type
+public :: list_type, dict_type, pair_type
 public :: size, append, scan, destroy
 public :: operator(.pair.), new_dict
-public :: invalid
+public :: invalid, to_array
 private
 
 integer, parameter :: invalid = -2147483647
@@ -117,6 +117,11 @@ interface
   module subroutine destroy_dict(dict)
     type(dict_type), intent(inout) :: dict
   end subroutine destroy_dict
+
+  module function to_array(dict) result(pairs)
+    type(dict_type), intent(in) :: dict
+    type(pair_type), allocatable :: pairs(:)
+  end function to_array
 end interface
 
 end module module_data_structure

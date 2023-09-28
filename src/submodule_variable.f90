@@ -41,7 +41,7 @@ module pure function shape_var(var) result(ret)
   ret = shape_dims(var%dims)
 end function shape_var
 
-subroutine def_var(var)
+module subroutine def_var(var)
   type(nc_var), intent(inout) :: var
   integer(c_int) :: stat, ndims, i
   integer(c_int), allocatable :: dimids(:)
@@ -57,7 +57,7 @@ subroutine def_var(var)
   end if
 end subroutine def_var
 
-subroutine put_var(var)
+module subroutine put_var(var)
   type(nc_var), intent(in) :: var
   integer(c_int) :: stat
 
@@ -153,47 +153,36 @@ subroutine get_var(var)
 end subroutine get_var
 
 module subroutine to_netcdf_var(var, filename, mode)
-  type(nc_var), intent(inout) :: var
+  type(nc_var), intent(in) :: var
   character(len=*), intent(in) :: filename
   integer(c_int), intent(in), optional :: mode
   type(nc_file), target :: file
-  integer(c_int) :: stat
 
-  !> Copy metadata
-  file%filename = filename
-  file%name = cstr("/")
-
+  file = data_set([var])
   if (present(mode)) then
     file%mode = mode
   else
     file%mode = ior(nc_netcdf4, nc_clobber)
   end if
-
-  select case (file%mode)
-  case (ior(nc_netcdf4, nc_clobber))
-    stat = nc_create(cstr(filename), file%mode, file%ID)
-    call handle_error(stat, "nc_create")
-    var%grpID => file%ID
-
-    call def_var_dim(var)
-    call def_var(var)
-
-    if (allocated(file%atts)) call put_grp_atts(file)
-    if (allocated(var%atts)) call put_var_atts(var)
-
-    ! enddef is not required for netcdf4
-    ! stat = nc_enddef(file%ID)
-    ! call handle_error(stat, "nc_enddef")
-
-    call put_var(var)
-    nullify (var%grpID)
-  case default
-    error stop "Mode not supported yet."
-  end select
-
-  stat = nc_close(file%ID)
-  call handle_error(stat, "nc_close")
+  file%filename = filename
+  call to_netcdf_grp(file)
 end subroutine to_netcdf_var
+
+module subroutine to_netcdf_vars(vars, filename, mode)
+  type(nc_var), intent(in) :: vars(:)
+  character(len=*), intent(in) :: filename
+  integer(c_int), intent(in), optional :: mode
+  type(nc_file), target :: file
+
+  file = data_set(vars)
+  if (present(mode)) then
+    file%mode = mode
+  else
+    file%mode = ior(nc_netcdf4, nc_clobber)
+  end if
+  file%filename = filename
+  call to_netcdf_grp(file)
+end subroutine to_netcdf_vars
 
 module function from_netcdf_var(filename, name) result(var)
   character(len=*), intent(in) :: filename, name

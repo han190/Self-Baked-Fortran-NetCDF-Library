@@ -75,4 +75,27 @@ module subroutine destroy_dict(dict)
   deallocate (dict%buckets)
 end subroutine destroy_dict
 
+module function to_array(dict) result(pairs)
+  type(dict_type), intent(in) :: dict
+  type(pair_type), allocatable :: pairs(:)
+  type(list_type) :: list
+  type(node_type), pointer :: tmp
+  integer :: i, j
+
+  if (allocated(pairs)) deallocate (pairs)
+  allocate (pairs(size(dict)))
+
+  j = 1
+  do i = 1, dict%num_buckets
+    list = dict%buckets(i)
+    tmp => list%head
+    do while (associated(tmp))
+      pairs(j) = tmp%pair
+      tmp => tmp%next
+      j = j + 1
+    end do
+  end do
+  nullify (tmp)
+end function to_array
+
 end submodule submodule_dictionary

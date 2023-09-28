@@ -5,31 +5,48 @@ use :: module_data_structure
 use :: ieee_arithmetic
 implicit none
 
-integer, parameter :: nx = 3, ny = 5
+integer, parameter :: nx = 3, ny = 5, nz = 4, nt = 1
 character(len=*), parameter :: path = "./data/"
 character(len=*), parameter :: filename = "single_var.nc"
 
 contains
 
 subroutine data_structure()
-  type(dict_type) :: rank_physicists
+  type(dict_type) :: physicists_dict
+  type(pair_type), allocatable :: physicists_pairs(:)
   character(len=:), allocatable :: physicists(:), physicist
   integer :: i, n
 
   physicists = [character(len=30) :: &
     & "Albert Einstein", "Isaac Newton", "James Maxwell", "Galileo Galilei"]
-  rank_physicists = new_dict()
+  physicists_dict = new_dict()
 
   do i = 1, size(physicists)
-    call append(rank_physicists, trim(physicists(i)).pair.i)
+    call append(physicists_dict, trim(physicists(i)) .pair.i)
   end do
+  physicists_pairs = to_array(physicists_dict)
+  print "(a)", "Unsorted pair array = "
+  do i = 1, size(physicists_pairs)
+    print "(2x, a, t30, i0)", physicists_pairs(i)%key, &
+      & physicists_pairs(i)%val
+  end do
+  print "(a)", ""
 
-  physicists = [physicists, [character(len=30) :: "Nicolaus Copernicus"]]
+  print "(a)", "Scan results = "
   do i = 1, size(physicists)
     physicist = trim(physicists(i))
-    n = scan(rank_physicists, physicist)
-    print "(a, t30, i0)", physicist, n
+    n = scan(physicists_dict, physicist)
+    print "(2x, a, t30, i0)", physicist, n
   end do
+
+  associate (someone => "Nicolaus Copernicus")
+    n = scan(physicists_dict, someone)
+    if (n == invalid) then
+      print "(a)", someone//" not found."
+    else
+      print "(a)", someone//" found."
+    end if
+  end associate
 
   associate (str => "Successfully test customized data structures.")
     print "(a)", repeat("=", len(str))
@@ -65,7 +82,7 @@ subroutine single_var_wr()
   ! Write to netcdf.
   call to_netcdf(dummy_var, path//filename)
   nullify (dummy_data)
-  
+
   print "(dt)", dummy_var
   print "(a)", "values = "
   do i = 1, size(raw, 2)
@@ -104,5 +121,37 @@ subroutine single_var_rd()
     print "(a)", repeat("=", len(str)), new_line("(a)")
   end associate
 end subroutine single_var_rd
+
+subroutine multiple_vars_wr()
+  type(nc_var) :: geopt, temp, slp
+  real, target :: geopt_raw(nx, ny, nz), temp_raw(nx, ny, nt), slp_raw(nx, ny)
+  class(*), pointer :: ptr(:)
+
+  call execute_command_line("mkdir -p "//path)
+
+  call random_number(geopt_raw)
+  ptr(1:size(geopt_raw)) => geopt_raw
+  geopt = data_array(ptr, "geopt", &
+    & dims=dims(["latitude".dim.nx, "longitude".dim.ny, "level".dim.nz]), &
+    & atts=atts(["long_name".att."geopotenail"]))
+  nullify (ptr)
+
+  call random_number(temp_raw)
+  ptr(1:size(temp_raw)) => temp_raw
+  temp = data_array(ptr, "temp", &
+    & dims=dims(["latitude".dim.nx, "longitude".dim.ny, "time".dim.nt]), &
+    & atts=atts(["long_name".att."temperature"]))
+  nullify (ptr)
+
+  call random_number(slp_raw)
+  ptr(1:size(slp_raw)) => slp_raw
+  slp = data_array(ptr, "slp", &
+    & dims=dims(["latitude".dim.nx, "longitude".dim.ny]), &
+    & atts=atts(["long_name".att."sea level pressure"]))
+  nullify (ptr)
+
+  print "(dt)", geopt, temp, slp
+  call to_netcdf([geopt, temp, slp], path//"multiple_vars.nc")
+end subroutine multiple_vars_wr
 
 end module module_test

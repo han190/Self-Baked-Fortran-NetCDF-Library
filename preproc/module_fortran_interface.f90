@@ -3,6 +3,7 @@ module module_fortran_interface
 use :: iso_fortran_env
 use :: iso_c_binding
 use :: module_c_interface
+use :: module_data_structure
 implicit none
 
 !> The data model follows the netCDF data model introduced
@@ -76,11 +77,12 @@ interface data_array
 end interface data_array
 
 interface data_set
-  module procedure :: new_grp
+  module procedure :: new_file
 end interface data_set
 
 interface to_netcdf
   module procedure :: to_netcdf_var
+  module procedure :: to_netcdf_vars
 end interface to_netcdf
 
 interface from_netcdf
@@ -203,28 +205,45 @@ interface
     integer, allocatable :: ret(:)
   end function shape_var
 
-  module subroutine to_netcdf_var(var, filename, mode)
+  module subroutine def_var(var)
     type(nc_var), intent(inout) :: var
+  end subroutine def_var
+
+  module subroutine put_var(var)
+    type(nc_var), intent(in) :: var
+  end subroutine put_var
+
+  module subroutine to_netcdf_var(var, filename, mode)
+    type(nc_var), intent(in) :: var
     character(len=*), intent(in) :: filename
     integer(c_int), intent(in), optional :: mode
   end subroutine to_netcdf_var
+
+  module subroutine to_netcdf_vars(vars, filename, mode)
+    type(nc_var), intent(in) :: vars(:)
+    character(len=*), intent(in) :: filename
+    integer(c_int), intent(in), optional :: mode
+  end subroutine to_netcdf_vars
 
   module function from_netcdf_var(filename, name) result(var)
     character(len=*), intent(in) :: filename, name
     type(nc_var) :: var
   end function from_netcdf_var
 
-  module function new_grp(vars, name, atts) result(grp)
+  module function new_file(vars, atts) result(file)
     type(nc_var), intent(in) :: vars(:)
-    character(len=*), intent(in) :: name
     type(nc_att), intent(in), optional :: atts(:)
-    type(nc_grp) :: grp
-  end function new_grp
+    type(nc_file) :: file
+  end function new_file
 
   module function from_netcdf_grp(path) result(file)
     character(len=*), intent(in) :: path
     type(nc_file) :: file
   end function from_netcdf_grp
+
+  module subroutine to_netcdf_grp(file)
+    type(nc_file), target, intent(in) :: file
+  end subroutine to_netcdf_grp
 
   module subroutine write_formatted_dim( &
     & dim, unit, iotype, v_list, iostat, iomsg)
