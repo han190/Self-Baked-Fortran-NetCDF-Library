@@ -143,14 +143,16 @@ subroutine multiple_vars_wr()
   ptr(1:size(temp_raw)) => temp_raw
   temp = data_array(ptr, "temp", &
     & dims=dims(["latitude".dim.nx, "longitude".dim.ny, "time".dim.nt]), &
-    & atts=atts(["long_name".att."temperature"]))
+    & atts=atts(["long_name".att."temperature", "add_offset".att.-273.15, &
+                 "scale_factor".att.1.0]))
   nullify (ptr)
 
   call random_number(slp_raw)
   ptr(1:size(slp_raw)) => slp_raw
   slp = data_array(ptr, "slp", &
     & dims=dims(["latitude".dim.nx, "longitude".dim.ny]), &
-    & atts=atts(["long_name".att."sea level pressure"]))
+    & atts=atts(["long_name".att."sea level pressure", &
+                 "missing_value".att.-2147483647]))
   nullify (ptr)
 
   print "(dt)", geopt, temp, slp
