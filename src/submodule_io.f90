@@ -105,7 +105,7 @@ module subroutine write_formatted_att( &
   integer, intent(in) :: v_list(:)
   integer, intent(out) :: iostat
   character(*), intent(inout) :: iomsg
-  character(len=:), allocatable :: fmt, tmp
+  character(len=:), allocatable :: fmt, tmp, val_str
   character(len=:), allocatable :: att_type, att_name
   integer :: lvl
 
@@ -121,6 +121,7 @@ module subroutine write_formatted_att( &
   if (iotype == "DT" .or. iotype == "LISTDIRECTED") then
     att_type = type_name(att%type)
     att_name = indent(att%name, lvl)
+    allocate (character(len=100) :: val_str)
 
     select type (vals_ => att%vals)
     type is (character(*))
@@ -131,53 +132,59 @@ module subroutine write_formatted_att( &
         write (unit, "(a,/)") tmp
       end if
     type is (integer(int8))
-      fmt = "(a,1x,a,1x,i0,"
+      write (val_str, *) vals_(1)
+      fmt = "(a,1x,a,1x,a,"
       if (size(att%vals) > 1) then
         fmt = fmt//"'...',/)"
       else
         fmt = fmt//"/)"
       end if
-      write (unit, fmt) att_name, att_type, vals_(1)
+      write (unit, fmt) att_name, att_type, adjustl(trim(val_str))
     type is (integer(int16))
-      fmt = "(a,1x,a,1x,i0,"
+      write (val_str, *) vals_(1)
+      fmt = "(a,1x,a,1x,a,"
       if (size(att%vals) > 1) then
         fmt = fmt//"'...',/)"
       else
         fmt = fmt//"/)"
       end if
-      write (unit, fmt) att_name, att_type, vals_(1)
+      write (unit, fmt) att_name, att_type, adjustl(trim(val_str))
     type is (integer(int32))
-      fmt = "(a,1x,a,1x,i0,"
+      write (val_str, *) vals_(1)
+      fmt = "(a,1x,a,1x,a,"
       if (size(att%vals) > 1) then
         fmt = fmt//"'...',/)"
       else
         fmt = fmt//"/)"
       end if
-      write (unit, fmt) att_name, att_type, vals_(1)
+      write (unit, fmt) att_name, att_type, adjustl(trim(val_str))
     type is (integer(int64))
-      fmt = "(a,1x,a,1x,i0,"
+      write (val_str, *) vals_(1)
+      fmt = "(a,1x,a,1x,a,"
       if (size(att%vals) > 1) then
         fmt = fmt//"'...',/)"
       else
         fmt = fmt//"/)"
       end if
-      write (unit, fmt) att_name, att_type, vals_(1)
+      write (unit, fmt) att_name, att_type, adjustl(trim(val_str))
     type is (real(real32))
-      fmt = "(a,1x,a,1x,e10.3,"
+      write (val_str, *) vals_(1)
+      fmt = "(a,1x,a,1x,a,"
       if (size(att%vals) > 1) then
         fmt = fmt//"'...',/)"
       else
         fmt = fmt//"/)"
       end if
-      write (unit, fmt) att_name, att_type, vals_(1)
+      write (unit, fmt) att_name, att_type, adjustl(trim(val_str))
     type is (real(real64))
-      fmt = "(a,1x,a,1x,e10.3,"
+      write (val_str, *) vals_(1)
+      fmt = "(a,1x,a,1x,a,"
       if (size(att%vals) > 1) then
         fmt = fmt//"'...',/)"
       else
         fmt = fmt//"/)"
       end if
-      write (unit, fmt) att_name, att_type, vals_(1)
+      write (unit, fmt) att_name, att_type, adjustl(trim(val_str))
     end select
   end if
 end subroutine write_formatted_att

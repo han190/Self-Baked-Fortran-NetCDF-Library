@@ -124,16 +124,19 @@ end subroutine single_var_rd
 
 subroutine multiple_vars_wr()
   type(nc_var) :: geopt, temp, slp
-  real, target :: geopt_raw(nx, ny, nz), temp_raw(nx, ny, nt), slp_raw(nx, ny)
+  real, target :: geopt_raw(nx, ny, nz)
+  double precision, target :: temp_raw(nx, ny, nt), slp_raw(nx, ny)
   class(*), pointer :: ptr(:)
+  real :: nan
 
+  nan = ieee_value(0.0, ieee_quiet_nan)
   call execute_command_line("mkdir -p "//path)
 
   call random_number(geopt_raw)
   ptr(1:size(geopt_raw)) => geopt_raw
   geopt = data_array(ptr, "geopt", &
     & dims=dims(["latitude".dim.nx, "longitude".dim.ny, "level".dim.nz]), &
-    & atts=atts(["long_name".att."geopotenail"]))
+    & atts=atts(["long_name".att."geopotenail", "_FillValue".att.nan]))
   nullify (ptr)
 
   call random_number(temp_raw)

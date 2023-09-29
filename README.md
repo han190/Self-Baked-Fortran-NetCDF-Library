@@ -35,6 +35,44 @@ nullify (ptr)
 
 end program main
 ```
+#### Write multiple variables to a NetCDF file
+```fortran
+program main
+
+use module_netcdf
+implicit none
+
+integer, parameter :: nx = 4, ny = 3, nz = 2, nt = 1
+type(nc_var) :: geopt, temp, slp
+real, target :: geopt_raw(nx, ny, nz)
+double precision, target :: temp_raw(nx, ny, nt), slp_raw(nx, ny)
+class(*), pointer :: ptr(:)
+
+call random_number(geopt_raw)
+ptr(1:size(geopt_raw)) => geopt_raw
+geopt = data_array(ptr, "geopt", &
+  & dims=dims(["latitude".dim.nx, "longitude".dim.ny, "level".dim.nz]), &
+  & atts=atts(["long_name".att."geopotenail"]))
+nullify (ptr)
+
+call random_number(temp_raw)
+ptr(1:size(temp_raw)) => temp_raw
+temp = data_array(ptr, "temp", &
+  & dims=dims(["latitude".dim.nx, "longitude".dim.ny, "time".dim.nt]), &
+  & atts=atts(["long_name".att."temperature"]))
+nullify (ptr)
+
+call random_number(slp_raw)
+ptr(1:size(slp_raw)) => slp_raw
+slp = data_array(ptr, "slp", &
+  & dims=dims(["latitude".dim.nx, "longitude".dim.ny]), &
+  & atts=atts(["long_name".att."sea level pressure"]))
+nullify (ptr)
+
+! print "(dt)", geopt, temp, slp
+call to_netcdf([geopt, temp, slp], "multiple_vars.nc")
+end program main
+```
 ### Read from a NetCDF file
 #### Read a single variable from a NetCDF file
 ```Fortran
