@@ -125,7 +125,8 @@ end subroutine single_var_rd
 subroutine multiple_vars_wr()
   type(nc_var) :: geopt, temp, slp
   real, target :: geopt_raw(nx, ny, nz)
-  double precision, target :: temp_raw(nx, ny, nt), slp_raw(nx, ny)
+  integer, target :: temp_raw(nx, ny, nt)
+  double precision, target :: slp_raw(nx, ny)
   class(*), pointer :: ptr(:)
   real :: nan
 
@@ -139,7 +140,7 @@ subroutine multiple_vars_wr()
     & atts=atts(["long_name".att."geopotenail", "_FillValue".att.nan]))
   nullify (ptr)
 
-  call random_number(temp_raw)
+  temp_raw = 1
   ptr(1:size(temp_raw)) => temp_raw
   temp = data_array(ptr, "temp", &
     & dims=dims(["latitude".dim.nx, "longitude".dim.ny, "time".dim.nt]), &
