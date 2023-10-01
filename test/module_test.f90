@@ -156,8 +156,14 @@ subroutine multiple_vars_wr()
                  "missing_value".att.-2147483647]))
   nullify (ptr)
 
-  print "(dt)", geopt, temp, slp
+  print "(*(dt))", geopt, temp, slp
   call to_netcdf([geopt, temp, slp], path//"multiple_vars.nc")
+
+  associate (str => "Successfully write to 'multiple_vars.nc'.")
+    print "(a)", repeat("=", len(str))
+    print "(a)", str
+    print "(a)", repeat("=", len(str)), new_line("(a)")
+  end associate
 end subroutine multiple_vars_wr
 
 end module module_test
