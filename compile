@@ -5,24 +5,40 @@ profile="debug"
 src="${repodir}/src"
 preproc="${repodir}/preproc"
 interface="${repodir}/interface"
+src_folders=("c_interface" "fortran_interface" "data_structure")
 fypp_files=("submodule_attribute" "submodule_io" "submodule_variable")
 fprettify_flags="-r -i 2 --strict-indent --disable-indent-mod"
 fpm_flags="--compiler ${compiler} --profile ${profile}"
 
-echo "Preprocessing using fypp..."
-cd $preproc
-for fypp_file in ${fypp_files[@]}; do
-  echo "  Preprocessing ${fypp_file}.fypp..."
-  fypp ${fypp_file}.fypp ${src}/${fypp_file}.f90
+if [ -d "${src}" ]; then
+  echo "Removing exsiting source directory..."
+  rm -rf ${src}
+fi
+
+folders=$(find ${preproc} -type d)
+for folder in ${folders}; do
+  mkdir -p ${folder/preproc/src}
 done
 
-echo "Generating C interface..."
-python module_c_interface.py
-mv ${preproc}/module_c_interface.f90 ${src}
-cd ..
+files=$(find ${preproc} -type f)
+for file in ${files[@]}; do
+  filename=$(basename -- "${file}")
+  extension="${filename##*.}"
+  filename="${filename%.*}"
 
-echo "Copy remaining source code..."
-cp ${preproc}/*.f90 ${src}
+  if [ ${extension} == "f90" ]; then
+    echo "Copying ${filename}..."
+    cp ${file} ${file/preproc/src}
+  elif [ ${extension} == "fypp" ]; then
+    echo "Preprocessing ${filename}..."
+    chdir=${file/preproc/src}
+    fypp ${file} ${chdir/fypp/f90}
+  elif [ ${extension} == "py" ]; then
+    echo "Generating C interface..."
+    python ${file}
+    mv module_c_interface.f90 ${src}/c_interface
+  fi
+done
 
 echo "Source file generated successfully."
 echo "Compile Fortran source code..."
