@@ -114,6 +114,7 @@ subroutine single_var_rd()
   do i = 1, size(dummy_data, 2)
     print "(3(f10.4, 1x))", dummy_data(:, i)
   end do
+  nullify (dummy_data)
 
   associate (str => "Successfully read from 'single_var.nc'.")
     print "(a)", repeat("=", len(str))
