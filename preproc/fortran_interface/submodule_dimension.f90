@@ -5,15 +5,15 @@ contains
 module pure function new_dim(name, len) result(dim)
   character(len=*), intent(in) :: name
   integer, intent(in) :: len
-  type(nc_dim) :: dim
+  type(netcdf_dimension) :: dim
 
   dim%name = name
   dim%len = len
 end function new_dim
 
 module pure function new_dims(dims) result(ret)
-  type(nc_dim), intent(in) :: dims(:)
-  type(nc_dim), allocatable :: ret(:)
+  type(netcdf_dimension), intent(in) :: dims(:)
+  type(netcdf_dimension), allocatable :: ret(:)
   integer :: i
 
   ret = dims
@@ -23,9 +23,9 @@ module pure function new_dims(dims) result(ret)
 end function new_dims
 
 module pure function new_dims_unlim(dims, unlim_dim) result(ret)
-  type(nc_dim), intent(in) :: dims(:)
+  type(netcdf_dimension), intent(in) :: dims(:)
   integer, intent(in) :: unlim_dim
-  type(nc_dim), allocatable :: ret(:)
+  type(netcdf_dimension), allocatable :: ret(:)
   integer :: i
 
   ret = dims
@@ -36,7 +36,7 @@ module pure function new_dims_unlim(dims, unlim_dim) result(ret)
 end function new_dims_unlim
 
 module pure function shape_dims(dims) result(ret)
-  type(nc_dim), intent(in) :: dims(:)
+  type(netcdf_dimension), intent(in) :: dims(:)
   integer, allocatable :: ret(:)
   integer :: i
 
@@ -44,7 +44,7 @@ module pure function shape_dims(dims) result(ret)
 end function shape_dims
 
 module subroutine def_grp_dim(grp)
-  class(nc_grp), intent(in) :: grp
+  class(netcdf_group), intent(in) :: grp
   integer(c_int) :: stat, i
 
   if (allocated(grp%dims)) then
@@ -59,7 +59,7 @@ module subroutine def_grp_dim(grp)
 end subroutine def_grp_dim
 
 module subroutine def_var_dim(var)
-  type(nc_var), intent(in) :: var
+  type(netcdf_variable), intent(in) :: var
   integer(c_int) :: stat, i
 
   if (associated(var%grpID)) then
@@ -76,7 +76,7 @@ end subroutine def_var_dim
 function inq_dims_(ncid, dimids) result(dims)
   integer(c_int), intent(in) :: ncid
   integer(c_int), intent(in) :: dimids(:)
-  type(nc_dim), allocatable :: dims(:)
+  type(netcdf_dimension), allocatable :: dims(:)
   integer(c_int) :: stat, ndims, i, unlim_dim
   character(kind=c_char, len=nc_max_name) :: tmp
 
@@ -102,7 +102,7 @@ function inq_dims_(ncid, dimids) result(dims)
 end function inq_dims_
 
 module subroutine inq_grp_dims(grp)
-  class(nc_grp), intent(inout) :: grp
+  class(netcdf_group), intent(inout) :: grp
   integer(c_int) :: stat, ndims, include_parents
   integer(c_int), allocatable :: dimids(:)
 
@@ -117,7 +117,7 @@ module subroutine inq_grp_dims(grp)
 end subroutine inq_grp_dims
 
 module subroutine inq_var_dims(var)
-  type(nc_var), intent(inout) :: var
+  type(netcdf_variable), intent(inout) :: var
   integer(c_int) :: stat, ndims
   integer(c_int), allocatable :: dimids(:)
 

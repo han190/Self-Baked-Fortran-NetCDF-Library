@@ -4,14 +4,14 @@ contains
 
 pure function pair2dim(pair) result(dim)
   type(pair_type), intent(in) :: pair
-  type(nc_dim) :: dim
+  type(netcdf_dimension) :: dim
 
   dim = pair%key.dim.pair%val
 end function pair2dim
 
 pure function pairs2dims(pairs) result(dims)
   type(pair_type), intent(in) :: pairs(:)
-  type(nc_dim), allocatable :: dims(:)
+  type(netcdf_dimension), allocatable :: dims(:)
   integer :: i
 
   if (allocated(dims)) deallocate (dims)
@@ -19,9 +19,9 @@ pure function pairs2dims(pairs) result(dims)
 end function pairs2dims
 
 module function new_file(vars, atts) result(file)
-  type(nc_var), intent(in) :: vars(:)
-  type(nc_att), intent(in), optional :: atts(:)
-  type(nc_file) :: file
+  type(netcdf_variable), intent(in) :: vars(:)
+  type(netcdf_attribute), intent(in), optional :: atts(:)
+  type(netcdf_file) :: file
   type(dict_type) :: file_dims
   integer :: loc, val
   character(:), allocatable :: key
@@ -47,7 +47,7 @@ end function new_file
 
 module function from_netcdf_grp(path) result(file)
   character(len=*), intent(in) :: path
-  type(nc_file) :: file
+  type(netcdf_file) :: file
   integer(c_int) :: stat
   character(kind=c_char, len=nc_max_name) :: tmp
 
@@ -69,9 +69,9 @@ module function from_netcdf_grp(path) result(file)
 end function from_netcdf_grp
 
 module subroutine to_netcdf_grp(file)
-  type(nc_file), target, intent(in) :: file
+  type(netcdf_file), target, intent(in) :: file
   integer(c_int) :: stat, i
-  type(nc_var) :: var
+  type(netcdf_variable) :: var
 
   if (.not. allocated(file%vars) .and. .not. allocated(file%grps)) &
     & error stop "[to_netcdf_grp] Empty file type."

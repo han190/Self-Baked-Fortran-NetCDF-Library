@@ -9,7 +9,7 @@ implicit none
 !> The data model follows the netCDF data model introduced
 !> https://docs.unidata.ucar.edu/netcdf-c/current/netcdf_data_model.html
 
-public :: nc_dim, nc_att, nc_var, nc_grp, nc_file
+public :: netcdf_dimension, netcdf_attribute, netcdf_variable, netcdf_group, netcdf_file
 public :: operator(.dim.), operator(.att.)
 public :: write(formatted)
 public :: shape, atts, dims
@@ -17,42 +17,42 @@ public :: to_netcdf, from_netcdf
 public :: data_array, data_set
 private
 
-type, abstract :: netcdf_type
+type, abstract :: netcdf_abstract
   integer(c_int) :: ID
   character(len=:), allocatable :: name
-end type netcdf_type
+end type netcdf_abstract
 
-type, extends(netcdf_type) :: nc_dim
+type, extends(netcdf_abstract) :: netcdf_dimension
   integer(c_size_t) :: len = 0
   logical :: is_unlim = .false.
-end type nc_dim
+end type netcdf_dimension
 
-type, extends(netcdf_type) :: nc_att
+type, extends(netcdf_abstract) :: netcdf_attribute
   integer(c_size_t) :: len = 0
   integer(c_int) :: type = 0
-  class(*), allocatable :: vals(:)
-end type nc_att
+  class(*), pointer :: vals(:) => null()
+end type netcdf_attribute
 
-type, extends(netcdf_type) :: nc_var
-  type(nc_dim), allocatable :: dims(:)
-  type(nc_att), allocatable :: atts(:)
+type, extends(netcdf_abstract) :: netcdf_variable
+  type(netcdf_dimension), allocatable :: dims(:)
+  type(netcdf_attribute), allocatable :: atts(:)
   integer(c_int), pointer :: grpID => null()
   integer(c_int) :: type = 0
-  class(*), allocatable :: vals(:)
-end type nc_var
+  class(*), pointer :: vals(:) => null()
+end type netcdf_variable
 
-type, extends(netcdf_type) :: nc_grp
-  type(nc_dim), allocatable :: dims(:)
-  type(nc_att), allocatable :: atts(:)
-  type(nc_var), allocatable :: vars(:)
-  type(nc_grp), allocatable :: grps(:)
+type, extends(netcdf_abstract) :: netcdf_group
+  type(netcdf_dimension), allocatable :: dims(:)
+  type(netcdf_attribute), allocatable :: atts(:)
+  type(netcdf_variable), allocatable :: vars(:)
+  type(netcdf_group), allocatable :: grps(:)
   integer(c_int) :: mode = 0
   integer(c_int) :: fmt = 0
-end type nc_grp
+end type netcdf_group
 
-type, extends(nc_grp) :: nc_file
+type, extends(netcdf_group) :: netcdf_file
   character(len=:), allocatable :: filename
-end type nc_file
+end type netcdf_file
 
 interface operator(.dim.)
   module procedure :: new_dim
@@ -95,11 +95,11 @@ interface shape
   module procedure :: shape_var
 end interface shape
 
-interface write (formatted)
+interface write(formatted)
   module procedure :: write_formatted_att
   module procedure :: write_formatted_dim
   module procedure :: write_formatted_var
-end interface write (formatted)
+end interface write(formatted)
 
 interface
   module pure function cstr(string) result(cstring)
@@ -120,134 +120,134 @@ interface
   module pure function new_dim(name, len) result(dim)
     character(len=*), intent(in) :: name
     integer, intent(in) :: len
-    type(nc_dim) :: dim
+    type(netcdf_dimension) :: dim
   end function new_dim
 
   module pure function new_dims(dims) result(ret)
-    type(nc_dim), intent(in) :: dims(:)
-    type(nc_dim), allocatable :: ret(:)
+    type(netcdf_dimension), intent(in) :: dims(:)
+    type(netcdf_dimension), allocatable :: ret(:)
   end function new_dims
 
   module pure function new_dims_unlim(dims, unlim_dim) result(ret)
-    type(nc_dim), intent(in) :: dims(:)
+    type(netcdf_dimension), intent(in) :: dims(:)
     integer, intent(in) :: unlim_dim
-    type(nc_dim), allocatable :: ret(:)
+    type(netcdf_dimension), allocatable :: ret(:)
   end function new_dims_unlim
 
   module pure function shape_dims(dims) result(ret)
-    type(nc_dim), intent(in) :: dims(:)
+    type(netcdf_dimension), intent(in) :: dims(:)
     integer, allocatable :: ret(:)
   end function shape_dims
 
   module subroutine def_grp_dim(grp)
-    class(nc_grp), intent(in) :: grp
+    class(netcdf_group), intent(in) :: grp
   end subroutine def_grp_dim
 
   module subroutine def_var_dim(var)
-    type(nc_var), intent(in) :: var
+    type(netcdf_variable), intent(in) :: var
   end subroutine def_var_dim
 
   module subroutine inq_grp_dims(grp)
-    class(nc_grp), intent(inout) :: grp
+    class(netcdf_group), intent(inout) :: grp
   end subroutine inq_grp_dims
 
   module subroutine inq_var_dims(var)
-    type(nc_var), intent(inout) :: var
+    type(netcdf_variable), intent(inout) :: var
   end subroutine inq_var_dims
 
   module pure function new_att_vec(name, vals) result(ret)
     character(len=*), intent(in) :: name
     class(*), intent(in) :: vals(:)
-    type(nc_att) :: ret
+    type(netcdf_attribute) :: ret
   end function new_att_vec
 
   module pure function new_att_scal(name, val) result(ret)
     character(len=*), intent(in) :: name
     class(*), intent(in) :: val
-    type(nc_att) :: ret
+    type(netcdf_attribute) :: ret
   end function new_att_scal
 
-  module pure function new_atts(atts) result(ret)
-    type(nc_att), intent(in) :: atts(:)
-    type(nc_att), allocatable :: ret(:)
+  module function new_atts(atts) result(ret)
+    type(netcdf_attribute), intent(in) :: atts(:)
+    type(netcdf_attribute), allocatable :: ret(:)
   end function new_atts
 
   module subroutine put_grp_atts(grp)
-    class(nc_grp), intent(in) :: grp
+    class(netcdf_group), intent(in) :: grp
   end subroutine put_grp_atts
 
   module subroutine put_var_atts(var)
-    type(nc_var), intent(in) :: var
+    type(netcdf_variable), intent(in) :: var
   end subroutine put_var_atts
 
   module subroutine inq_grp_atts(grp)
-    class(nc_grp), intent(inout) :: grp
+    class(netcdf_group), intent(inout) :: grp
   end subroutine inq_grp_atts
 
   module subroutine inq_var_atts(var)
-    type(nc_var), intent(inout) :: var
+    type(netcdf_variable), intent(inout) :: var
   end subroutine inq_var_atts
 
   module subroutine get_var_atts(var)
-    type(nc_var), intent(inout) :: var
+    type(netcdf_variable), intent(inout) :: var
   end subroutine get_var_atts
 
   module function new_var(data, name, dims, atts) result(var)
-    class(*), intent(in) :: data(:)
+    class(*), target, intent(in) :: data(:)
     character(len=*), intent(in) :: name
-    type(nc_dim), intent(in) :: dims(:)
-    type(nc_att), intent(in), optional :: atts(:)
-    type(nc_var) :: var
+    type(netcdf_dimension), intent(in) :: dims(:)
+    type(netcdf_attribute), intent(in), optional :: atts(:)
+    type(netcdf_variable) :: var
   end function new_var
 
   module pure function shape_var(var) result(ret)
-    type(nc_var), intent(in) :: var
+    type(netcdf_variable), intent(in) :: var
     integer, allocatable :: ret(:)
   end function shape_var
 
   module subroutine def_var(var)
-    type(nc_var), intent(inout) :: var
+    type(netcdf_variable), intent(inout) :: var
   end subroutine def_var
 
   module subroutine put_var(var)
-    type(nc_var), intent(in) :: var
+    type(netcdf_variable), intent(in) :: var
   end subroutine put_var
 
   module subroutine to_netcdf_var(var, filename, mode)
-    type(nc_var), intent(in) :: var
+    type(netcdf_variable), intent(in) :: var
     character(len=*), intent(in) :: filename
     integer(c_int), intent(in), optional :: mode
   end subroutine to_netcdf_var
 
   module subroutine to_netcdf_vars(vars, filename, mode)
-    type(nc_var), intent(in) :: vars(:)
+    type(netcdf_variable), intent(in) :: vars(:)
     character(len=*), intent(in) :: filename
     integer(c_int), intent(in), optional :: mode
   end subroutine to_netcdf_vars
 
   module function from_netcdf_var(filename, name) result(var)
     character(len=*), intent(in) :: filename, name
-    type(nc_var) :: var
+    type(netcdf_variable) :: var
   end function from_netcdf_var
 
   module function new_file(vars, atts) result(file)
-    type(nc_var), intent(in) :: vars(:)
-    type(nc_att), intent(in), optional :: atts(:)
-    type(nc_file) :: file
+    type(netcdf_variable), intent(in) :: vars(:)
+    type(netcdf_attribute), intent(in), optional :: atts(:)
+    type(netcdf_file) :: file
   end function new_file
 
   module function from_netcdf_grp(path) result(file)
     character(len=*), intent(in) :: path
-    type(nc_file) :: file
+    type(netcdf_file) :: file
   end function from_netcdf_grp
 
   module subroutine to_netcdf_grp(file)
-    type(nc_file), target, intent(in) :: file
+    type(netcdf_file), target, intent(in) :: file
   end subroutine to_netcdf_grp
 
   module subroutine write_formatted_dim( &
     & dim, unit, iotype, v_list, iostat, iomsg)
-    class(nc_dim), intent(in) :: dim
+    class(netcdf_dimension), intent(in) :: dim
     integer, intent(in) :: unit
     character(*), intent(in) :: iotype
     integer, intent(in) :: v_list(:)
@@ -257,7 +257,7 @@ interface
 
   module subroutine write_formatted_att( &
     & att, unit, iotype, v_list, iostat, iomsg)
-    class(nc_att), intent(in) :: att
+    class(netcdf_attribute), intent(in) :: att
     integer, intent(in) :: unit
     character(*), intent(in) :: iotype
     integer, intent(in) :: v_list(:)
@@ -267,7 +267,7 @@ interface
 
   module subroutine write_formatted_var( &
     & var, unit, iotype, v_list, iostat, iomsg)
-    class(nc_var), intent(in) :: var
+    class(netcdf_variable), intent(in) :: var
     integer, intent(in) :: unit
     character(*), intent(in) :: iotype
     integer, intent(in) :: v_list(:)

@@ -35,7 +35,7 @@ end function indent
 
 module subroutine write_formatted_dim( &
   & dim, unit, iotype, v_list, iostat, iomsg)
-  class(nc_dim), intent(in) :: dim
+  class(netcdf_dimension), intent(in) :: dim
   integer, intent(in) :: unit
   character(*), intent(in) :: iotype
   integer, intent(in) :: v_list(:)
@@ -100,7 +100,7 @@ end function type_name
 
 module subroutine write_formatted_att( &
   & att, unit, iotype, v_list, iostat, iomsg)
-  class(nc_att), intent(in) :: att
+  class(netcdf_attribute), intent(in) :: att
   integer, intent(in) :: unit
   character(*), intent(in) :: iotype
   integer, intent(in) :: v_list(:)
@@ -149,7 +149,7 @@ end subroutine write_formatted_att
 
 module subroutine write_formatted_var( &
   & var, unit, iotype, v_list, iostat, iomsg)
-  class(nc_var), intent(in) :: var
+  class(netcdf_variable), intent(in) :: var
   integer, intent(in) :: unit
   character(*), intent(in) :: iotype
   integer, intent(in) :: v_list(:)

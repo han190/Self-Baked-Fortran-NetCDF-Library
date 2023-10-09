@@ -5,43 +5,43 @@ contains
 module pure function new_att_vec(name, vals) result(ret)
   character(len=*), intent(in) :: name
   class(*), intent(in) :: vals(:)
-  type(nc_att) :: ret
+  type(netcdf_attribute) :: ret
 
   ret%name = name
   select type (vals_ => vals)
   type is (integer (int8))
     ret%type = nc_byte
-    if (allocated(ret%vals)) deallocate (ret%vals)
+    if (associated(ret%vals)) deallocate (ret%vals)
     allocate (ret%vals, source=vals_)
     ret%len = size(vals_)
   type is (integer (int16))
     ret%type = nc_short
-    if (allocated(ret%vals)) deallocate (ret%vals)
+    if (associated(ret%vals)) deallocate (ret%vals)
     allocate (ret%vals, source=vals_)
     ret%len = size(vals_)
   type is (integer (int32))
     ret%type = nc_int
-    if (allocated(ret%vals)) deallocate (ret%vals)
+    if (associated(ret%vals)) deallocate (ret%vals)
     allocate (ret%vals, source=vals_)
     ret%len = size(vals_)
   type is (integer (int64))
     ret%type = nc_int64
-    if (allocated(ret%vals)) deallocate (ret%vals)
+    if (associated(ret%vals)) deallocate (ret%vals)
     allocate (ret%vals, source=vals_)
     ret%len = size(vals_)
   type is (real (real32))
     ret%type = nc_float
-    if (allocated(ret%vals)) deallocate (ret%vals)
+    if (associated(ret%vals)) deallocate (ret%vals)
     allocate (ret%vals, source=vals_)
     ret%len = size(vals_)
   type is (real (real64))
     ret%type = nc_double
-    if (allocated(ret%vals)) deallocate (ret%vals)
+    if (associated(ret%vals)) deallocate (ret%vals)
     allocate (ret%vals, source=vals_)
     ret%len = size(vals_)
   type is (character(*))
     ret%type = nc_char
-    if (allocated(ret%vals)) deallocate (ret%vals)
+    if (associated(ret%vals)) deallocate (ret%vals)
     allocate (ret%vals, source=vals_)
     ret%len = size(vals_)
   end select
@@ -50,51 +50,51 @@ end function new_att_vec
 module pure function new_att_scal(name, val) result(ret)
   character(len=*), intent(in) :: name
   class(*), intent(in) :: val
-  type(nc_att) :: ret
+  type(netcdf_attribute) :: ret
 
   ret%name = name
   select type (val_ => val)
   type is (integer (int8))
     ret%type = nc_byte
-    if (allocated(ret%vals)) deallocate (ret%vals)
+    if (associated(ret%vals)) deallocate (ret%vals)
     allocate (ret%vals, source=[val_])
     ret%len = 1
   type is (integer (int16))
     ret%type = nc_short
-    if (allocated(ret%vals)) deallocate (ret%vals)
+    if (associated(ret%vals)) deallocate (ret%vals)
     allocate (ret%vals, source=[val_])
     ret%len = 1
   type is (integer (int32))
     ret%type = nc_int
-    if (allocated(ret%vals)) deallocate (ret%vals)
+    if (associated(ret%vals)) deallocate (ret%vals)
     allocate (ret%vals, source=[val_])
     ret%len = 1
   type is (integer (int64))
     ret%type = nc_int64
-    if (allocated(ret%vals)) deallocate (ret%vals)
+    if (associated(ret%vals)) deallocate (ret%vals)
     allocate (ret%vals, source=[val_])
     ret%len = 1
   type is (real (real32))
     ret%type = nc_float
-    if (allocated(ret%vals)) deallocate (ret%vals)
+    if (associated(ret%vals)) deallocate (ret%vals)
     allocate (ret%vals, source=[val_])
     ret%len = 1
   type is (real (real64))
     ret%type = nc_double
-    if (allocated(ret%vals)) deallocate (ret%vals)
+    if (associated(ret%vals)) deallocate (ret%vals)
     allocate (ret%vals, source=[val_])
     ret%len = 1
   type is (character(*))
     ret%type = nc_char
-    if (allocated(ret%vals)) deallocate (ret%vals)
+    if (associated(ret%vals)) deallocate (ret%vals)
     allocate (ret%vals, source=[val_])
     ret%len = 1
   end select
 end function new_att_scal
 
-module pure function new_atts(atts) result(ret)
-  type(nc_att), intent(in) :: atts(:)
-  type(nc_att), allocatable :: ret(:)
+module function new_atts(atts) result(ret)
+  type(netcdf_attribute), intent(in) :: atts(:)
+  type(netcdf_attribute), allocatable :: ret(:)
   integer :: i
 
   ret = atts
@@ -105,7 +105,7 @@ end function new_atts
 
 subroutine put_att_(ncid, varid, att)
   integer(c_int), intent(in) :: ncid, varid
-  type(nc_att) :: att
+  type(netcdf_attribute) :: att
   integer(c_int) :: stat
 
   select type (vals_ => att%vals)
@@ -149,7 +149,7 @@ end subroutine put_att_
 
 subroutine put_atts_(ncid, varid, atts)
   integer(c_int), intent(in) :: ncid, varid
-  type(nc_att), intent(in) :: atts(:)
+  type(netcdf_attribute), intent(in) :: atts(:)
   integer :: i
 
   do i = 1, size(atts)
@@ -158,14 +158,14 @@ subroutine put_atts_(ncid, varid, atts)
 end subroutine put_atts_
 
 module subroutine put_grp_atts(grp)
-  class(nc_grp), intent(in) :: grp
+  class(netcdf_group), intent(in) :: grp
 
   if (allocated(grp%atts)) &
     & call put_atts_(grp%ID, nc_global, grp%atts)
 end subroutine put_grp_atts
 
 module subroutine put_var_atts(var)
-  type(nc_var), intent(in) :: var
+  type(netcdf_variable), intent(in) :: var
 
   if (allocated(var%atts)) &
     & call put_atts_(var%grpID, var%ID, var%atts)
@@ -173,7 +173,7 @@ end subroutine put_var_atts
 
 function inq_atts_(ncid, varid, natts) result(atts)
   integer(c_int), intent(in) :: ncid, varid, natts
-  type(nc_att), allocatable :: atts(:)
+  type(netcdf_attribute), allocatable :: atts(:)
   integer(c_int) :: i, stat
   character(kind=c_char, len=nc_max_name) :: tmp
 
@@ -194,7 +194,7 @@ function inq_atts_(ncid, varid, natts) result(atts)
 end function inq_atts_
 
 module subroutine inq_grp_atts(grp)
-  class(nc_grp), intent(inout) :: grp
+  class(netcdf_group), intent(inout) :: grp
   integer(c_int) :: stat, natts
 
   stat = nc_inq_natts(grp%ID, natts)
@@ -203,7 +203,7 @@ module subroutine inq_grp_atts(grp)
 end subroutine inq_grp_atts
 
 module subroutine inq_var_atts(var)
-  type(nc_var), intent(inout) :: var
+  type(netcdf_variable), intent(inout) :: var
   integer(c_int) :: stat, natts
 
   if (.not. associated(var%grpID)) &
@@ -216,12 +216,12 @@ end subroutine inq_var_atts
 
 subroutine get_atts_(ncid, varid, atts)
   integer(c_int), intent(in) :: ncid, varid
-  type(nc_att), intent(inout) :: atts(:)
+  type(netcdf_attribute), intent(inout) :: atts(:)
   integer(c_int) :: stat, i
 
   do i = 1, size(atts)
     associate (att => atts(i))
-      if (allocated(att%vals)) deallocate (att%vals)
+      if (associated(att%vals)) deallocate (att%vals)
       select case (att%type)
       case (nc_byte)
         allocate (integer(int8) :: att%vals(att%len))
@@ -283,7 +283,7 @@ subroutine get_atts_(ncid, varid, atts)
 end subroutine get_atts_
 
 module subroutine get_var_atts(var)
-  type(nc_var), intent(inout) :: var
+  type(netcdf_variable), intent(inout) :: var
 
   if (.not. associated(var%grpID)) &
     & error stop "[inq_var_atts] Group ID not associated."

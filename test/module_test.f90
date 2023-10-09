@@ -56,9 +56,9 @@ subroutine data_structure()
 end subroutine data_structure
 
 subroutine single_var_wr()
-  type(nc_var) :: dummy_var
-  type(nc_dim), allocatable :: dummy_dims(:)
-  type(nc_att), allocatable :: dummy_atts(:)
+  type(netcdf_variable) :: dummy_var
+  type(netcdf_dimension), allocatable :: dummy_dims(:)
+  type(netcdf_attribute), allocatable :: dummy_atts(:)
   real, target :: raw(nx, ny)
   class(*), pointer :: dummy_data(:)
   real :: nan
@@ -97,7 +97,7 @@ subroutine single_var_wr()
 end subroutine single_var_wr
 
 subroutine single_var_rd()
-  type(nc_var), target :: dummy_var
+  type(netcdf_variable), target :: dummy_var
   real, pointer :: dummy_data(:, :)
   integer :: i
 
@@ -124,7 +124,7 @@ subroutine single_var_rd()
 end subroutine single_var_rd
 
 subroutine multiple_vars_wr()
-  type(nc_var) :: geopt, temp, slp
+  type(netcdf_variable) :: geopt, temp, slp
   real, target :: geopt_raw(nx, ny, nz)
   integer, target :: temp_raw(nx, ny, nt)
   double precision, target :: slp_raw(nx, ny)

@@ -3,6 +3,9 @@ version = "0.0.1"
 maintainer = "htang2@alaska.edu"
 author = "Han Tang"
 
+[dependencies]
+stdlib="*"
+
 [library]
 source-dir = "src"
 
