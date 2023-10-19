@@ -61,11 +61,14 @@ end subroutine def_grp_dim
 module subroutine def_var_dim(var)
   type(netcdf_variable), intent(in) :: var
   integer(c_int) :: stat, i
+  integer(c_size_t) :: len
 
   if (associated(var%grpID)) then
     do i = 1, size(var%dims)
+      len = merge(int(nc_unlimited, c_size_t), &
+        & int(var%dims(i)%len, c_size_t), var%dims(i)%is_unlim)
       stat = nc_def_dim(var%grpID, cstr(var%dims(i)%name), &
-        & int(var%dims(i)%len, c_size_t), var%dims(i)%ID)
+        & len, var%dims(i)%ID)
       call handle_error(stat, "nc_def_dim")
     end do
   else

@@ -1,3 +1,4 @@
+#: include 'module_common.fypp'
 module module_fortran_interface
 
 use :: iso_fortran_env
@@ -14,7 +15,7 @@ public :: operator(.dim.), operator(.att.)
 public :: write(formatted)
 public :: shape, atts, dims
 public :: to_netcdf, from_netcdf
-public :: data_array, data_set
+public :: data_array, data_set, extract
 private
 
 type, abstract :: netcdf_abstract
@@ -89,6 +90,14 @@ interface from_netcdf
   module procedure :: from_netcdf_grp
   module procedure :: from_netcdf_var
 end interface from_netcdf
+
+interface extract
+  #: for rank in range(1, 6)
+  #: for type, kind in zip(types, kinds)
+  module procedure :: extract_var_${kind}$_${rank}$d
+  #: endfor
+  #: endfor
+end interface extract
 
 interface shape
   module procedure :: shape_dims
@@ -192,10 +201,11 @@ interface
     type(netcdf_variable), intent(inout) :: var
   end subroutine get_var_atts
 
-  module function new_var(data, name, dims, atts) result(var)
-    class(*), target, intent(in) :: data(:)
+  module function new_var(data, name, dims, unlim_dim, atts) result(var)
+    class(*), target, intent(in) :: data(..)
     character(len=*), intent(in) :: name
     type(netcdf_dimension), intent(in) :: dims(:)
+    integer, intent(in), optional :: unlim_dim
     type(netcdf_attribute), intent(in), optional :: atts(:)
     type(netcdf_variable) :: var
   end function new_var
@@ -229,6 +239,15 @@ interface
     character(len=*), intent(in) :: filename, name
     type(netcdf_variable) :: var
   end function from_netcdf_var
+
+  #: for rank in range(1, max_rank)
+  #: for type, kind in zip(types, kinds)
+  module subroutine extract_var_${kind}$_${rank}$d(var, raw)
+    type(netcdf_variable), target, intent(in) :: var
+    ${type}$(${kind}$), pointer, intent(out) :: raw(#{for i in range(1, rank)}#:,#{endfor}#:)
+  end subroutine extract_var_${kind}$_${rank}$d${"\n"}$
+  #: endfor
+  #: endfor
 
   module function new_file(vars, atts) result(file)
     type(netcdf_variable), intent(in) :: vars(:)

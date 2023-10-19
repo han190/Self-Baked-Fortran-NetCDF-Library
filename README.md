@@ -20,7 +20,7 @@ use module_netcdf
 implicit none
 
 character(len=*), parameter :: filename = "simple_xy.nc"
-type(nc_var) :: var
+type(netcdf_variable) :: var
 real, target :: raw(3, 4)
 class(*), pointer :: ptr(:)
 

@@ -1,5 +1,6 @@
 module module_test
 
+use :: iso_fortran_env
 use :: module_netcdf
 use :: module_data_structure
 use :: ieee_arithmetic
@@ -11,7 +12,7 @@ character(len=*), parameter :: filename = "single_var.nc"
 
 contains
 
-subroutine data_structure()
+subroutine test_data_structure()
   type(dict_type) :: physicists_dict
   type(pair_type), allocatable :: physicists_pairs(:)
   character(len=:), allocatable :: physicists(:), physicist
@@ -53,37 +54,26 @@ subroutine data_structure()
     print "(a)", str
     print "(a)", repeat("=", len(str)), new_line("(a)")
   end associate
-end subroutine data_structure
+end subroutine test_data_structure
 
 subroutine single_var_wr()
-  type(netcdf_variable) :: dummy_var
-  type(netcdf_dimension), allocatable :: dummy_dims(:)
-  type(netcdf_attribute), allocatable :: dummy_atts(:)
-  real, target :: raw(nx, ny)
-  class(*), pointer :: dummy_data(:)
-  real :: nan
+  type(netcdf_variable) :: var
+  real :: raw(nx, ny)
   integer :: i
 
-  nan = ieee_value(0.0, ieee_quiet_nan)
   ! Fill raw with random numbers.
   call execute_command_line("mkdir -p "//path)
   call random_number(raw)
-  raw(2, 2) = nan
-  dummy_data(1:size(raw)) => raw
 
   ! Construct a raw array and write to a netcdf file.
-  dummy_dims = dims(["x".dim.nx, "y".dim.ny])
-  dummy_atts = atts([ &
-      & "long_name".att."dummy variable", &
-      & "_FillValue".att.nan])
-  dummy_var = data_array(dummy_data, name="dummy_var", &
-    & dims=dummy_dims, atts=dummy_atts)
+  var = data_array(raw, name="var", &
+    & dims=["x".dim.nx, "y".dim.ny], &
+    & atts=["long_name".att."dummy variable"])
 
   ! Write to netcdf.
-  call to_netcdf(dummy_var, path//filename)
-  nullify (dummy_data)
+  call to_netcdf(var, path//filename)
 
-  print "(dt)", dummy_var
+  print "(dt)", var
   print "(a)", "values = "
   do i = 1, size(raw, 2)
     print "(3(f10.4, 1x))", raw(:, i)
@@ -97,24 +87,19 @@ subroutine single_var_wr()
 end subroutine single_var_wr
 
 subroutine single_var_rd()
-  type(netcdf_variable), target :: dummy_var
-  real, pointer :: dummy_data(:, :)
+  type(netcdf_variable), target :: var
+  real, pointer :: raw(:, :) => null()
   integer :: i
 
-  dummy_var = from_netcdf(path//filename, "dummy_var")
-  select type (v => dummy_var%vals)
-  type is (real(real32))
-    associate (s => shape(dummy_var))
-      dummy_data(1:s(1), 1:s(2)) => v
-    end associate
-  end select
+  var = from_netcdf(path//filename, "var")
+  call extract(var, raw)
 
-  print "(dt)", dummy_var
+  print "(dt)", var
   print "(a)", "values = "
-  do i = 1, size(dummy_data, 2)
-    print "(3(f10.4, 1x))", dummy_data(:, i)
+  do i = 1, size(raw, 2)
+    print "(3(f10.4, 1x))", raw(:, i)
   end do
-  nullify (dummy_data)
+  nullify (raw)
 
   associate (str => "Successfully read from 'single_var.nc'.")
     print "(a)", repeat("=", len(str))
@@ -128,34 +113,25 @@ subroutine multiple_vars_wr()
   real, target :: geopt_raw(nx, ny, nz)
   integer, target :: temp_raw(nx, ny, nt)
   double precision, target :: slp_raw(nx, ny)
-  class(*), pointer :: ptr(:)
   real :: nan
 
   nan = ieee_value(0.0, ieee_quiet_nan)
   call execute_command_line("mkdir -p "//path)
 
   call random_number(geopt_raw)
-  ptr(1:size(geopt_raw)) => geopt_raw
-  geopt = data_array(ptr, "geopt", &
-    & dims=dims(["latitude".dim.nx, "longitude".dim.ny, "level".dim.nz]), &
-    & atts=atts(["long_name".att."geopotenail", "_FillValue".att.nan]))
-  nullify (ptr)
+  geopt = data_array(geopt_raw, "geopt", &
+    & dims=["latitude".dim.nx, "longitude".dim.ny, "level".dim.nz], &
+    & atts=["long_name".att."geopotenail", "_FillValue".att.nan])
 
   temp_raw = 1
-  ptr(1:size(temp_raw)) => temp_raw
-  temp = data_array(ptr, "temp", &
-    & dims=dims(["latitude".dim.nx, "longitude".dim.ny, "time".dim.nt]), &
-    & atts=atts(["long_name".att."temperature", "add_offset".att.-273.15, &
-                 "scale_factor".att.1.0]))
-  nullify (ptr)
+  temp = data_array(temp_raw, "temp", &
+    & dims=["latitude".dim.nx, "longitude".dim.ny, "time".dim.nt], &
+    & atts=["long_name".att."temperature", "add_offset".att.-273.15, "scale_factor".att.1.0])
 
   call random_number(slp_raw)
-  ptr(1:size(slp_raw)) => slp_raw
-  slp = data_array(ptr, "slp", &
-    & dims=dims(["latitude".dim.nx, "longitude".dim.ny]), &
-    & atts=atts(["long_name".att."sea level pressure", &
-                 "missing_value".att.-2147483647]))
-  nullify (ptr)
+  slp = data_array(slp_raw, "slp", &
+    & dims=["latitude".dim.nx, "longitude".dim.ny], &
+    & atts=["long_name".att."sea level pressure", "missing_value".att.-2147483647])
 
   print "(*(dt))", geopt, temp, slp
   call to_netcdf([geopt, temp, slp], path//"multiple_vars.nc")

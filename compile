@@ -3,10 +3,9 @@ repodir=$(pwd)
 compiler="gfortran"
 profile="debug"
 src="${repodir}/src"
-preproc="${repodir}/preproc"
+preproc_dir="preproc"
+preproc="${repodir}/${preproc_dir}/"
 interface="${repodir}/interface"
-src_folders=("c_interface" "fortran_interface" "data_structure")
-fypp_files=("submodule_attribute" "submodule_io" "submodule_variable")
 fprettify_flags="-r -i 2 --strict-indent --disable-indent-mod"
 fpm_flags="--compiler ${compiler} --profile ${profile}"
 
@@ -17,7 +16,7 @@ fi
 
 folders=$(find ${preproc} -type d)
 for folder in ${folders}; do
-  mkdir -p ${folder/preproc/src}
+  mkdir -p ${folder/${preproc_dir}/src}
 done
 
 files=$(find ${preproc} -type f)
@@ -28,10 +27,10 @@ for file in ${files[@]}; do
 
   if [ ${extension} == "f90" ]; then
     echo "Copying ${filename}..."
-    cp ${file} ${file/preproc/src}
+    cp ${file} ${file/${preproc_dir}/src}
   elif [ ${extension} == "fypp" ]; then
     echo "Preprocessing ${filename}..."
-    chdir=${file/preproc/src}
+    chdir=${file/${preproc_dir}/src}
     fypp ${file} ${chdir/fypp/f90}
   elif [ ${extension} == "py" ]; then
     echo "Generating C interface..."

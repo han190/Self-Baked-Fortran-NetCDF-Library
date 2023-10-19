@@ -12,5 +12,6 @@
   #:set c_names = [ &
     & 'ubyte', 'short', 'int', 'longlong', &
     & 'float', 'double']
+  #:set max_rank = 6
 
 #:endmute

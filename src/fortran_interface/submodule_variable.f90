@@ -2,35 +2,127 @@ submodule(module_fortran_interface) submodule_variable
 implicit none
 contains
 
-module function new_var(data, name, dims, atts) result(var)
-  class(*), target, intent(in) :: data(:)
+module function new_var(data, name, dims, unlim_dim, atts) result(var)
+  class(*), target, intent(in) :: data(..)
   character(len=*), intent(in) :: name
   type(netcdf_dimension), intent(in) :: dims(:)
+  integer, intent(in), optional :: unlim_dim
   type(netcdf_attribute), intent(in), optional :: atts(:)
   type(netcdf_variable) :: var
 
   var%name = name
-  var%dims = dims
-  if (present(atts)) var%atts = atts
-  ! if (associated(var%vals)) deallocate (var%vals)
-  ! allocate (var%vals, source=data)
-  var%vals => data
+  if (present(unlim_dim)) then
+    var%dims = new_dims_unlim(dims, unlim_dim)
+  else
+    var%dims = new_dims(dims)
+  end if
+  if (present(atts)) then
+    var%atts = new_atts(atts)
+  end if
 
-  select type (data)
-  type is (integer(int8))
-    var%type = nc_byte
-  type is (integer(int16))
-    var%type = nc_short
-  type is (integer(int32))
-    var%type = nc_int
-  type is (integer(int64))
-    var%type = nc_int64
-  type is (real(real32))
-    var%type = nc_float
-  type is (real(real64))
-    var%type = nc_double
-  type is (character(*))
-    var%type = nc_char
+  select rank (data_ => data)
+  rank (1)
+    if (.not. all(shape(var%dims) == shape(data_))) &
+      & error stop "[new_var] Shape of dims /= shape of data."
+    var%vals(1:size(data_)) => data_
+    select type (data_)
+    type is (integer(int8))
+      var%type = nc_byte
+    type is (integer(int16))
+      var%type = nc_short
+    type is (integer(int32))
+      var%type = nc_int
+    type is (integer(int64))
+      var%type = nc_int64
+    type is (real(real32))
+      var%type = nc_float
+    type is (real(real64))
+      var%type = nc_double
+    type is (character(*))
+      var%type = nc_char
+    end select
+  rank (2)
+    if (.not. all(shape(var%dims) == shape(data_))) &
+      & error stop "[new_var] Shape of dims /= shape of data."
+    var%vals(1:size(data_)) => data_
+    select type (data_)
+    type is (integer(int8))
+      var%type = nc_byte
+    type is (integer(int16))
+      var%type = nc_short
+    type is (integer(int32))
+      var%type = nc_int
+    type is (integer(int64))
+      var%type = nc_int64
+    type is (real(real32))
+      var%type = nc_float
+    type is (real(real64))
+      var%type = nc_double
+    type is (character(*))
+      var%type = nc_char
+    end select
+  rank (3)
+    if (.not. all(shape(var%dims) == shape(data_))) &
+      & error stop "[new_var] Shape of dims /= shape of data."
+    var%vals(1:size(data_)) => data_
+    select type (data_)
+    type is (integer(int8))
+      var%type = nc_byte
+    type is (integer(int16))
+      var%type = nc_short
+    type is (integer(int32))
+      var%type = nc_int
+    type is (integer(int64))
+      var%type = nc_int64
+    type is (real(real32))
+      var%type = nc_float
+    type is (real(real64))
+      var%type = nc_double
+    type is (character(*))
+      var%type = nc_char
+    end select
+  rank (4)
+    if (.not. all(shape(var%dims) == shape(data_))) &
+      & error stop "[new_var] Shape of dims /= shape of data."
+    var%vals(1:size(data_)) => data_
+    select type (data_)
+    type is (integer(int8))
+      var%type = nc_byte
+    type is (integer(int16))
+      var%type = nc_short
+    type is (integer(int32))
+      var%type = nc_int
+    type is (integer(int64))
+      var%type = nc_int64
+    type is (real(real32))
+      var%type = nc_float
+    type is (real(real64))
+      var%type = nc_double
+    type is (character(*))
+      var%type = nc_char
+    end select
+  rank (5)
+    if (.not. all(shape(var%dims) == shape(data_))) &
+      & error stop "[new_var] Shape of dims /= shape of data."
+    var%vals(1:size(data_)) => data_
+    select type (data_)
+    type is (integer(int8))
+      var%type = nc_byte
+    type is (integer(int16))
+      var%type = nc_short
+    type is (integer(int32))
+      var%type = nc_int
+    type is (integer(int64))
+      var%type = nc_int64
+    type is (real(real32))
+      var%type = nc_float
+    type is (real(real64))
+      var%type = nc_double
+    type is (character(*))
+      var%type = nc_char
+    end select
+  rank default
+    error stop "[new_var] Invalid rank."
   end select
 end function new_var
 
@@ -199,5 +291,396 @@ module function from_netcdf_var(filename, name) result(var)
   var = inq_var(file, name)
   call get_var(var)
 end function from_netcdf_var
+
+module subroutine extract_var_int8_1d(var, raw)
+  type(netcdf_variable), target, intent(in) :: var
+  integer(int8), pointer, intent(out) :: raw(:)
+
+  associate (s => shape(var))
+    select type (vals => var%vals)
+    type is (integer(int8))
+      raw(1:s(1)) => vals
+    class default
+      error stop "[extract_var_int8_1d] Invalid pointer type."
+    end select
+  end associate
+end subroutine extract_var_int8_1d
+module subroutine extract_var_int16_1d(var, raw)
+  type(netcdf_variable), target, intent(in) :: var
+  integer(int16), pointer, intent(out) :: raw(:)
+
+  associate (s => shape(var))
+    select type (vals => var%vals)
+    type is (integer(int16))
+      raw(1:s(1)) => vals
+    class default
+      error stop "[extract_var_int16_1d] Invalid pointer type."
+    end select
+  end associate
+end subroutine extract_var_int16_1d
+module subroutine extract_var_int32_1d(var, raw)
+  type(netcdf_variable), target, intent(in) :: var
+  integer(int32), pointer, intent(out) :: raw(:)
+
+  associate (s => shape(var))
+    select type (vals => var%vals)
+    type is (integer(int32))
+      raw(1:s(1)) => vals
+    class default
+      error stop "[extract_var_int32_1d] Invalid pointer type."
+    end select
+  end associate
+end subroutine extract_var_int32_1d
+module subroutine extract_var_int64_1d(var, raw)
+  type(netcdf_variable), target, intent(in) :: var
+  integer(int64), pointer, intent(out) :: raw(:)
+
+  associate (s => shape(var))
+    select type (vals => var%vals)
+    type is (integer(int64))
+      raw(1:s(1)) => vals
+    class default
+      error stop "[extract_var_int64_1d] Invalid pointer type."
+    end select
+  end associate
+end subroutine extract_var_int64_1d
+module subroutine extract_var_real32_1d(var, raw)
+  type(netcdf_variable), target, intent(in) :: var
+  real(real32), pointer, intent(out) :: raw(:)
+
+  associate (s => shape(var))
+    select type (vals => var%vals)
+    type is (real(real32))
+      raw(1:s(1)) => vals
+    class default
+      error stop "[extract_var_real32_1d] Invalid pointer type."
+    end select
+  end associate
+end subroutine extract_var_real32_1d
+module subroutine extract_var_real64_1d(var, raw)
+  type(netcdf_variable), target, intent(in) :: var
+  real(real64), pointer, intent(out) :: raw(:)
+
+  associate (s => shape(var))
+    select type (vals => var%vals)
+    type is (real(real64))
+      raw(1:s(1)) => vals
+    class default
+      error stop "[extract_var_real64_1d] Invalid pointer type."
+    end select
+  end associate
+end subroutine extract_var_real64_1d
+module subroutine extract_var_int8_2d(var, raw)
+  type(netcdf_variable), target, intent(in) :: var
+  integer(int8), pointer, intent(out) :: raw(:,:)
+
+  associate (s => shape(var))
+    select type (vals => var%vals)
+    type is (integer(int8))
+      raw(1:s(1),1:s(2)) => vals
+    class default
+      error stop "[extract_var_int8_2d] Invalid pointer type."
+    end select
+  end associate
+end subroutine extract_var_int8_2d
+module subroutine extract_var_int16_2d(var, raw)
+  type(netcdf_variable), target, intent(in) :: var
+  integer(int16), pointer, intent(out) :: raw(:,:)
+
+  associate (s => shape(var))
+    select type (vals => var%vals)
+    type is (integer(int16))
+      raw(1:s(1),1:s(2)) => vals
+    class default
+      error stop "[extract_var_int16_2d] Invalid pointer type."
+    end select
+  end associate
+end subroutine extract_var_int16_2d
+module subroutine extract_var_int32_2d(var, raw)
+  type(netcdf_variable), target, intent(in) :: var
+  integer(int32), pointer, intent(out) :: raw(:,:)
+
+  associate (s => shape(var))
+    select type (vals => var%vals)
+    type is (integer(int32))
+      raw(1:s(1),1:s(2)) => vals
+    class default
+      error stop "[extract_var_int32_2d] Invalid pointer type."
+    end select
+  end associate
+end subroutine extract_var_int32_2d
+module subroutine extract_var_int64_2d(var, raw)
+  type(netcdf_variable), target, intent(in) :: var
+  integer(int64), pointer, intent(out) :: raw(:,:)
+
+  associate (s => shape(var))
+    select type (vals => var%vals)
+    type is (integer(int64))
+      raw(1:s(1),1:s(2)) => vals
+    class default
+      error stop "[extract_var_int64_2d] Invalid pointer type."
+    end select
+  end associate
+end subroutine extract_var_int64_2d
+module subroutine extract_var_real32_2d(var, raw)
+  type(netcdf_variable), target, intent(in) :: var
+  real(real32), pointer, intent(out) :: raw(:,:)
+
+  associate (s => shape(var))
+    select type (vals => var%vals)
+    type is (real(real32))
+      raw(1:s(1),1:s(2)) => vals
+    class default
+      error stop "[extract_var_real32_2d] Invalid pointer type."
+    end select
+  end associate
+end subroutine extract_var_real32_2d
+module subroutine extract_var_real64_2d(var, raw)
+  type(netcdf_variable), target, intent(in) :: var
+  real(real64), pointer, intent(out) :: raw(:,:)
+
+  associate (s => shape(var))
+    select type (vals => var%vals)
+    type is (real(real64))
+      raw(1:s(1),1:s(2)) => vals
+    class default
+      error stop "[extract_var_real64_2d] Invalid pointer type."
+    end select
+  end associate
+end subroutine extract_var_real64_2d
+module subroutine extract_var_int8_3d(var, raw)
+  type(netcdf_variable), target, intent(in) :: var
+  integer(int8), pointer, intent(out) :: raw(:,:,:)
+
+  associate (s => shape(var))
+    select type (vals => var%vals)
+    type is (integer(int8))
+      raw(1:s(1),1:s(2),1:s(3)) => vals
+    class default
+      error stop "[extract_var_int8_3d] Invalid pointer type."
+    end select
+  end associate
+end subroutine extract_var_int8_3d
+module subroutine extract_var_int16_3d(var, raw)
+  type(netcdf_variable), target, intent(in) :: var
+  integer(int16), pointer, intent(out) :: raw(:,:,:)
+
+  associate (s => shape(var))
+    select type (vals => var%vals)
+    type is (integer(int16))
+      raw(1:s(1),1:s(2),1:s(3)) => vals
+    class default
+      error stop "[extract_var_int16_3d] Invalid pointer type."
+    end select
+  end associate
+end subroutine extract_var_int16_3d
+module subroutine extract_var_int32_3d(var, raw)
+  type(netcdf_variable), target, intent(in) :: var
+  integer(int32), pointer, intent(out) :: raw(:,:,:)
+
+  associate (s => shape(var))
+    select type (vals => var%vals)
+    type is (integer(int32))
+      raw(1:s(1),1:s(2),1:s(3)) => vals
+    class default
+      error stop "[extract_var_int32_3d] Invalid pointer type."
+    end select
+  end associate
+end subroutine extract_var_int32_3d
+module subroutine extract_var_int64_3d(var, raw)
+  type(netcdf_variable), target, intent(in) :: var
+  integer(int64), pointer, intent(out) :: raw(:,:,:)
+
+  associate (s => shape(var))
+    select type (vals => var%vals)
+    type is (integer(int64))
+      raw(1:s(1),1:s(2),1:s(3)) => vals
+    class default
+      error stop "[extract_var_int64_3d] Invalid pointer type."
+    end select
+  end associate
+end subroutine extract_var_int64_3d
+module subroutine extract_var_real32_3d(var, raw)
+  type(netcdf_variable), target, intent(in) :: var
+  real(real32), pointer, intent(out) :: raw(:,:,:)
+
+  associate (s => shape(var))
+    select type (vals => var%vals)
+    type is (real(real32))
+      raw(1:s(1),1:s(2),1:s(3)) => vals
+    class default
+      error stop "[extract_var_real32_3d] Invalid pointer type."
+    end select
+  end associate
+end subroutine extract_var_real32_3d
+module subroutine extract_var_real64_3d(var, raw)
+  type(netcdf_variable), target, intent(in) :: var
+  real(real64), pointer, intent(out) :: raw(:,:,:)
+
+  associate (s => shape(var))
+    select type (vals => var%vals)
+    type is (real(real64))
+      raw(1:s(1),1:s(2),1:s(3)) => vals
+    class default
+      error stop "[extract_var_real64_3d] Invalid pointer type."
+    end select
+  end associate
+end subroutine extract_var_real64_3d
+module subroutine extract_var_int8_4d(var, raw)
+  type(netcdf_variable), target, intent(in) :: var
+  integer(int8), pointer, intent(out) :: raw(:,:,:,:)
+
+  associate (s => shape(var))
+    select type (vals => var%vals)
+    type is (integer(int8))
+      raw(1:s(1),1:s(2),1:s(3),1:s(4)) => vals
+    class default
+      error stop "[extract_var_int8_4d] Invalid pointer type."
+    end select
+  end associate
+end subroutine extract_var_int8_4d
+module subroutine extract_var_int16_4d(var, raw)
+  type(netcdf_variable), target, intent(in) :: var
+  integer(int16), pointer, intent(out) :: raw(:,:,:,:)
+
+  associate (s => shape(var))
+    select type (vals => var%vals)
+    type is (integer(int16))
+      raw(1:s(1),1:s(2),1:s(3),1:s(4)) => vals
+    class default
+      error stop "[extract_var_int16_4d] Invalid pointer type."
+    end select
+  end associate
+end subroutine extract_var_int16_4d
+module subroutine extract_var_int32_4d(var, raw)
+  type(netcdf_variable), target, intent(in) :: var
+  integer(int32), pointer, intent(out) :: raw(:,:,:,:)
+
+  associate (s => shape(var))
+    select type (vals => var%vals)
+    type is (integer(int32))
+      raw(1:s(1),1:s(2),1:s(3),1:s(4)) => vals
+    class default
+      error stop "[extract_var_int32_4d] Invalid pointer type."
+    end select
+  end associate
+end subroutine extract_var_int32_4d
+module subroutine extract_var_int64_4d(var, raw)
+  type(netcdf_variable), target, intent(in) :: var
+  integer(int64), pointer, intent(out) :: raw(:,:,:,:)
+
+  associate (s => shape(var))
+    select type (vals => var%vals)
+    type is (integer(int64))
+      raw(1:s(1),1:s(2),1:s(3),1:s(4)) => vals
+    class default
+      error stop "[extract_var_int64_4d] Invalid pointer type."
+    end select
+  end associate
+end subroutine extract_var_int64_4d
+module subroutine extract_var_real32_4d(var, raw)
+  type(netcdf_variable), target, intent(in) :: var
+  real(real32), pointer, intent(out) :: raw(:,:,:,:)
+
+  associate (s => shape(var))
+    select type (vals => var%vals)
+    type is (real(real32))
+      raw(1:s(1),1:s(2),1:s(3),1:s(4)) => vals
+    class default
+      error stop "[extract_var_real32_4d] Invalid pointer type."
+    end select
+  end associate
+end subroutine extract_var_real32_4d
+module subroutine extract_var_real64_4d(var, raw)
+  type(netcdf_variable), target, intent(in) :: var
+  real(real64), pointer, intent(out) :: raw(:,:,:,:)
+
+  associate (s => shape(var))
+    select type (vals => var%vals)
+    type is (real(real64))
+      raw(1:s(1),1:s(2),1:s(3),1:s(4)) => vals
+    class default
+      error stop "[extract_var_real64_4d] Invalid pointer type."
+    end select
+  end associate
+end subroutine extract_var_real64_4d
+module subroutine extract_var_int8_5d(var, raw)
+  type(netcdf_variable), target, intent(in) :: var
+  integer(int8), pointer, intent(out) :: raw(:,:,:,:,:)
+
+  associate (s => shape(var))
+    select type (vals => var%vals)
+    type is (integer(int8))
+      raw(1:s(1),1:s(2),1:s(3),1:s(4),1:s(5)) => vals
+    class default
+      error stop "[extract_var_int8_5d] Invalid pointer type."
+    end select
+  end associate
+end subroutine extract_var_int8_5d
+module subroutine extract_var_int16_5d(var, raw)
+  type(netcdf_variable), target, intent(in) :: var
+  integer(int16), pointer, intent(out) :: raw(:,:,:,:,:)
+
+  associate (s => shape(var))
+    select type (vals => var%vals)
+    type is (integer(int16))
+      raw(1:s(1),1:s(2),1:s(3),1:s(4),1:s(5)) => vals
+    class default
+      error stop "[extract_var_int16_5d] Invalid pointer type."
+    end select
+  end associate
+end subroutine extract_var_int16_5d
+module subroutine extract_var_int32_5d(var, raw)
+  type(netcdf_variable), target, intent(in) :: var
+  integer(int32), pointer, intent(out) :: raw(:,:,:,:,:)
+
+  associate (s => shape(var))
+    select type (vals => var%vals)
+    type is (integer(int32))
+      raw(1:s(1),1:s(2),1:s(3),1:s(4),1:s(5)) => vals
+    class default
+      error stop "[extract_var_int32_5d] Invalid pointer type."
+    end select
+  end associate
+end subroutine extract_var_int32_5d
+module subroutine extract_var_int64_5d(var, raw)
+  type(netcdf_variable), target, intent(in) :: var
+  integer(int64), pointer, intent(out) :: raw(:,:,:,:,:)
+
+  associate (s => shape(var))
+    select type (vals => var%vals)
+    type is (integer(int64))
+      raw(1:s(1),1:s(2),1:s(3),1:s(4),1:s(5)) => vals
+    class default
+      error stop "[extract_var_int64_5d] Invalid pointer type."
+    end select
+  end associate
+end subroutine extract_var_int64_5d
+module subroutine extract_var_real32_5d(var, raw)
+  type(netcdf_variable), target, intent(in) :: var
+  real(real32), pointer, intent(out) :: raw(:,:,:,:,:)
+
+  associate (s => shape(var))
+    select type (vals => var%vals)
+    type is (real(real32))
+      raw(1:s(1),1:s(2),1:s(3),1:s(4),1:s(5)) => vals
+    class default
+      error stop "[extract_var_real32_5d] Invalid pointer type."
+    end select
+  end associate
+end subroutine extract_var_real32_5d
+module subroutine extract_var_real64_5d(var, raw)
+  type(netcdf_variable), target, intent(in) :: var
+  real(real64), pointer, intent(out) :: raw(:,:,:,:,:)
+
+  associate (s => shape(var))
+    select type (vals => var%vals)
+    type is (real(real64))
+      raw(1:s(1),1:s(2),1:s(3),1:s(4),1:s(5)) => vals
+    class default
+      error stop "[extract_var_real64_5d] Invalid pointer type."
+    end select
+  end associate
+end subroutine extract_var_real64_5d
 
 end submodule submodule_variable

@@ -14,7 +14,7 @@ public :: operator(.dim.), operator(.att.)
 public :: write(formatted)
 public :: shape, atts, dims
 public :: to_netcdf, from_netcdf
-public :: data_array, data_set
+public :: data_array, data_set, extract
 private
 
 type, abstract :: netcdf_abstract
@@ -90,16 +90,49 @@ interface from_netcdf
   module procedure :: from_netcdf_var
 end interface from_netcdf
 
+interface extract
+  module procedure :: extract_var_int8_1d
+  module procedure :: extract_var_int16_1d
+  module procedure :: extract_var_int32_1d
+  module procedure :: extract_var_int64_1d
+  module procedure :: extract_var_real32_1d
+  module procedure :: extract_var_real64_1d
+  module procedure :: extract_var_int8_2d
+  module procedure :: extract_var_int16_2d
+  module procedure :: extract_var_int32_2d
+  module procedure :: extract_var_int64_2d
+  module procedure :: extract_var_real32_2d
+  module procedure :: extract_var_real64_2d
+  module procedure :: extract_var_int8_3d
+  module procedure :: extract_var_int16_3d
+  module procedure :: extract_var_int32_3d
+  module procedure :: extract_var_int64_3d
+  module procedure :: extract_var_real32_3d
+  module procedure :: extract_var_real64_3d
+  module procedure :: extract_var_int8_4d
+  module procedure :: extract_var_int16_4d
+  module procedure :: extract_var_int32_4d
+  module procedure :: extract_var_int64_4d
+  module procedure :: extract_var_real32_4d
+  module procedure :: extract_var_real64_4d
+  module procedure :: extract_var_int8_5d
+  module procedure :: extract_var_int16_5d
+  module procedure :: extract_var_int32_5d
+  module procedure :: extract_var_int64_5d
+  module procedure :: extract_var_real32_5d
+  module procedure :: extract_var_real64_5d
+end interface extract
+
 interface shape
   module procedure :: shape_dims
   module procedure :: shape_var
 end interface shape
 
-interface write (formatted)
+interface write(formatted)
   module procedure :: write_formatted_att
   module procedure :: write_formatted_dim
   module procedure :: write_formatted_var
-end interface write (formatted)
+end interface write(formatted)
 
 interface
   module pure function cstr(string) result(cstring)
@@ -192,10 +225,11 @@ interface
     type(netcdf_variable), intent(inout) :: var
   end subroutine get_var_atts
 
-  module function new_var(data, name, dims, atts) result(var)
-    class(*), target, intent(in) :: data(:)
+  module function new_var(data, name, dims, unlim_dim, atts) result(var)
+    class(*), target, intent(in) :: data(..)
     character(len=*), intent(in) :: name
     type(netcdf_dimension), intent(in) :: dims(:)
+    integer, intent(in), optional :: unlim_dim
     type(netcdf_attribute), intent(in), optional :: atts(:)
     type(netcdf_variable) :: var
   end function new_var
@@ -229,6 +263,157 @@ interface
     character(len=*), intent(in) :: filename, name
     type(netcdf_variable) :: var
   end function from_netcdf_var
+
+  module subroutine extract_var_int8_1d(var, raw)
+    type(netcdf_variable), target, intent(in) :: var
+    integer(int8), pointer, intent(out) :: raw(:)
+  end subroutine extract_var_int8_1d
+
+  module subroutine extract_var_int16_1d(var, raw)
+    type(netcdf_variable), target, intent(in) :: var
+    integer(int16), pointer, intent(out) :: raw(:)
+  end subroutine extract_var_int16_1d
+
+  module subroutine extract_var_int32_1d(var, raw)
+    type(netcdf_variable), target, intent(in) :: var
+    integer(int32), pointer, intent(out) :: raw(:)
+  end subroutine extract_var_int32_1d
+
+  module subroutine extract_var_int64_1d(var, raw)
+    type(netcdf_variable), target, intent(in) :: var
+    integer(int64), pointer, intent(out) :: raw(:)
+  end subroutine extract_var_int64_1d
+
+  module subroutine extract_var_real32_1d(var, raw)
+    type(netcdf_variable), target, intent(in) :: var
+    real(real32), pointer, intent(out) :: raw(:)
+  end subroutine extract_var_real32_1d
+
+  module subroutine extract_var_real64_1d(var, raw)
+    type(netcdf_variable), target, intent(in) :: var
+    real(real64), pointer, intent(out) :: raw(:)
+  end subroutine extract_var_real64_1d
+
+  module subroutine extract_var_int8_2d(var, raw)
+    type(netcdf_variable), target, intent(in) :: var
+    integer(int8), pointer, intent(out) :: raw(:,:)
+  end subroutine extract_var_int8_2d
+
+  module subroutine extract_var_int16_2d(var, raw)
+    type(netcdf_variable), target, intent(in) :: var
+    integer(int16), pointer, intent(out) :: raw(:,:)
+  end subroutine extract_var_int16_2d
+
+  module subroutine extract_var_int32_2d(var, raw)
+    type(netcdf_variable), target, intent(in) :: var
+    integer(int32), pointer, intent(out) :: raw(:,:)
+  end subroutine extract_var_int32_2d
+
+  module subroutine extract_var_int64_2d(var, raw)
+    type(netcdf_variable), target, intent(in) :: var
+    integer(int64), pointer, intent(out) :: raw(:,:)
+  end subroutine extract_var_int64_2d
+
+  module subroutine extract_var_real32_2d(var, raw)
+    type(netcdf_variable), target, intent(in) :: var
+    real(real32), pointer, intent(out) :: raw(:,:)
+  end subroutine extract_var_real32_2d
+
+  module subroutine extract_var_real64_2d(var, raw)
+    type(netcdf_variable), target, intent(in) :: var
+    real(real64), pointer, intent(out) :: raw(:,:)
+  end subroutine extract_var_real64_2d
+
+  module subroutine extract_var_int8_3d(var, raw)
+    type(netcdf_variable), target, intent(in) :: var
+    integer(int8), pointer, intent(out) :: raw(:,:,:)
+  end subroutine extract_var_int8_3d
+
+  module subroutine extract_var_int16_3d(var, raw)
+    type(netcdf_variable), target, intent(in) :: var
+    integer(int16), pointer, intent(out) :: raw(:,:,:)
+  end subroutine extract_var_int16_3d
+
+  module subroutine extract_var_int32_3d(var, raw)
+    type(netcdf_variable), target, intent(in) :: var
+    integer(int32), pointer, intent(out) :: raw(:,:,:)
+  end subroutine extract_var_int32_3d
+
+  module subroutine extract_var_int64_3d(var, raw)
+    type(netcdf_variable), target, intent(in) :: var
+    integer(int64), pointer, intent(out) :: raw(:,:,:)
+  end subroutine extract_var_int64_3d
+
+  module subroutine extract_var_real32_3d(var, raw)
+    type(netcdf_variable), target, intent(in) :: var
+    real(real32), pointer, intent(out) :: raw(:,:,:)
+  end subroutine extract_var_real32_3d
+
+  module subroutine extract_var_real64_3d(var, raw)
+    type(netcdf_variable), target, intent(in) :: var
+    real(real64), pointer, intent(out) :: raw(:,:,:)
+  end subroutine extract_var_real64_3d
+
+  module subroutine extract_var_int8_4d(var, raw)
+    type(netcdf_variable), target, intent(in) :: var
+    integer(int8), pointer, intent(out) :: raw(:,:,:,:)
+  end subroutine extract_var_int8_4d
+
+  module subroutine extract_var_int16_4d(var, raw)
+    type(netcdf_variable), target, intent(in) :: var
+    integer(int16), pointer, intent(out) :: raw(:,:,:,:)
+  end subroutine extract_var_int16_4d
+
+  module subroutine extract_var_int32_4d(var, raw)
+    type(netcdf_variable), target, intent(in) :: var
+    integer(int32), pointer, intent(out) :: raw(:,:,:,:)
+  end subroutine extract_var_int32_4d
+
+  module subroutine extract_var_int64_4d(var, raw)
+    type(netcdf_variable), target, intent(in) :: var
+    integer(int64), pointer, intent(out) :: raw(:,:,:,:)
+  end subroutine extract_var_int64_4d
+
+  module subroutine extract_var_real32_4d(var, raw)
+    type(netcdf_variable), target, intent(in) :: var
+    real(real32), pointer, intent(out) :: raw(:,:,:,:)
+  end subroutine extract_var_real32_4d
+
+  module subroutine extract_var_real64_4d(var, raw)
+    type(netcdf_variable), target, intent(in) :: var
+    real(real64), pointer, intent(out) :: raw(:,:,:,:)
+  end subroutine extract_var_real64_4d
+
+  module subroutine extract_var_int8_5d(var, raw)
+    type(netcdf_variable), target, intent(in) :: var
+    integer(int8), pointer, intent(out) :: raw(:,:,:,:,:)
+  end subroutine extract_var_int8_5d
+
+  module subroutine extract_var_int16_5d(var, raw)
+    type(netcdf_variable), target, intent(in) :: var
+    integer(int16), pointer, intent(out) :: raw(:,:,:,:,:)
+  end subroutine extract_var_int16_5d
+
+  module subroutine extract_var_int32_5d(var, raw)
+    type(netcdf_variable), target, intent(in) :: var
+    integer(int32), pointer, intent(out) :: raw(:,:,:,:,:)
+  end subroutine extract_var_int32_5d
+
+  module subroutine extract_var_int64_5d(var, raw)
+    type(netcdf_variable), target, intent(in) :: var
+    integer(int64), pointer, intent(out) :: raw(:,:,:,:,:)
+  end subroutine extract_var_int64_5d
+
+  module subroutine extract_var_real32_5d(var, raw)
+    type(netcdf_variable), target, intent(in) :: var
+    real(real32), pointer, intent(out) :: raw(:,:,:,:,:)
+  end subroutine extract_var_real32_5d
+
+  module subroutine extract_var_real64_5d(var, raw)
+    type(netcdf_variable), target, intent(in) :: var
+    real(real64), pointer, intent(out) :: raw(:,:,:,:,:)
+  end subroutine extract_var_real64_5d
+
 
   module function new_file(vars, atts) result(file)
     type(netcdf_variable), intent(in) :: vars(:)

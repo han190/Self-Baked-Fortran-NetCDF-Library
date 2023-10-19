@@ -3,27 +3,41 @@ submodule(module_fortran_interface) submodule_variable
 implicit none
 contains
 
-module function new_var(data, name, dims, atts) result(var)
-  class(*), target, intent(in) :: data(:)
+module function new_var(data, name, dims, unlim_dim, atts) result(var)
+  class(*), target, intent(in) :: data(..)
   character(len=*), intent(in) :: name
   type(netcdf_dimension), intent(in) :: dims(:)
+  integer, intent(in), optional :: unlim_dim
   type(netcdf_attribute), intent(in), optional :: atts(:)
   type(netcdf_variable) :: var
 
   var%name = name
-  var%dims = dims
-  if (present(atts)) var%atts = atts
-  ! if (associated(var%vals)) deallocate (var%vals)
-  ! allocate (var%vals, source=data)
-  var%vals => data
+  if (present(unlim_dim)) then
+    var%dims = new_dims_unlim(dims, unlim_dim)
+  else
+    var%dims = new_dims(dims)
+  end if
+  if (present(atts)) then
+    var%atts = new_atts(atts)
+  end if
 
-  select type (data)
-  #: for type, kind, nc_type in zip(types, kinds, nc_types)
-  type is (${type}$(${kind}$))
-    var%type = ${nc_type}$
+  select rank (data_ => data)
+  #: for rank in range(1, max_rank)
+  rank (${rank}$)
+    if (.not. all(shape(var%dims) == shape(data_))) &
+      & error stop "[new_var] Shape of dims /= shape of data."
+    var%vals(1:size(data_)) => data_
+    select type (data_)
+    #: for type, kind, nc_type in zip(types, kinds, nc_types)
+    type is (${type}$(${kind}$))
+      var%type = ${nc_type}$
+    #: endfor
+    type is (character(*))
+      var%type = nc_char
+    end select
   #: endfor
-  type is (character(*))
-    var%type = nc_char
+  rank default
+    error stop "[new_var] Invalid rank."
   end select
 end function new_var
 
@@ -158,5 +172,23 @@ module function from_netcdf_var(filename, name) result(var)
   var = inq_var(file, name)
   call get_var(var)
 end function from_netcdf_var
+
+#: for rank in range(1, max_rank)
+#: for type, kind in zip(types, kinds)
+module subroutine extract_var_${kind}$_${rank}$d(var, raw)
+  type(netcdf_variable), target, intent(in) :: var
+  ${type}$(${kind}$), pointer, intent(out) :: raw(#{for i in range(1, rank)}#:,#{endfor}#:)
+
+  associate (s => shape(var))
+    select type (vals => var%vals)
+    type is (${type}$(${kind}$))
+      raw(#{for i in range(1, rank)}#1:s(${i}$),#{endfor}#1:s(${rank}$)) => vals
+    class default
+      error stop "[extract_var_${kind}$_${rank}$d] Invalid pointer type."
+    end select
+  end associate
+end subroutine extract_var_${kind}$_${rank}$d
+#: endfor
+#: endfor
 
 end submodule submodule_variable
