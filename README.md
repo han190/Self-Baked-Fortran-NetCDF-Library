@@ -19,21 +19,17 @@ program main
 use module_netcdf
 implicit none
 
+integer, parameter :: nx = 3, ny = 4
 character(len=*), parameter :: filename = "simple_xy.nc"
 type(netcdf_variable) :: var
-real, target :: raw(3, 4)
-class(*), pointer :: ptr(:)
+real :: raw(nx, ny)
 
-! Fill an array with random numbers, and
-! map the array to a 1D pointer
+! Fill an array with random numbers.
 call random_number(raw)
-ptr(1:3*4) => raw 
 
 ! Construct a data array and write to a NetCDF file.
-var = data_array(ptr, name="data", &
-  & dims=dims(["x".dim.3, "y".dim.4]))
+var = data_array(raw, "data", dims=["x".dim.nx, "y".dim.ny])
 call to_netcdf(var, filename)
-nullify (ptr)
 
 end program main
 ```
@@ -45,33 +41,29 @@ use module_netcdf
 implicit none
 
 integer, parameter :: nx = 4, ny = 3, nz = 2, nt = 1
-type(nc_var) :: geopt, temp, slp
-real, target :: geopt_raw(nx, ny, nz)
-double precision, target :: temp_raw(nx, ny, nt), slp_raw(nx, ny)
-class(*), pointer :: ptr(:)
+type(netcdf_variable) :: geopt, temp, slp
+real :: geopt_raw(nx, ny, nz)
+integer :: temp_raw(nx, ny, nt)
+double precision :: slp_raw(nx, ny)
+real :: nan
 
+nan = ieee_value(0.0, ieee_quiet_nan)
 call random_number(geopt_raw)
-ptr(1:size(geopt_raw)) => geopt_raw
-geopt = data_array(ptr, "geopt", &
-  & dims=dims(["latitude".dim.nx, "longitude".dim.ny, "level".dim.nz]), &
-  & atts=atts(["long_name".att."geopotenail"]))
-nullify (ptr)
+geopt = data_array(geopt_raw, "geopt", &
+  & dims=["latitude".dim.nx, "longitude".dim.ny, "level".dim.nz], &
+  & atts=["long_name".att."geopotenail", "_FillValue".att.nan])
 
-call random_number(temp_raw)
-ptr(1:size(temp_raw)) => temp_raw
-temp = data_array(ptr, "temp", &
-  & dims=dims(["latitude".dim.nx, "longitude".dim.ny, "time".dim.nt]), &
-  & atts=atts(["long_name".att."temperature"]))
-nullify (ptr)
+temp_raw = 1
+temp = data_array(temp_raw, "temp", &
+  & dims=["latitude".dim.nx, "longitude".dim.ny, "time".dim.nt], &
+  & atts=["long_name".att."temperature", "add_offset".att.-273.15, "scale_factor".att.1.0])
 
 call random_number(slp_raw)
-ptr(1:size(slp_raw)) => slp_raw
-slp = data_array(ptr, "slp", &
-  & dims=dims(["latitude".dim.nx, "longitude".dim.ny]), &
-  & atts=atts(["long_name".att."sea level pressure"]))
-nullify (ptr)
+slp = data_array(slp_raw, "slp", &
+  & dims=["latitude".dim.nx, "longitude".dim.ny], &
+  & atts=["long_name".att."sea level pressure", "missing_value".att.-2147483647])
 
-! print "(dt)", geopt, temp, slp
+print "(*(dt))", geopt, temp, slp
 call to_netcdf([geopt, temp, slp], "multiple_vars.nc")
 end program main
 ```
@@ -84,29 +76,19 @@ use module_netcdf
 implicit none
 
 character(len=*), parameter :: filename = "simple_xy.nc"
-type(nc_var), target :: var
-real, pointer :: ptr(:, :)
+type(netcdf_variable) :: var
+real, pointer :: raw(:, :) => null()
 
-! Read from NetCDF
+! Read from NetCDF and extract data
 var = from_netcdf(filename, "data")
-
-! Select type and then map the 1d 
-! unlimited polymorphic to a 2d array.
-select type (vals => var%vals)
-type is (real)
-  associate (s => shape(var))
-    ptr(1:s(1), 1:s(2)) => vals
-  end associate
-end select
-nullify (ptr)
-
+call extract(var, raw)
 end program main
 ```
 
 ## Miscellaneous
 To count the LOC for this project
 ```
-cloc --force-lang-def=./misc/language_definitions.txt --exclude-dir=backups,src .
+cloc --force-lang-def=./misc/language_definitions.txt --exclude-dir=backups,src,doc,build .
 ```
 To generate and compile source code
 ```

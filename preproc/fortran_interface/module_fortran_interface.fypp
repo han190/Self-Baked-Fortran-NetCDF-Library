@@ -97,6 +97,9 @@ interface extract
   module procedure :: extract_var_${kind}$_${rank}$d
   #: endfor
   #: endfor
+  #: for type, kind in zip(types, kinds)
+  module procedure :: extract_att_${kind}$
+  #: endfor
 end interface extract
 
 interface shape
@@ -200,6 +203,14 @@ interface
   module subroutine get_var_atts(var)
     type(netcdf_variable), intent(inout) :: var
   end subroutine get_var_atts
+
+  #: for type, kind in zip(types, kinds)
+  module subroutine extract_att_${kind}$(var, name, raw)
+    type(netcdf_variable), target, intent(in) :: var
+    character(len=*), intent(in) :: name
+    ${type}$(${kind}$), pointer, intent(out) :: raw(:)
+  end subroutine extract_att_${kind}$${"\n"}$
+  #: endfor
 
   module function new_var(data, name, dims, unlim_dim, atts) result(var)
     class(*), target, intent(in) :: data(..)

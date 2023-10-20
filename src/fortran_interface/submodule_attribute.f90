@@ -290,4 +290,119 @@ module subroutine get_var_atts(var)
   call get_atts_(var%grpID, var%ID, var%atts)
 end subroutine get_var_atts
 
+module subroutine extract_att_int8(var, name, raw)
+  type(netcdf_variable), target, intent(in) :: var
+  character(len=*), intent(in) :: name
+  integer(int8), pointer, intent(out) :: raw(:)
+  integer :: i
+
+  do i = 1, size(var%atts)
+    if (name == var%atts(i)%name) then
+      select type (vals => var%atts(i)%vals)
+      type is (integer(int8))
+        raw(1:size(vals)) => vals
+        return
+      class default
+        error stop "[extract_att_int8] Invalid attribute pointer."
+      end select
+    end if
+  end do
+end subroutine extract_att_int8
+
+module subroutine extract_att_int16(var, name, raw)
+  type(netcdf_variable), target, intent(in) :: var
+  character(len=*), intent(in) :: name
+  integer(int16), pointer, intent(out) :: raw(:)
+  integer :: i
+
+  do i = 1, size(var%atts)
+    if (name == var%atts(i)%name) then
+      select type (vals => var%atts(i)%vals)
+      type is (integer(int16))
+        raw(1:size(vals)) => vals
+        return
+      class default
+        error stop "[extract_att_int16] Invalid attribute pointer."
+      end select
+    end if
+  end do
+end subroutine extract_att_int16
+
+module subroutine extract_att_int32(var, name, raw)
+  type(netcdf_variable), target, intent(in) :: var
+  character(len=*), intent(in) :: name
+  integer(int32), pointer, intent(out) :: raw(:)
+  integer :: i
+
+  do i = 1, size(var%atts)
+    if (name == var%atts(i)%name) then
+      select type (vals => var%atts(i)%vals)
+      type is (integer(int32))
+        raw(1:size(vals)) => vals
+        return
+      class default
+        error stop "[extract_att_int32] Invalid attribute pointer."
+      end select
+    end if
+  end do
+end subroutine extract_att_int32
+
+module subroutine extract_att_int64(var, name, raw)
+  type(netcdf_variable), target, intent(in) :: var
+  character(len=*), intent(in) :: name
+  integer(int64), pointer, intent(out) :: raw(:)
+  integer :: i
+
+  do i = 1, size(var%atts)
+    if (name == var%atts(i)%name) then
+      select type (vals => var%atts(i)%vals)
+      type is (integer(int64))
+        raw(1:size(vals)) => vals
+        return
+      class default
+        error stop "[extract_att_int64] Invalid attribute pointer."
+      end select
+    end if
+  end do
+end subroutine extract_att_int64
+
+module subroutine extract_att_real32(var, name, raw)
+  type(netcdf_variable), target, intent(in) :: var
+  character(len=*), intent(in) :: name
+  real(real32), pointer, intent(out) :: raw(:)
+  integer :: i
+
+  do i = 1, size(var%atts)
+    if (name == var%atts(i)%name) then
+      select type (vals => var%atts(i)%vals)
+      type is (real(real32))
+        raw(1:size(vals)) => vals
+        return
+      class default
+        error stop "[extract_att_real32] Invalid attribute pointer."
+      end select
+    end if
+  end do
+end subroutine extract_att_real32
+
+module subroutine extract_att_real64(var, name, raw)
+  type(netcdf_variable), target, intent(in) :: var
+  character(len=*), intent(in) :: name
+  real(real64), pointer, intent(out) :: raw(:)
+  integer :: i
+
+  do i = 1, size(var%atts)
+    if (name == var%atts(i)%name) then
+      select type (vals => var%atts(i)%vals)
+      type is (real(real64))
+        raw(1:size(vals)) => vals
+        return
+      class default
+        error stop "[extract_att_real64] Invalid attribute pointer."
+      end select
+    end if
+  end do
+end subroutine extract_att_real64
+
+
 end submodule submodule_attribute

@@ -121,6 +121,12 @@ interface extract
   module procedure :: extract_var_int64_5d
   module procedure :: extract_var_real32_5d
   module procedure :: extract_var_real64_5d
+  module procedure :: extract_att_int8
+  module procedure :: extract_att_int16
+  module procedure :: extract_att_int32
+  module procedure :: extract_att_int64
+  module procedure :: extract_att_real32
+  module procedure :: extract_att_real64
 end interface extract
 
 interface shape
@@ -224,6 +230,43 @@ interface
   module subroutine get_var_atts(var)
     type(netcdf_variable), intent(inout) :: var
   end subroutine get_var_atts
+
+  module subroutine extract_att_int8(var, name, raw)
+    type(netcdf_variable), target, intent(in) :: var
+    character(len=*), intent(in) :: name
+    integer(int8), pointer, intent(out) :: raw(:)
+  end subroutine extract_att_int8
+
+  module subroutine extract_att_int16(var, name, raw)
+    type(netcdf_variable), target, intent(in) :: var
+    character(len=*), intent(in) :: name
+    integer(int16), pointer, intent(out) :: raw(:)
+  end subroutine extract_att_int16
+
+  module subroutine extract_att_int32(var, name, raw)
+    type(netcdf_variable), target, intent(in) :: var
+    character(len=*), intent(in) :: name
+    integer(int32), pointer, intent(out) :: raw(:)
+  end subroutine extract_att_int32
+
+  module subroutine extract_att_int64(var, name, raw)
+    type(netcdf_variable), target, intent(in) :: var
+    character(len=*), intent(in) :: name
+    integer(int64), pointer, intent(out) :: raw(:)
+  end subroutine extract_att_int64
+
+  module subroutine extract_att_real32(var, name, raw)
+    type(netcdf_variable), target, intent(in) :: var
+    character(len=*), intent(in) :: name
+    real(real32), pointer, intent(out) :: raw(:)
+  end subroutine extract_att_real32
+
+  module subroutine extract_att_real64(var, name, raw)
+    type(netcdf_variable), target, intent(in) :: var
+    character(len=*), intent(in) :: name
+    real(real64), pointer, intent(out) :: raw(:)
+  end subroutine extract_att_real64
+
 
   module function new_var(data, name, dims, unlim_dim, atts) result(var)
     class(*), target, intent(in) :: data(..)

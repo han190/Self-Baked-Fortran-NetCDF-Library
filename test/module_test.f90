@@ -8,7 +8,8 @@ implicit none
 
 integer, parameter :: nx = 3, ny = 5, nz = 4, nt = 1
 character(len=*), parameter :: path = "./data/"
-character(len=*), parameter :: filename = "single_var.nc"
+character(len=*), parameter :: signle_var_file = "single_var.nc"
+character(len=*), parameter :: multi_vars_file = "multi_vars.nc"
 
 contains
 
@@ -71,7 +72,7 @@ subroutine single_var_wr()
     & atts=["long_name".att."dummy variable"])
 
   ! Write to netcdf.
-  call to_netcdf(var, path//filename)
+  call to_netcdf(var, path//signle_var_file)
 
   print "(dt)", var
   print "(a)", "values = "
@@ -91,7 +92,7 @@ subroutine single_var_rd()
   real, pointer :: raw(:, :) => null()
   integer :: i
 
-  var = from_netcdf(path//filename, "var")
+  var = from_netcdf(path//signle_var_file, "var")
   call extract(var, raw)
 
   print "(dt)", var
@@ -110,9 +111,9 @@ end subroutine single_var_rd
 
 subroutine multiple_vars_wr()
   type(netcdf_variable) :: geopt, temp, slp
-  real, target :: geopt_raw(nx, ny, nz)
-  integer, target :: temp_raw(nx, ny, nt)
-  double precision, target :: slp_raw(nx, ny)
+  real :: geopt_raw(nx, ny, nz)
+  integer :: temp_raw(nx, ny, nt)
+  double precision :: slp_raw(nx, ny)
   real :: nan
 
   nan = ieee_value(0.0, ieee_quiet_nan)
@@ -134,7 +135,7 @@ subroutine multiple_vars_wr()
     & atts=["long_name".att."sea level pressure", "missing_value".att.-2147483647])
 
   print "(*(dt))", geopt, temp, slp
-  call to_netcdf([geopt, temp, slp], path//"multiple_vars.nc")
+  call to_netcdf([geopt, temp, slp], path//multi_vars_file)
 
   associate (str => "Successfully write to 'multiple_vars.nc'.")
     print "(a)", repeat("=", len(str))
@@ -142,5 +143,23 @@ subroutine multiple_vars_wr()
     print "(a)", repeat("=", len(str)), new_line("(a)")
   end associate
 end subroutine multiple_vars_wr
+
+subroutine multiple_vars_rd()
+  real, pointer :: add_offset(:), scale_factor(:)
+  integer, pointer :: raw(:, :, :)
+  type(netcdf_variable) :: var
+
+  var = from_netcdf(path//multi_vars_file, "temp")
+  call extract(var, raw)
+  call extract(var, "add_offset", add_offset)
+  call extract(var, "scale_factor", scale_factor)
+
+  print "(dt)", var
+  associate (str => "Successfully read to 'multiple_vars.nc'.")
+    print "(a)", repeat("=", len(str))
+    print "(a)", str
+    print "(a)", repeat("=", len(str)), new_line("(a)")
+  end associate
+end subroutine multiple_vars_rd
 
 end module module_test
