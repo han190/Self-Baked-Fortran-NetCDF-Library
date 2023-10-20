@@ -3,49 +3,45 @@ submodule(module_fortran_interface) submodule_attribute
 implicit none
 contains
 
-module pure function new_att_vec(name, vals) result(ret)
+#: for rank, column in zip([0, 1], ['', "(:)"])
+#: for type, kind, nc_type in zip(types, kinds, nc_types)
+module pure function new_att_${kind}$_${rank}$d(name, vals) result(ret)
   character(len=*), intent(in) :: name
-  class(*), intent(in) :: vals(:)
+  ${type}$(${kind}$), intent(in) :: vals${column}$
   type(netcdf_attribute) :: ret
 
   ret%name = name
-  select type (vals_ => vals)
-  #: for type, kind, nc_type in zip(types, kinds, nc_types)
-  type is (${type}$ (${kind}$))
-    ret%type = ${nc_type}$
-    if (associated(ret%vals)) deallocate (ret%vals)
-    allocate (ret%vals, source=vals_)
-    ret%len = size(vals_)
-  #: endfor
-  type is (character(*))
-    ret%type = nc_char
-    if (associated(ret%vals)) deallocate (ret%vals)
-    allocate (ret%vals, source=vals_)
-    ret%len = size(vals_)
-  end select
-end function new_att_vec
+  ret%type = ${nc_type}$
+  if (associated(ret%vals)) deallocate (ret%vals)
+  #: if rank == 0
+  allocate (ret%vals, source=[vals])
+  ret%len = 1
+  #: else
+  allocate (ret%vals, source=vals)
+  ret%len = size(vals)
+  #: endif
+end function new_att_${kind}$_${rank}$d${"\n"}$
+#: endfor
+#: endfor
 
-module pure function new_att_scal(name, val) result(ret)
+#: for rank, column in zip([0, 1], ['', "(:)"])
+module pure function new_att_char_${rank}$d(name, vals) result(ret)
   character(len=*), intent(in) :: name
-  class(*), intent(in) :: val
+  character(len=*), intent(in) :: vals${column}$
   type(netcdf_attribute) :: ret
 
   ret%name = name
-  select type (val_ => val)
-  #: for type, kind, nc_type in zip(types, kinds, nc_types)
-  type is (${type}$ (${kind}$))
-    ret%type = ${nc_type}$
-    if (associated(ret%vals)) deallocate (ret%vals)
-    allocate (ret%vals, source=[val_])
-    ret%len = 1
-  #: endfor
-  type is (character(*))
-    ret%type = nc_char
-    if (associated(ret%vals)) deallocate (ret%vals)
-    allocate (ret%vals, source=[val_])
-    ret%len = 1
-  end select
-end function new_att_scal
+  ret%type = nc_char
+  if (associated(ret%vals)) deallocate (ret%vals)
+  #: if rank == 0
+  allocate (ret%vals, source=[vals])
+  ret%len = 1
+  #: else
+  allocate (ret%vals, source=vals)
+  ret%len = size(vals)
+  #: endif
+end function new_att_char_${rank}$d${"\n"}$
+#: endfor
 
 module function new_atts(atts) result(ret)
   type(netcdf_attribute), intent(in) :: atts(:)

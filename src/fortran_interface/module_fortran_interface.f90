@@ -64,8 +64,20 @@ interface dims
 end interface dims
 
 interface operator(.att.)
-  module procedure :: new_att_scal
-  module procedure :: new_att_vec
+  module procedure :: new_att_int8_0d
+  module procedure :: new_att_int16_0d
+  module procedure :: new_att_int32_0d
+  module procedure :: new_att_int64_0d
+  module procedure :: new_att_real32_0d
+  module procedure :: new_att_real64_0d
+  module procedure :: new_att_int8_1d
+  module procedure :: new_att_int16_1d
+  module procedure :: new_att_int32_1d
+  module procedure :: new_att_int64_1d
+  module procedure :: new_att_real32_1d
+  module procedure :: new_att_real64_1d
+  module procedure :: new_att_char_0d
+  module procedure :: new_att_char_1d
 end interface operator(.att.)
 
 interface atts
@@ -200,11 +212,91 @@ interface
     type(netcdf_attribute) :: ret
   end function new_att_vec
 
-  module pure function new_att_scal(name, val) result(ret)
+  module pure function new_att_int8_0d(name, vals) result(ret)
     character(len=*), intent(in) :: name
-    class(*), intent(in) :: val
+    integer(int8), intent(in) :: vals
     type(netcdf_attribute) :: ret
-  end function new_att_scal
+  end function new_att_int8_0d
+
+  module pure function new_att_int16_0d(name, vals) result(ret)
+    character(len=*), intent(in) :: name
+    integer(int16), intent(in) :: vals
+    type(netcdf_attribute) :: ret
+  end function new_att_int16_0d
+
+  module pure function new_att_int32_0d(name, vals) result(ret)
+    character(len=*), intent(in) :: name
+    integer(int32), intent(in) :: vals
+    type(netcdf_attribute) :: ret
+  end function new_att_int32_0d
+
+  module pure function new_att_int64_0d(name, vals) result(ret)
+    character(len=*), intent(in) :: name
+    integer(int64), intent(in) :: vals
+    type(netcdf_attribute) :: ret
+  end function new_att_int64_0d
+
+  module pure function new_att_real32_0d(name, vals) result(ret)
+    character(len=*), intent(in) :: name
+    real(real32), intent(in) :: vals
+    type(netcdf_attribute) :: ret
+  end function new_att_real32_0d
+
+  module pure function new_att_real64_0d(name, vals) result(ret)
+    character(len=*), intent(in) :: name
+    real(real64), intent(in) :: vals
+    type(netcdf_attribute) :: ret
+  end function new_att_real64_0d
+
+  module pure function new_att_int8_1d(name, vals) result(ret)
+    character(len=*), intent(in) :: name
+    integer(int8), intent(in) :: vals(:)
+    type(netcdf_attribute) :: ret
+  end function new_att_int8_1d
+
+  module pure function new_att_int16_1d(name, vals) result(ret)
+    character(len=*), intent(in) :: name
+    integer(int16), intent(in) :: vals(:)
+    type(netcdf_attribute) :: ret
+  end function new_att_int16_1d
+
+  module pure function new_att_int32_1d(name, vals) result(ret)
+    character(len=*), intent(in) :: name
+    integer(int32), intent(in) :: vals(:)
+    type(netcdf_attribute) :: ret
+  end function new_att_int32_1d
+
+  module pure function new_att_int64_1d(name, vals) result(ret)
+    character(len=*), intent(in) :: name
+    integer(int64), intent(in) :: vals(:)
+    type(netcdf_attribute) :: ret
+  end function new_att_int64_1d
+
+  module pure function new_att_real32_1d(name, vals) result(ret)
+    character(len=*), intent(in) :: name
+    real(real32), intent(in) :: vals(:)
+    type(netcdf_attribute) :: ret
+  end function new_att_real32_1d
+
+  module pure function new_att_real64_1d(name, vals) result(ret)
+    character(len=*), intent(in) :: name
+    real(real64), intent(in) :: vals(:)
+    type(netcdf_attribute) :: ret
+  end function new_att_real64_1d
+
+
+  module pure function new_att_char_0d(name, vals) result(ret)
+    character(len=*), intent(in) :: name
+    character(len=*), intent(in) :: vals
+    type(netcdf_attribute) :: ret
+  end function new_att_char_0d
+
+  module pure function new_att_char_1d(name, vals) result(ret)
+    character(len=*), intent(in) :: name
+    character(len=*), intent(in) :: vals(:)
+    type(netcdf_attribute) :: ret
+  end function new_att_char_1d
+
 
   module function new_atts(atts) result(ret)
     type(netcdf_attribute), intent(in) :: atts(:)

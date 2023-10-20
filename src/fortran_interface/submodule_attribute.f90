@@ -2,95 +2,175 @@ submodule(module_fortran_interface) submodule_attribute
 implicit none
 contains
 
-module pure function new_att_vec(name, vals) result(ret)
+module pure function new_att_int8_0d(name, vals) result(ret)
   character(len=*), intent(in) :: name
-  class(*), intent(in) :: vals(:)
+  integer(int8), intent(in) :: vals
   type(netcdf_attribute) :: ret
 
   ret%name = name
-  select type (vals_ => vals)
-  type is (integer (int8))
-    ret%type = nc_byte
-    if (associated(ret%vals)) deallocate (ret%vals)
-    allocate (ret%vals, source=vals_)
-    ret%len = size(vals_)
-  type is (integer (int16))
-    ret%type = nc_short
-    if (associated(ret%vals)) deallocate (ret%vals)
-    allocate (ret%vals, source=vals_)
-    ret%len = size(vals_)
-  type is (integer (int32))
-    ret%type = nc_int
-    if (associated(ret%vals)) deallocate (ret%vals)
-    allocate (ret%vals, source=vals_)
-    ret%len = size(vals_)
-  type is (integer (int64))
-    ret%type = nc_int64
-    if (associated(ret%vals)) deallocate (ret%vals)
-    allocate (ret%vals, source=vals_)
-    ret%len = size(vals_)
-  type is (real (real32))
-    ret%type = nc_float
-    if (associated(ret%vals)) deallocate (ret%vals)
-    allocate (ret%vals, source=vals_)
-    ret%len = size(vals_)
-  type is (real (real64))
-    ret%type = nc_double
-    if (associated(ret%vals)) deallocate (ret%vals)
-    allocate (ret%vals, source=vals_)
-    ret%len = size(vals_)
-  type is (character(*))
-    ret%type = nc_char
-    if (associated(ret%vals)) deallocate (ret%vals)
-    allocate (ret%vals, source=vals_)
-    ret%len = size(vals_)
-  end select
-end function new_att_vec
+  ret%type = nc_byte
+  if (associated(ret%vals)) deallocate (ret%vals)
+  allocate (ret%vals, source=[vals])
+  ret%len = 1
+end function new_att_int8_0d
 
-module pure function new_att_scal(name, val) result(ret)
+module pure function new_att_int16_0d(name, vals) result(ret)
   character(len=*), intent(in) :: name
-  class(*), intent(in) :: val
+  integer(int16), intent(in) :: vals
   type(netcdf_attribute) :: ret
 
   ret%name = name
-  select type (val_ => val)
-  type is (integer (int8))
-    ret%type = nc_byte
-    if (associated(ret%vals)) deallocate (ret%vals)
-    allocate (ret%vals, source=[val_])
-    ret%len = 1
-  type is (integer (int16))
-    ret%type = nc_short
-    if (associated(ret%vals)) deallocate (ret%vals)
-    allocate (ret%vals, source=[val_])
-    ret%len = 1
-  type is (integer (int32))
-    ret%type = nc_int
-    if (associated(ret%vals)) deallocate (ret%vals)
-    allocate (ret%vals, source=[val_])
-    ret%len = 1
-  type is (integer (int64))
-    ret%type = nc_int64
-    if (associated(ret%vals)) deallocate (ret%vals)
-    allocate (ret%vals, source=[val_])
-    ret%len = 1
-  type is (real (real32))
-    ret%type = nc_float
-    if (associated(ret%vals)) deallocate (ret%vals)
-    allocate (ret%vals, source=[val_])
-    ret%len = 1
-  type is (real (real64))
-    ret%type = nc_double
-    if (associated(ret%vals)) deallocate (ret%vals)
-    allocate (ret%vals, source=[val_])
-    ret%len = 1
-  type is (character(*))
-    ret%type = nc_char
-    if (associated(ret%vals)) deallocate (ret%vals)
-    allocate (ret%vals, source=[val_])
-    ret%len = 1
-  end select
-end function new_att_scal
+  ret%type = nc_short
+  if (associated(ret%vals)) deallocate (ret%vals)
+  allocate (ret%vals, source=[vals])
+  ret%len = 1
+end function new_att_int16_0d
+
+module pure function new_att_int32_0d(name, vals) result(ret)
+  character(len=*), intent(in) :: name
+  integer(int32), intent(in) :: vals
+  type(netcdf_attribute) :: ret
+
+  ret%name = name
+  ret%type = nc_int
+  if (associated(ret%vals)) deallocate (ret%vals)
+  allocate (ret%vals, source=[vals])
+  ret%len = 1
+end function new_att_int32_0d
+
+module pure function new_att_int64_0d(name, vals) result(ret)
+  character(len=*), intent(in) :: name
+  integer(int64), intent(in) :: vals
+  type(netcdf_attribute) :: ret
+
+  ret%name = name
+  ret%type = nc_int64
+  if (associated(ret%vals)) deallocate (ret%vals)
+  allocate (ret%vals, source=[vals])
+  ret%len = 1
+end function new_att_int64_0d
+
+module pure function new_att_real32_0d(name, vals) result(ret)
+  character(len=*), intent(in) :: name
+  real(real32), intent(in) :: vals
+  type(netcdf_attribute) :: ret
+
+  ret%name = name
+  ret%type = nc_float
+  if (associated(ret%vals)) deallocate (ret%vals)
+  allocate (ret%vals, source=[vals])
+  ret%len = 1
+end function new_att_real32_0d
+
+module pure function new_att_real64_0d(name, vals) result(ret)
+  character(len=*), intent(in) :: name
+  real(real64), intent(in) :: vals
+  type(netcdf_attribute) :: ret
+
+  ret%name = name
+  ret%type = nc_double
+  if (associated(ret%vals)) deallocate (ret%vals)
+  allocate (ret%vals, source=[vals])
+  ret%len = 1
+end function new_att_real64_0d
+
+module pure function new_att_int8_1d(name, vals) result(ret)
+  character(len=*), intent(in) :: name
+  integer(int8), intent(in) :: vals(:)
+  type(netcdf_attribute) :: ret
+
+  ret%name = name
+  ret%type = nc_byte
+  if (associated(ret%vals)) deallocate (ret%vals)
+  allocate (ret%vals, source=vals)
+  ret%len = size(vals)
+end function new_att_int8_1d
+
+module pure function new_att_int16_1d(name, vals) result(ret)
+  character(len=*), intent(in) :: name
+  integer(int16), intent(in) :: vals(:)
+  type(netcdf_attribute) :: ret
+
+  ret%name = name
+  ret%type = nc_short
+  if (associated(ret%vals)) deallocate (ret%vals)
+  allocate (ret%vals, source=vals)
+  ret%len = size(vals)
+end function new_att_int16_1d
+
+module pure function new_att_int32_1d(name, vals) result(ret)
+  character(len=*), intent(in) :: name
+  integer(int32), intent(in) :: vals(:)
+  type(netcdf_attribute) :: ret
+
+  ret%name = name
+  ret%type = nc_int
+  if (associated(ret%vals)) deallocate (ret%vals)
+  allocate (ret%vals, source=vals)
+  ret%len = size(vals)
+end function new_att_int32_1d
+
+module pure function new_att_int64_1d(name, vals) result(ret)
+  character(len=*), intent(in) :: name
+  integer(int64), intent(in) :: vals(:)
+  type(netcdf_attribute) :: ret
+
+  ret%name = name
+  ret%type = nc_int64
+  if (associated(ret%vals)) deallocate (ret%vals)
+  allocate (ret%vals, source=vals)
+  ret%len = size(vals)
+end function new_att_int64_1d
+
+module pure function new_att_real32_1d(name, vals) result(ret)
+  character(len=*), intent(in) :: name
+  real(real32), intent(in) :: vals(:)
+  type(netcdf_attribute) :: ret
+
+  ret%name = name
+  ret%type = nc_float
+  if (associated(ret%vals)) deallocate (ret%vals)
+  allocate (ret%vals, source=vals)
+  ret%len = size(vals)
+end function new_att_real32_1d
+
+module pure function new_att_real64_1d(name, vals) result(ret)
+  character(len=*), intent(in) :: name
+  real(real64), intent(in) :: vals(:)
+  type(netcdf_attribute) :: ret
+
+  ret%name = name
+  ret%type = nc_double
+  if (associated(ret%vals)) deallocate (ret%vals)
+  allocate (ret%vals, source=vals)
+  ret%len = size(vals)
+end function new_att_real64_1d
+
+
+module pure function new_att_char_0d(name, vals) result(ret)
+  character(len=*), intent(in) :: name
+  character(len=*), intent(in) :: vals
+  type(netcdf_attribute) :: ret
+
+  ret%name = name
+  ret%type = nc_char
+  if (associated(ret%vals)) deallocate (ret%vals)
+  allocate (ret%vals, source=[vals])
+  ret%len = 1
+end function new_att_char_0d
+
+module pure function new_att_char_1d(name, vals) result(ret)
+  character(len=*), intent(in) :: name
+  character(len=*), intent(in) :: vals(:)
+  type(netcdf_attribute) :: ret
+
+  ret%name = name
+  ret%type = nc_char
+  if (associated(ret%vals)) deallocate (ret%vals)
+  allocate (ret%vals, source=vals)
+  ret%len = size(vals)
+end function new_att_char_1d
+
 
 module function new_atts(atts) result(ret)
   type(netcdf_attribute), intent(in) :: atts(:)

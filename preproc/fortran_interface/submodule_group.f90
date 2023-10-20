@@ -77,7 +77,7 @@ module subroutine to_netcdf_grp(file)
     & error stop "[to_netcdf_grp] Empty file type."
 
   select case (file%mode)
-  case (xor(nc_netcdf4, nc_clobber))
+  case (ior(nc_netcdf4, nc_clobber))
     stat = nc_create(cstr(file%filename), file%mode, file%ID)
     call handle_error(stat, "nc_create")
 

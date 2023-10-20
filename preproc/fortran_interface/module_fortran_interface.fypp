@@ -65,8 +65,14 @@ interface dims
 end interface dims
 
 interface operator(.att.)
-  module procedure :: new_att_scal
-  module procedure :: new_att_vec
+  #: for rank, column in zip([0, 1], ['', "(:)"])
+  #: for type, kind, nc_type in zip(types, kinds, nc_types)
+  module procedure :: new_att_${kind}$_${rank}$d
+  #: endfor
+  #: endfor
+  #: for rank, column in zip([0, 1], ['', "(:)"])
+  module procedure :: new_att_char_${rank}$d
+  #: endfor
 end interface operator(.att.)
 
 interface atts
@@ -173,11 +179,23 @@ interface
     type(netcdf_attribute) :: ret
   end function new_att_vec
 
-  module pure function new_att_scal(name, val) result(ret)
+  #: for rank, column in zip([0, 1], ['', "(:)"])
+  #: for type, kind, nc_type in zip(types, kinds, nc_types)
+  module pure function new_att_${kind}$_${rank}$d(name, vals) result(ret)
     character(len=*), intent(in) :: name
-    class(*), intent(in) :: val
+    ${type}$(${kind}$), intent(in) :: vals${column}$
     type(netcdf_attribute) :: ret
-  end function new_att_scal
+  end function new_att_${kind}$_${rank}$d${"\n"}$
+  #: endfor
+  #: endfor
+
+  #: for rank, column in zip([0, 1], ['', "(:)"])
+  module pure function new_att_char_${rank}$d(name, vals) result(ret)
+    character(len=*), intent(in) :: name
+    character(len=*), intent(in) :: vals${column}$
+    type(netcdf_attribute) :: ret
+  end function new_att_char_${rank}$d${"\n"}$
+  #: endfor
 
   module function new_atts(atts) result(ret)
     type(netcdf_attribute), intent(in) :: atts(:)
